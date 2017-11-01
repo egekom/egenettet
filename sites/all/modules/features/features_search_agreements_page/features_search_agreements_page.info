@@ -1,0 +1,12 @@
+name = Search agreements page
+core = 7.x
+package = Pages
+version = 7.x-1.0
+project = features_search_agreements_page
+dependencies[] = ctools
+dependencies[] = page_manager
+dependencies[] = panelizer
+dependencies[] = strongarm
+features[ctools][] = page_manager:pages_default:1
+features[features_api][] = api:2
+features[page_manager_pages][] = agreements_search_page

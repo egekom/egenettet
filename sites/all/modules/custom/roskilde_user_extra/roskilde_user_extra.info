@@ -1,0 +1,6 @@
+name = Roskilde user related customizations
+description = Specific user functionalities.
+core = 7.x
+
+dependencies[] = block
+dependencies[] = user

@@ -1,0 +1,60 @@
+/*
+* Custom styles for the Admin theme
+*
+*/
+
+/*@font-face {
+  font-family: 'Max-Regular';
+  src: url('../../egedal/css/fonts/Max-Regular.eot');
+  src: url('../../egedal/css/fonts/Max-Regular.eot?#iefix') format('embedded-opentype'),
+    url('../../egedal/css/fonts/Max-Regular.svg#Max-Regular') format('svg'),
+    url('../../egedal/css/fonts/Max-Regular.woff') format('woff'),
+    url('../../egedal/css/fonts/Max-Regular.ttf')  format('truetype');
+}
+
+
+input.form-autocomplete,
+input.form-text,
+input.form-file,
+textarea.form-textarea,
+select.form-select {
+  font-family: 'Max-Regular';
+  font: 14px 'Max-Regular';
+}
+*/
+.chosen-container-multi {
+  min-width: 100%;
+}
+
+.chosen-container-single {
+  min-width: 30%;
+}
+
+.colorBox[color="#ffffff"] {
+  border: 1px solid #333;
+}
+
+.media-item {
+  border: 3px solid #fff;
+}
+
+.media-list-thumbnails .media-item:hover {
+  border-color: #3399ff;
+}
+
+.media-list-thumbnails .media-item.selected {
+  background: #fff;
+  border-color: #3366ff;
+}
+
+.media-list-thumbnails li a {
+  display: block;
+}
+
+#edit-group_main_content .fieldset-wrapper .field-name-field-for-approve {
+  margin-top: 32px;
+}
+.node-type-editorial-news .form-item-workbench-moderation-state-new,
+.page-node-add-editorial-news .form-item-workbench-moderation-state-new {
+  display: none;
+}

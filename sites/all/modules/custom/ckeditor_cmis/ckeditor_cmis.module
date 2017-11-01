@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * CKEditor CMIS link plugin.
+ */
+
+/**
+ * Implements hook_ckeditor_plugin().
+ */
+function ckeditor_cmis_ckeditor_plugin() {
+  return array(
+    'cmis' => array(
+      // Name of the plugin used to write it.
+      'name' => 'cmis',
+      // Description of plugin - it would appear in plugins managment
+      // of profile settings.
+      'desc' => t('Support for CMIS links'),
+      // The full path to the CKEditor plugin directory, with trailing slash.
+      'path' => drupal_get_path('module', 'ckeditor_cmis') . '/ckeditor_plugin/',
+      // Buttons to show up in the toolbar config area.
+      'buttons' => array(
+        'cmis' => array(
+          'label' => 'CMIS Link',
+          'icon' => 'icons/cmis.png',
+        ),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function ckeditor_cmis_element_info_alter(&$types) {
+  drupal_add_library('system', 'drupal.ajax');
+  drupal_add_library('system', 'jquery.form');
+}

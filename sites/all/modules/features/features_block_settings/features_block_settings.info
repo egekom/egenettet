@@ -1,0 +1,16 @@
+name = Block settings
+core = 7.x
+package = Features
+version = 7.x-1.0
+project = features_block_settings
+dependencies[] = ctools
+dependencies[] = fe_block
+dependencies[] = menu
+dependencies[] = menu_block
+dependencies[] = panelizer
+dependencies[] = roskilde_user_extra
+dependencies[] = strongarm
+features[fe_block_settings][] = menu-menu-help
+features[fe_block_settings][] = menu_block-footer_menu_block
+features[fe_block_settings][] = roskilde_user_extra-roskilde_user_information_block
+features[features_api][] = api:2

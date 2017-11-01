@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Search FAQ page feature.
+ */
+
+include_once 'features_search_faq_page.features.inc';

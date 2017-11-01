@@ -1,0 +1,451 @@
+/**
+ * Page User Phonebook.
+ */
+
+.panel-4col-25-50-25-tworows .panel-pane {
+  background-color: transparent;
+  line-height: 1;
+}
+.panel-4col-25-50-25-tworows {
+  background-color: $white;
+}
+.panel-col-content-wrapper.bottom,
+.panel-col-content-wrapper.top {
+  padding: $space*2.1875 0 $space*3 0;
+}
+.panel-col-content-wrapper.top {
+  background-color: $blue-bg-hover;
+}
+.panel-pane.phone-book-image-small {
+  display: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  right: 20px;
+  img {
+    border-radius: 71.5px;
+  }
+}
+.panel-pane.phone-book-image-big {
+  padding-top: 0;
+  padding-left: $space*3.9375;
+  img {
+    border-radius: 106px;
+  }
+}
+.panel-4col-25-50-25-tworows .panel-col-middle {
+  position: relative;
+}
+.panel-4col-25-50-25-tworows .panel-col-middle .panel-pane {
+  padding-top: 0;
+  padding-bottom: 10px;
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  //&.pane-node-field-department,
+  &.pane-node-field-unit {
+    padding-bottom: 40px;
+  }
+  &.pane-node-field-department {
+    padding-bottom: 5px;
+  }
+}
+
+// .panel-4col-25-50-25-tworows .panel-col-middle .panel-pane.pane-node-field-username {
+//   padding-bottom: 0;
+// }
+
+
+.node-type-phonebook .panel-pane.pane-node-title,
+.panel-pane.pane-node-field-full-name {
+  font-size: $text-m*1.875;
+  font-family: $bold;
+  float: left;
+  line-height: 1;
+  padding: 0 0 $space $space*1.875;
+  //max-width: 60%;
+}
+
+.panel-col-middle .panel-pane.pane-flag-link.pane-node {
+  display: none;
+  position: relative;
+  top: 3px;
+  left: 5px;
+  a span {
+    display: none;
+  }
+}
+
+.panel-pane.pane-node-field-last-name,
+.panel-pane.pane-node-field-first-name {
+  font-size: $text-m*1.875;
+  font-family: $bold;
+  float: left;
+  line-height: 1;
+  padding: 0 $space/2 $space 0;
+}
+.panel-pane.pane-node-field-first-name {
+  padding-left: $space*1.875;
+}
+.panel-pane.pane-node-field-last-name {
+  clear: right;
+}
+.panel-pane.pane-node-field-position {
+  font-size: $small-title-m;
+  line-height: 1;
+  padding-bottom: $space;
+}
+
+.pane-node-field-department,
+.pane-node-field-unit {
+  font-size: $text-s;
+  line-height: 1;
+  padding-bottom: $space*2.5;
+}
+// .panel-pane.pane-node-field-unit {
+//   font-size: $text-s;
+//   line-height: 1;
+//   padding-bottom: $space*3;
+// }
+
+.panel-pane.pane-node-field-email,
+.panel-pane.pane-node-field-mobile-number,
+.panel-pane.pane-node-field-phone-number,
+.panel-pane.pane-node-field-local-phone-number,
+.panel-pane.pane-node-field-main-number {
+  line-height: 1;
+  padding-bottom: $space/2;
+  position: relative;
+  padding-left: 55px;
+  &:before {
+    @extend %font-icon;
+    color: $blue-link;
+    font-size: $text-s;
+    padding-right: 14px;
+    position: absolute;
+    left: 30px;
+    top: 4px;
+  }
+  a {
+    color: $blue-link;
+  }
+  a:hover,
+  a:focus {
+    color: $pink-link-hover;
+  }
+}
+.panel-pane.pane-node-field-phone-number,
+.panel-pane.pane-node-field-local-phone-number,
+.panel-pane.pane-node-field-main-number {
+  &:before {
+    content: '\e81f';
+  }
+}
+.panel-pane.pane-node-field-mobile-number {
+  &:before {
+    font-size: $text-m;
+    content: '\e81e';
+  }
+}
+.panel-pane.pane-node-field-email {
+  padding-bottom: 0;
+  &:before {
+    content: '\e81d';
+  }
+}
+.panel-pane.pane-node-field-work-time,
+.panel-pane.pane-node-field-unit,
+.panel-pane.pane-node-field-organizational-unit,
+.panel-pane.pane-node-field-work-place,
+.panel-col-content-wrapper.bottom .panel-pane:first-child {
+  .field-items {
+    max-width: 66%;
+    line-height: 1.5rem;
+  }
+}
+//.panel-col-content-wrapper.bottom .panel-pane:last-child,
+.panel-pane.pane-node-field-competences {
+  .field-items {
+    line-height: 1.5rem;
+    padding-left: 5%;
+  }
+}
+.panel-4col-25-50-25-tworows .field-label {
+  width: 34%;
+  color: $grey-text;
+  font-weight: normal !important;
+  font-size: $text-s;
+  line-height: 1.5rem;
+  padding-left: 5%;
+  box-sizing: border-box;
+}
+.panel-4col-25-50-25-tworows .panel-col-middle {
+  .field-item p {
+    line-height: 1.5rem;
+    margin: 0;
+  }
+}
+
+.panel-col-content-wrapper.top .field-label {
+  padding-left: 0;
+  width: 31%;
+}
+
+
+.panel-col-content-wrapper.bottom {
+/*   .panel-pane {
+    padding-left: $space*3.75;
+  } */
+  .panel-pane:first-child {
+    border-bottom: 1px solid $blue-bg-hover;
+    margin-bottom: $space*1.5625;
+    padding-bottom: $space*1.5625;
+  }
+  //.panel-pane:last-child,
+  .panel-pane.pane-node-field-competences {
+    border-top: 1px solid $blue-bg-hover;
+    margin-top: $space*1.5625;
+    padding-top: $space*1.5625;
+    .field-label {
+      clear: both;
+      margin-bottom: $space*1.875;
+      width: 100%;
+    }
+    .field-items {
+      padding-left: 5%;
+    }
+  }
+}
+
+.pane-node-field-birthday span {
+  text-transform: lowercase;
+}
+
+
+@include breakpoint(small-only) {
+  .node-type-phonebook .panel-pane.pane-node-title,
+  .panel-pane.pane-node-field-full-name {
+    max-width: 80%;
+  }
+  .panel-4col-25-50-25-tworows .field-label {
+    width: 50%;
+  }
+  .panel-4col-25-50-25-tworows .panel-col-last {
+    padding: $space*1.875 0 0 $space*1.375 !important;
+  }
+
+  .panel-pane.pane-node-field-work-place,
+  .panel-col-content-wrapper.bottom .panel-pane:first-child,
+  //.panel-col-content-wrapper.bottom .panel-pane:last-child,
+  .panel-pane.pane-node-field-competences {
+    .field-label {
+      clear: both;
+      margin-bottom: $space*1.875;
+      width: 100%;
+    }
+    .field-items {
+      line-height: 1.4;
+      padding-left: 5%;
+      max-width: 100%;
+      p {
+        padding-left: 0;
+        line-height: 1.4;
+      }
+    }
+  }
+
+  .panel-col-middle .panel-pane.pane-flag-link.pane-node {
+    display: inline-block;
+  }
+  .panel-col-content-wrapper.top .panel-col-last {
+    display: none;
+  }
+}
+
+@include breakpoint(small-only-three) {
+  .node-type-phonebook .panel-pane.pane-node-title,
+  .panel-pane.pane-node-field-full-name {
+    max-width: 55%;
+    .field-item {
+      font-size: $title-l;
+    }
+  }
+  .panel-pane.phone-book-image-small {
+    display: block;
+  }
+  .panel-pane.phone-book-image-big {
+    display: none;
+  }
+  .panel-4col-25-50-25-tworows .panel-col-last {
+    padding: $space*1.875 0 0 $space*1.375;
+  }
+  .panel-pane.pane-node-field-work-time,
+  .panel-pane.pane-node-field-organizational-unit,
+  .panel-pane.pane-node-field-address-work {
+    .field-label {
+      clear: both;
+      margin-bottom: $space*1.875;
+      width: 100%;
+    }
+    .field-items {
+      line-height: 1.5rem;
+      padding-left: 5%;
+      p {
+        padding-left: 0;
+      }
+    }
+  }
+  .panel-4col-25-50-25-tworows{
+    .field-label {
+      font-size: $text-xl;
+    }
+  }
+
+  .panel-pane.pane-node-field-email,
+  .panel-pane.pane-node-field-mobile-number,
+  .panel-pane.pane-node-field-phone-number,
+  .panel-pane.pane-node-field-local-phone-number,
+  .panel-pane.pane-node-field-main-number {
+    padding-left: 65px;
+    .field-label {
+      display: none;
+    }
+    &:before {
+      font-size: $title-m;
+      top: 7px;
+    }
+  }
+
+  .panel-col-middle .panel-pane.pane-flag-link.pane-node {
+    top: 13px;
+  }
+
+}
+
+@include breakpoint(smallest-only) {
+  .node-type-phonebook .panel-pane.pane-node-title,
+  .panel-pane.pane-node-field-full-name {
+    padding-left: $space;
+    max-width: 42%;
+  }
+  .panel-col-middle .panel-pane.pane-flag-link.pane-node {
+    //top: -5px;
+    left: 5px;
+  }
+  .panel-pane.pane-node-field-email,
+  .panel-pane.pane-node-field-mobile-number,
+  .panel-pane.pane-node-field-phone-number,
+  .panel-pane.pane-node-field-local-phone-number,
+  .panel-pane.pane-node-field-main-number {
+    padding-left: 65px;
+    .field-label {
+      display: none;
+    }
+    &:before {
+      font-size: $text-s;
+      top: 4px;
+    }
+  }
+  .panel-4col-25-50-25-tworows{
+    .field-label {
+      font-size: $text-s;
+    }
+  }
+}
+
+@include breakpoint(extrasmall-only) {
+  .node-type-phonebook .panel-pane.pane-node-title,
+  .panel-pane.pane-node-field-full-name {
+    max-width: 85%;
+  }
+  .panel-4col-25-50-25-tworows .field-label {
+    width: 100%;
+    clear: both;
+  }
+  .panel-4col-25-50-25-tworows .field-items {
+    padding-left: 5%;
+  }
+  .panel-col-content-wrapper.top .panel-col-middle {
+    .field-items {
+      padding-left: $space*1.875;
+    }
+  }
+  .panel-pane.phone-book-image-small {
+    position: relative;
+    left: 0;
+  }
+  .panel-pane.pane-node-field-unit,
+  .panel-pane.pane-node-field-position,
+  .panel-pane.pane-node-field-last-name,
+  .panel-pane.pane-node-field-first-name {
+    clear: both;
+    padding-left: 0;
+  }
+
+  .panel-pane.pane-node-field-department,
+  .panel-pane.pane-node-field-unit,
+  .panel-pane.pane-node-field-position,
+  .node-type-phonebook .panel-pane.pane-node-title,
+  .panel-pane.pane-node-field-full-name {
+    clear: both;
+    padding-left: 0;
+  }
+  .panel-pane.pane-node-field-first-name {
+    padding-top: $space*1.875;
+  }
+  .node-type-phonebook .panel-pane.pane-node-title {
+    padding-left: $space*1.875;
+  }
+}
+.pane-print-bookmark-read-phonebook {
+  @extend %reset-box;
+  padding: 0;
+  text-align: center;
+}
+.panel-pane.pane-node-field-work-time,
+.panel-pane.pane-node-field-organizational-unit,
+.panel-pane.pane-node-field-work-place {
+  .field-label {
+    @include breakpoint(small-only) {
+      margin-bottom: 10px;
+    }
+  }
+  .vocabulary-phonebook-work-place .field {
+    display: none;
+    &.field-name-field-phonebook-tax-address {
+      display: block;
+    }
+  }
+
+/*   .field-name-field-phonebook-tax-card-id,
+  .field-name-field-phonebook-tax-workplace-id,
+  .field-name-field-phonebook-tax-email,
+  .field-name-field-phonebook-tax-url,
+  .field-name-field-phonebook-tax-web {
+    display: none;
+  } */
+  .field-name-field-phonebook-tax-address {
+    .field-label {
+      display: none;
+    }
+    .field-items {
+      @include breakpoint(small-only) {
+        padding: 0;
+      }
+    }
+  }
+  .vocabulary-phonebook-work-place h2 {
+    font-size: $text-m;
+    font-family: $regular;
+    @include breakpoint(small-only-three) {
+      font-size: $small-text-m * 2;
+    }
+    @include breakpoint(smallest-only) {
+      font-size: $text-m;
+    }
+  }
+}
+
+

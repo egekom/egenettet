@@ -1,0 +1,6 @@
+name = Roskilde linkit extra
+description = Extends linkit module.
+core = 7.x
+
+; Files that contain classes:
+files[] = plugins/linkit_search/roskilde.node.extra.class.php

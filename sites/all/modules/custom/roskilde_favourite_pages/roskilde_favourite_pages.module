@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @file
+ * Roskilde Favourite Pages.
+ */
+
+/**
+ * Implements hook_init().
+ */
+function roskilde_favourite_pages_init() {
+  drupal_add_js(drupal_get_path('module', 'roskilde_favourite_pages') . '/roskilde_favourite_pages.js');
+}
+/**
+ * Implements hook_block_info().
+ */
+function roskilde_favourite_pages_block_info() {
+  $blocks = array();
+
+  $blocks['roskilde_favourite_pages'] = array(
+    'info' => t('My Bookmarks'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function roskilde_favourite_pages_block_view($delta = '') {
+  $block = array();
+  if ($delta == 'roskilde_favourite_pages') {
+    // Block to display bookmarks inside homebox module.
+    $block['subject'] = 'My bookmarks';
+    // Set empty content here and add the real content in hook_block_view_alter
+    // in order to have the homebox block settings.
+    $block['content'] = '';
+  }
+
+  return $block;
+}
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function roskilde_favourite_pages_block_view_alter(&$data, $block) {
+  if ($block->delta == 'roskilde_favourite_pages') {
+
+    $view = views_get_view('flag_bookmarks_custom');
+    if (isset($block->number_of_links)) {
+      $view->set_display('block_1');
+      $view->set_items_per_page($block->number_of_links);
+    }
+    $data['content'] = $view->preview('block_1');
+  }
+
+}
+/**
+ * Implements hook_pages_homebox_block_keys().
+ *
+ * Add number of links to the block settings keys
+ */
+function roskilde_favourite_pages_homebox_block_keys($block) {
+  return array('number_of_links');
+}
+
+/**
+ * Implements hook_homebox_block_edit_form().
+ *
+ * Configure homebox block settings form to set up number of results.
+ */
+function roskilde_favourite_pages_homebox_block_edit_form($block) {
+  $form = array();
+  if ($block->delta == 'roskilde_favourite_pages') {
+    $form['number_of_links'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Number of links'),
+      '#description' => t('Enter the number of links you would like to see in the block.'),
+      '#default_value' => isset($block->number_of_links) ? $block->number_of_links : 10,
+      '#size' => 250,
+      '#maxlength' => 250,
+    );
+  }
+  return $form;
+}

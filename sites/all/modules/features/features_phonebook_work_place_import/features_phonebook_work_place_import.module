@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Phonebook - Work place import feature.
+ */
+
+include_once 'features_phonebook_work_place_import.features.inc';

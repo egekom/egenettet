@@ -1,0 +1,277 @@
+/**
+ * FAQ pane styling.
+ */
+
+[class*="pane-agreements-list-panel-pane-"],
+[class*="pane-faq-list-panel-pane-"],
+//.pane-faq-list-panel-pane-1,
+//.pane-agreements-list-panel-pane-1,
+.node-type-agreements,
+.node-type-faq-qa,
+.view-agreements-list,
+.view-faq-list,
+.pane-bundle-agreements-pane,
+.pane-bundle-faq-pane,
+.pane-node-field-related-agreements,
+.pane-node-field-related-faq {
+
+  .faq-toggle-all {
+    display: none;
+  }
+
+  .pane-title {
+    display: block;
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding: 10px 15px 20px;
+    background-color: $blue-bg-hover;
+
+    .pane-title-inner {
+      font-family: $bold;
+      font-size: $small-title-l;
+      border-bottom: 3px solid $body-bg;
+      display: inline-block;
+      line-height: 2;
+    }
+  }
+
+  .field-name-field-title {
+    display: none;
+
+    //display: block;
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding: 10px 15px 20px;
+    background-color: $blue-bg-hover;
+
+    .field-item {
+      font-family: $bold;
+      font-size: $small-title-l;
+      border-bottom: 3px solid $body-bg;
+      display: inline-block;
+      line-height: 2;
+    }
+  }
+
+  .ui-widget-content,
+  .ui-state-default {
+    border: 0;
+  }
+
+  .ui-widget-content {
+    a {
+      color: $blue-link;
+
+      &:hover {
+        color: $pink-link-hover;
+      }
+    }
+
+    @extend %custom-ul-list;
+  }
+
+  .ui-icon {
+    width: auto;
+    height: auto;
+  }
+
+  .ui-widget-content {
+    overflow: visible;
+    background-color: $blue-bg-hover-lighter;
+    background-image: none;
+    padding: 20px 15px;
+    font-family: $regular;
+    font-size: $small-text-l;
+  }
+
+  .ui-accordion .ui-accordion-header {
+    margin-top: 1px;
+    background: none;
+    background-color: $blue-bg-hover;
+    font-size: $title-xs;
+    font-family: $regular;
+    padding: 15px 42px 15px 22px;
+
+    &.ui-state-active {
+      border: 0;
+
+      .ui-accordion-header-icon:before {
+        @extend %font-icon;
+        content: '\e820';
+        display: block;
+        color: $body-bg-dark;
+      }
+    }
+
+    .ui-accordion-header-icon {
+      left: auto;
+      right: 21px;
+      background-image: none;
+      text-indent: 0;
+
+      &:before {
+        @extend %font-icon;
+        content: '\e821';
+        width: auto;
+        display: block;
+        color: $body-bg-dark;
+      }
+    }
+  }
+}
+
+.pane-bundle-agreements-pane,
+.pane-bundle-faq-pane {
+  .node-title {
+    display: none;
+  }
+  .field-name-field-title {
+    display: block;
+    .field-item {
+      line-height: 1.6;
+    }
+  }
+}
+/* .pane-bundle-agreements-pane {
+  .field-name-field-title {
+    display: none;
+  }
+  .node-title {
+    display: block;
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding: 10px 15px 20px;
+    background-color: $blue-bg-hover;
+    a {
+      font-family: $bold;
+      font-size: $small-title-l;
+      border-bottom: 3px solid $body-bg;
+      display: inline-block;
+      line-height: 2;
+    }
+  }
+} */
+
+
+.panel-pane.pane-node-field-tags {
+   @extend %reset-box;
+   padding-top: $space * 1.875;
+
+  .field-item {
+    display: inline-block;
+    padding: 3px 10px;
+    margin-right: 5px;
+    background-color: $blue-bg-hover-lighter;
+    @include border-radius(2px);
+
+    &:hover {
+      background-color: $blue-link-hover;
+
+      & a {
+        color: $white;
+      }
+    }
+
+    a {
+      color: $blue-link;
+      &:hover {
+        color: $white;
+      }
+    }
+  }
+}
+
+/* Page FAQ List */
+.page-agreements-list,
+.page-faq-list {
+  #main {
+    max-width: 100%;
+  }
+
+  .view-filters {
+    padding: $space * 1.4375;
+    background-color: $blue-bg-hover-lighter;
+  }
+
+  .views-field-field-title {
+    display: block;
+    padding-top: $space * 1.5625;
+    padding-left: $space * 1.375;
+    background-color: $blue-bg-hover;
+    border-radius: 4px;
+  }
+
+  .views-exposed-widgets {
+    position: relative;
+  }
+
+  .views-exposed-form .views-exposed-widget {
+    width: 100%;
+
+    .ajax-progress {
+      position: absolute;
+      top: 50%;
+      left: $space * 0.375;
+      margin-top: - $space * 0.6875;
+    }
+  }
+
+  .view-agreements-list .view-content .views-row,
+  .view-agreements-list .view-empty .views-field,
+  .view-faq-list .view-content .views-row,
+  .view-faq-list .view-empty .views-field {
+    max-width: 57.4em;
+    margin-bottom: $space * 3.125;
+    padding-top: $space * 1.5;
+  }
+
+  .view-agreements-list .view-content .views-row,
+  .view-faq-list .view-content .views-row {
+    padding-left: $space * 1.875;
+  }
+
+  .view-empty {
+      padding-top: $space * 1.5;
+
+    .views-field {
+      margin-left: $space * 1.875;
+    }
+  }
+
+  @include breakpoint(small-only) {
+    .view-agreements-list .view-empty .views-field,
+    .view-faq-list .view-empty .views-field {
+      margin-left: 0;
+    }
+    .view-agreements-list .view-content .views-row,
+    .view-faq-list .view-content .views-row {
+      padding-left: 0;
+    }
+  }
+
+  ul.chosen-choices {
+    padding-left: $space * 1.875;
+
+    li.search-choice {
+      border: none;
+      padding-top: $space * 0.75;
+      padding-bottom: $space * 0.75;
+      padding-left: $space * 0.75;
+      padding-right: $space * 1.55;
+      color: $white;
+      background: $pink-link-hover;
+    }
+
+    .search-choice-close {
+      background: none !important;
+
+      &:before {
+        @extend %font-icon;
+        content: '\e82f';
+        color: $white;
+        font-size: $small-text-m;
+      }
+    }
+  }
+
+}

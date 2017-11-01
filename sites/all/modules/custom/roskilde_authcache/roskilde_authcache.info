@@ -1,0 +1,5 @@
+name = Roskilde Authcache
+description = Roskilde Authcache customizations.
+core = 7.x
+
+dependencies[] = roskilde_menu

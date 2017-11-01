@@ -1,0 +1,5 @@
+name = Roskilde Field Link
+description = Extend Link module with option links to be attached to the other fields.
+core = 7.x
+
+dependencies[] = link

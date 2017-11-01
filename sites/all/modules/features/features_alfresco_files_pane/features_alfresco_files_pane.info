@@ -1,0 +1,15 @@
+name = Alfresco files pane
+core = 7.x
+package = Panes
+dependencies[] = cmis_field
+dependencies[] = ctools
+dependencies[] = features
+dependencies[] = features_field_bases
+dependencies[] = fieldable_panels_panes
+dependencies[] = strongarm
+features[ctools][] = fieldable_panels_panes:fieldable_panels_pane_type:1
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:2
+features[field_instance][] = fieldable_panels_pane-alfresco_files-field_alfresco_document
+features[fieldable_panels_pane_type][] = alfresco_files
+features[variable][] = field_bundle_settings_fieldable_panels_pane__alfresco_files

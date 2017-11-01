@@ -1,0 +1,7 @@
+name = Roskilde blocks
+core = 7.x
+package = Config
+dependencies[] = fe_block
+features[fe_block_boxes][] = my_bookmarks
+features[fe_block_settings][] = block-my_bookmarks
+features[features_api][] = api:2

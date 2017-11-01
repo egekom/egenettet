@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Features Menu Icons feature.
+ */
+
+include_once 'features_menu_icons.features.inc';

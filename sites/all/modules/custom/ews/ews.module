@@ -1,0 +1,612 @@
+<?php
+
+/**
+ * @file
+ * Module file for the ews module.
+ */
+
+define('EWS_LIBRARY_PATH', DRUPAL_ROOT . '/sites/all/libraries/php-ews');
+
+// Register autoloader.
+spl_autoload_register('ews_class_autoloader');
+
+/**
+ * Implements hook_menu().
+ */
+function ews_menu() {
+  $items['admin/config/services/ews'] = array(
+    'title' => 'Exchange Web Service',
+    'description' => 'Configure the URL for the Exchange server.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ews_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'ews.admin.inc',
+  );
+  $items['my-calendar/all'] = array(
+    'title' => 'Calendar',
+    'page callback' => 'ews_all_calendar_events',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'ews.page.inc',
+  );
+  $items['calendar/details/%'] = array(
+    'title' => 'Calendar',
+    'page callback' => 'ews_event_details',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'ews.event_details.inc',
+  );
+  $items['ews/ajax/data'] = array(
+    'page callback' => 'ews_ajax_data',
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+  );
+
+  return $items;
+}
+
+/**
+ * Page callback.
+ */
+function ews_ajax_data() {
+  $user_calendar_json = array_shift(_ews_timeline_get_data_by_emails_date($_POST['emails'], (int) $_POST['minutes']));
+
+  // Send the output.
+  drupal_json_output($user_calendar_json);
+  exit();
+}
+
+/**
+ * Helper function: Get data form exchange server.
+ */
+function _ews_timeline_get_data_by_emails_date($emails, $minutes) {
+  $date = date('Y-m-d');
+  $start_date = strtotime($date);
+  $end_date = strtotime($date . " +14 days");
+
+  $ews = _ews_get_action_object();
+
+  $user_calendar_json = array();
+  foreach ($emails as $user_email) {
+    /*
+     * TODO: GetUserAvailability does not return the event_id properly,
+     * so we're not using it for now.
+     */
+    $use_get_free_busy = FALSE;
+    if ($use_get_free_busy) {
+      $res = $ews->GetUserAvailabilityByUser($user_email, $start_date, $end_date);
+      $items = $ews->processFreeBusyResponse($res);
+      $calendar_items = $ews->processFreeBusyItems($items);
+    }
+    else {
+      $res = $ews->findUserCalendarItems($user_email, $start_date, $end_date, $minutes);
+      $calendar_items = $ews->extractCalendarData($res);
+    }
+
+    $calendar_items_json = array();
+    foreach ($calendar_items as $item) {
+      $calendar_items_json[] = array(
+        'subject' => $item->Subject,
+        'start' => date('Y-m-d H:i:s', strtotime($item->Start)),
+        'end' => date('Y-m-d H:i:s', strtotime($item->End)),
+        'calendar_item_type' => $item->CalendarItemType,
+        'free_busy_status' => $item->LegacyFreeBusyStatus,
+        'location' => (isset($item->Location) ? $item->Location : ''),
+        'url' => url('calendar/details/' . base64_encode($item->ItemId->Id)),
+      );
+    }
+    $key = ($user = user_load_by_mail($user_email)) ? $user->name : $user_email ;
+    $user_calendar_json[$key] = $calendar_items_json;
+  }
+
+  return array($user_calendar_json, $start_date, $end_date);
+}
+
+/**
+ * Implements hook_libraries_info().
+ */
+function ews_libraries_info() {
+  $libraries['dhtmlxScheduler'] = array(
+    'name' => 'dhtmlxScheduler library',
+    'vendor url' => 'http://dhtmlx.com/docs/products/dhtmlxScheduler/',
+    'download url' => 'http://dhtmlx.com/x/download/regular/dhtmlxScheduler.zip',
+    'path' => 'codebase',
+    'version arguments' => array(
+      'file' => 'readme.txt',
+      'pattern' => '@dhtmlxScheduler\s+([0-9a-zA-Z\.-]+)@',
+      'lines' => 5,
+      'cols' => 50,
+    ),
+    'files' => array(
+      'js' => array(
+        'dhtmlxscheduler.js',
+        'ext/dhtmlxscheduler_timeline.js',
+      ),
+      'css' => array(
+        'dhtmlxscheduler.css',
+      ),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
+ * Autoload function for php-ews library.
+ */
+function ews_class_autoloader($name) {
+  if ('EWS_Exception' == $name) {
+    $file = EWS_LIBRARY_PATH . '/' . $name . '.php';
+  }
+  else {
+    $file = EWS_LIBRARY_PATH . '/' . str_replace('_', '/', $name) . '.php';
+  }
+
+  return (file_exists($file) ? require_once $file : FALSE);
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function ews_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && $plugin_type == 'content_types') {
+    return "plugins/$plugin_type";
+  }
+}
+
+/**
+ * Implements hook_homebox_block_keys().
+ */
+function ews_homebox_block_keys($block) {
+  return array('days_range');
+}
+
+/**
+ * Implements hook_homebox_block_keys().
+ */
+function ews_homebox_block_edit_form($block) {
+  return array(
+    'days_range' => array(
+      '#type' => 'textfield',
+      '#title' => t('Days range'),
+      '#size' => 2,
+      '#default_value' => isset($block->days_range) ? $block->days_range : 5,
+      '#required' => TRUE,
+    ),
+    '#validate' => array('ews_homebox_block_edit_form_validate'),
+  );
+}
+
+/**
+ * Form validate handler.
+ */
+function ews_homebox_block_edit_form_validate($form, $form_state) {
+  if (!is_numeric($form_state['values']['days_range']) || $form_state['values']['days_range'] < 1) {
+    form_set_error('days_range', t('Number of days range must be a positive integer.'));
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ews_theme() {
+  $theme = array(
+    'ews_calendar_block' => array(
+      'variables' => array('items' => NULL, 'days_range' => NULL),
+      'template' => 'templates/ews-calendar-events',
+      'file' => 'ews.theme.inc',
+    ),
+    'ews_timeline_events' => array(
+      'variables' => array('timeline_settings' => array()),
+      'template' => 'templates/ews-timeline-events',
+    ),
+    'ews_day_events' => array(
+      'variables' => array('events' => array()),
+      'template' => 'templates/ews-day-events',
+    ),
+    'ews_event_details' => array(
+      'variables' => array('event' => array()),
+      'template' => 'templates/ews-event-details',
+    ),
+  );
+
+  return $theme;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function ews_block_info() {
+  $blocks['ews_calendar'] = array(
+    'info' => t('Exchange Calendar'),
+    'weight' => -99,
+    'status' => 0,
+    'region' => -1,
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['ews_timeline'] = array(
+    'info' => t('EWS Timeline'),
+    'weight' => -98,
+    'status' => 0,
+    'region' => -1,
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['ews_day_events'] = array(
+    'info' => t('EWS Day Events'),
+    'weight' => -97,
+    'status' => 0,
+    'region' => -1,
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function ews_block_view($delta = '', $block_settings = NULL) {
+  $block = array(
+    'subject' => '',
+    'content' => array(),
+  );
+  $day_date = date('j. M', time());
+  $output = '';
+
+  switch ($delta) {
+    case 'ews_calendar':
+      $output = _ews_calendar();
+      $block['content']['#attached'] = array(
+        'css' => array(drupal_get_path('module', 'ews') . '/css/ews_calendar.css'),
+      );
+      break;
+
+    case 'ews_timeline':
+      libraries_load('dhtmlxScheduler');
+      $output = theme('ews_timeline_events', array('day_date' => $day_date));
+      $block['content']['#attached'] = array(
+        'js' => array(
+          drupal_get_path('module', 'ews') . '/js/ews_timeline.js',
+          array(
+            'data' => array(
+              'ews_timeline' => _ews_get_timeline_settings(),
+            ),
+            'type' => 'setting',
+          ),
+        ),
+        'css' => array(drupal_get_path('module', 'ews') . '/css/ews_timeline.css'),
+      );
+      break;
+
+    case 'ews_day_events':
+      $events = array(
+        'events' => _ews_get_day_eventss(),
+        'day_date' => $day_date,
+      );
+      $output = theme('ews_day_events', $events);
+      break;
+  }
+
+  $block['content']['#markup'] = !empty($output) ? $output : t('No results');
+
+  return $block;
+}
+
+/**
+ * Helper function: Get the timelien block content.
+ */
+function _ews_get_timeline_settings() {
+  $events = _ews_get_day_eventss();
+  $sections = array();
+  $parse = array();
+  foreach ($events as $k => $data) {
+    $key = $k + 1;
+    $obj = new stdClass();
+    $obj->key = $key;
+    $obj->label = $data['name'];
+    $sections[] = $obj;
+    $obj = new stdClass();
+    $obj->start_date = $data['start_date']['date'];
+    $obj->end_date = $data['end_date']['date'];
+    $obj->section_id = $key;
+    if (isset($data['important']) && $data['important']) {
+      $obj->important = 1;
+    }
+    $parse[] = $obj;
+  }
+
+  return array(
+    'block_id' => 'ews-timeline-scheduler',
+    'settings' => array(
+      'start_time' => (int) variable_get('timeline_start_hour', 8),
+      'work_hours' => (int) variable_get('timeline_work_hours', 10),
+    ),
+    'sections' => json_encode($sections),
+    'parse' => json_encode($parse),
+  );
+}
+
+/**
+ * Helper function: Get current day Exhcnge calendar events.
+ */
+function _ews_get_day_eventss() {
+  $items = _ews_calendar_get_data();
+  if (!isset($items)) {
+    return array();
+  }
+  if (is_scalar($items)) {
+    return $items;
+  }
+  $rows = array();
+
+  foreach ($items as $data) {
+    if (
+      !($data->ResponseCode == 'NoError' && $data->ResponseClass == 'Success') ||
+      !isset($data->RootFolder->TotalItemsInView)
+    ) {
+      if ($data->ResponseClass == 'Error') {
+        $message = $data->ResponseCode . ': ' . $data->MessageText;
+        drupal_set_message($message, 'error');
+        watchdog('ews', $message, array(), WATCHDOG_ERROR);
+      }
+      continue;
+    }
+    if ($data->RootFolder->TotalItemsInView > 0) {
+      // Show items into 'calendar' folder.
+      if (isset($data->RootFolder->Items->CalendarItem)) {
+        $tasks = $data->RootFolder->Items->CalendarItem;
+        foreach ($tasks as $task) {
+          list($date_start, $date_end) = _ews_only_this_day_events($task);
+          if (!isset($date_start, $date_end)) {
+            continue;
+          }
+          $rows[] = array(
+            'name' => $task->Subject,
+            'start_date' => $date_start,
+            'end_date' => $date_end,
+            'text' => (isset($task->Location)) ? $task->Location : '',
+            'important' => ($task->Importance != 'Normal') ? TRUE : FALSE,
+          );
+        }
+      }
+    }
+  }
+
+  return $rows;
+}
+
+/**
+ * Helper function: Get only current day events.
+ */
+function _ews_only_this_day_events($task) {
+  // Get site timezone.
+  $timezone = date_default_timezone(FALSE);
+  // Get the beginning of the work day.
+  $start_hour = variable_get('timeline_start_hour', 8);
+  // Get work day duration.
+  $work_hours = variable_get('timeline_work_hours', 10);
+  // Current day start timestamp.
+  $workday_start = strtotime('today midnight +' . $start_hour . 'hours');
+  // Current day end timestamp.
+  $workday_end = $workday_start + (3600 * ($work_hours));
+  // Event start timestamp.
+  $event_start = strtotime($task->Start);
+  // Event end timestamp.
+  $event_end = strtotime($task->End);
+
+  switch (TRUE) {
+    // Start and End date are in current day.
+    case ($workday_start <= $event_start && $workday_end >= $event_end):
+      return array(
+        0 => array(
+          // Needs the MySQL DATETIME format.
+          'date' => format_date($event_start, 'custom', 'Y-m-d H:i:s', $timezone),
+          'time' => format_date($event_start, 'custom', 'H:i', $timezone),
+          'timestamp' => $task->Start,
+        ),
+        1 => array(
+          'date' => format_date($event_end, 'custom', 'Y-m-d H:i:s', $timezone),
+          'time' => format_date($event_end, 'custom', 'H:i', $timezone),
+          'timestamp' => $task->End,
+        ),
+      );
+
+    // Start date is before current day but End date is in current day.
+    case ($workday_start > $event_start && $workday_end >= $event_end && $workday_start < $event_end):
+      $x = format_date($workday_start, 'custom', 'Y-m-d H:i:s');
+      return array(
+        0 => array(
+          // Needs the MySQL DATETIME format.
+          'date' => format_date($workday_start, 'custom', 'Y-m-d H:i:s'),
+          'time' => format_date($workday_start, 'custom', 'H:i'),
+          'timestamp' => $task->Start,
+        ),
+        1 => array(
+          'date' => format_date($event_end, 'custom', 'Y-m-d H:i:s', $timezone),
+          'time' => format_date($event_end, 'custom', 'H:i', $timezone),
+          'timestamp' => $task->End,
+        ),
+      );
+
+    // End date is after current day but Start date is in current day.
+    case ($workday_start <= $event_start && $workday_end >= $event_start && $workday_end < $event_end):
+      return array(
+        0 => array(
+          // Needs the MySQL DATETIME format.
+          'date' => format_date($event_start, 'custom', 'Y-m-d H:i:s', $timezone),
+          'time' => format_date($event_start, 'custom', 'H:i', $timezone),
+          'timestamp' => $task->Start,
+        ),
+        1 => array(
+          'date' => format_date($workday_end, 'custom', 'Y-m-d H:i:s'),
+          'time' => format_date($workday_end, 'custom', 'H:i'),
+          'timestamp' => $task->End,
+        ),
+      );
+
+    // Start date is before current day and End date is after current day.
+    case ($workday_start > $event_start && $workday_end < $event_end):
+      return array(
+        0 => array(
+          // Needs the MySQL DATETIME format.
+          'date' => format_date($workday_start, 'custom', 'Y-m-d H:i:s'),
+          'time' => format_date($workday_start, 'custom', 'H:i'),
+          'timestamp' => $task->Start,
+        ),
+        1 => array(
+          'date' => format_date($workday_end, 'custom', 'Y-m-d H:i:s'),
+          'time' => format_date($workday_end, 'custom', 'H:i'),
+          'timestamp' => $task->End,
+        ),
+      );
+  }
+
+  return array(NULL, NULL);
+}
+
+/**
+ * Exchange Web Service find calendar item call.
+ */
+function ews_find_item($options, $reset = FALSE) {
+  // Get Exchange Web Service connection.
+  $ews = _ews_get_action_object();
+
+  if (!isset($ews)) {
+    watchdog('ews', 'Unable to instantiate EWS client in @function', array('@function' => __FUNCTION__), WATCHDOG_ERROR);
+    return NULL;
+  }
+
+  $cid = 'ews:' . $ews->getUsername() . ':' . md5($ews->getServer()) . ':' . md5(serialize($options));
+
+  if (!$reset && ($cache = cache_get($cid)) && !empty($cache->data)) {
+    $data = $cache->data;
+  }
+  else {
+    // Fetch results.
+    $data = $ews->FindItem($options);
+    $hours = (int) variable_get('exchange_server_cached_hours', 3);
+    cache_set($cid, $data, 'cache', REQUEST_TIME + (3600 * $hours));
+  }
+
+  return $data;
+
+}
+
+/**
+ * Helper functin: get Exchange Web Service connection.
+ *
+ * @global array $conf
+ * @global object $user
+ * @return \EWS_Actions|null
+ *   An object EWS Actions if connection was established.
+ */
+function _ews_get_action_object() {
+  // TODO: needs a different way to get Exchange credentials.
+  global $conf, $user;
+  if ($user->uid == 0) {
+    return NULL;
+  }
+  $ews_action = NULL;
+
+  // Get Exchange credentials.
+  $credentials = array();
+  if (isset($conf['ews']['users'][$user->name])) {
+    $credentials = $conf['ews']['users'][$user->name];
+  }
+  elseif (isset($conf['ews']['system_user'])) {
+    $credentials = $conf['ews']['system_user'];
+  }
+  if (empty($credentials)) {
+    watchdog('ews', 'No access credentials for user @user', array('@user' => $user->uid), WATCHDOG_ERROR);
+    return NULL;
+  }
+
+  $server = variable_get('exchange_server_url', '');
+  $account = key($credentials);
+  $pass = current($credentials);
+  $version = EWS_Actions::VERSION_2010_SP1;
+
+  $ews_action = new EWS_Actions($server, $account, $pass, $version);
+
+  return $ews_action;
+}
+
+/**
+ * Helper function: Get content for the calendar block.
+ */
+function _ews_calendar() {
+  $items = _ews_calendar_get_data();
+  if (is_scalar($items)) {
+    return $items;
+  }
+
+  $output = '';
+  // Look throuth folders.
+  foreach ($items as $data) {
+    if (
+      !($data->ResponseCode == 'NoError' && $data->ResponseClass == 'Success') ||
+      !isset($data->RootFolder->TotalItemsInView)
+    ) {
+      if ($data->ResponseClass == 'Error') {
+        $message = $data->ResponseCode . ': ' . $data->MessageText;
+        drupal_set_message($message, 'error');
+        watchdog('ews', $message, array(), WATCHDOG_ERROR);
+      }
+      continue;
+    }
+    if ($data->RootFolder->TotalItemsInView > 0) {
+      // Show items into 'calendar' folder.
+      if (isset($data->RootFolder->Items->CalendarItem)) {
+        $output .= theme('ews_calendar_block', array(
+          'items' => $data->RootFolder->Items->CalendarItem,
+          'days_range' => isset($block_settings->days_range) ? $block_settings->days_range : 5,
+        ));
+      }
+    }
+  }
+
+  return $output;
+}
+
+function _ews_calendar_get_data(array $options = array()) {
+  $ews = _ews_get_action_object();
+
+  // TODO: get calendar items
+  // $cal_items = $ews->findCalendarItems('darin@prpexchange.local');
+  // dpm($cal_items);
+  // $availability = $ews->GetUserAvailabilityByUser('darin@prpexchange.local');
+  // dpm($availability);
+
+
+  $default_options = array(
+    'traversal' => EWSType_FolderQueryTraversalType::SHALLOW,
+    'base_shape' => EWSType_DefaultShapeNamesType::ALL_PROPERTIES,
+    'folder_ids' => array(
+      EWSType_DistinguishedFolderIdNameType::CALENDAR,
+    ),
+  );
+
+  $options += $default_options;
+
+  try {
+    // Get all events from 'Calendar' of Exchange Web Service.
+    $response = ews_find_item($options);
+  }
+  catch (Exception $e){
+    watchdog_exception('ews', $e);
+    return array();
+  }
+  if (!isset($response->ResponseMessages->FindItemResponseMessage)) {
+    watchdog('ews', 'Missing EWS response!', array(), WATCHDOG_ERROR);
+    return array();
+  }
+
+  $items = $response->ResponseMessages->FindItemResponseMessage;
+  if (is_object($items)) {
+    $items = array($items);
+  }
+  return $items;
+}

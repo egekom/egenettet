@@ -1,0 +1,5 @@
+name = CMIS CKEditor plugin
+description = Provides an easy interface for inserting links to CMIS documents in CKEditor
+core = 7.x
+dependencies[] = cmis_browser
+dependencies[] = ckeditor

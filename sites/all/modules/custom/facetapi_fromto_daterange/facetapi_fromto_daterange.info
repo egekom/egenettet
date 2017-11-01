@@ -1,0 +1,12 @@
+name = Facetapi From To Date Widget
+description = Displays search by date range as a from-to date widget.
+core = 7.x
+
+; Files that contain classes:
+files[] = plugins/facetapi/facetapi_fromto_daterange.inc
+files[] = plugins/facetapi/query_type_date.inc
+files[] = plugins/facetapi/search_adapter.inc
+
+dependencies[] = ctools
+dependencies[] = apachesolr
+dependencies[] = facetapi

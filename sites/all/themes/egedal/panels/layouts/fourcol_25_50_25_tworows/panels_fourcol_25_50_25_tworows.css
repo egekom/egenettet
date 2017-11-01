@@ -1,0 +1,34 @@
+
+.panel-4col-25-50-25-tworows {
+  /*overflow: hidden;*/
+  margin-top: 0;
+  padding-top: 0;
+}
+.panel-4col-25-50-25-tworows .panel-col-top,
+.panel-4col-25-50-25-tworows .panel-col-content-wrapper,
+.panel-4col-25-50-25-tworows .panel-col-bottom {
+  clear: both;
+  display: inline-block;
+  width: 100%;
+}
+.panel-4col-25-50-25-tworows .panel-col-top,
+.panel-4col-25-50-25-tworows .panel-col-content-wrapper {
+  margin-bottom: 0.75%;
+}
+.panel-4col-25-50-25-tworows .panel-col-first,
+.panel-4col-25-50-25-tworows .panel-col-last {
+  float: left;
+  width: 24.625%;
+}
+.panel-4col-25-50-25-tworows .panel-col-first {
+  margin-right: 0.375%;
+}
+.panel-4col-25-50-25-tworows .panel-col-last {
+  margin-left: 0.375%;
+}
+.panel-4col-25-50-25-tworows .panel-col-middle {
+  float: left;
+  width: 49.25%;
+  margin-left: 0.375%;
+  margin-right: 0.375%;
+}

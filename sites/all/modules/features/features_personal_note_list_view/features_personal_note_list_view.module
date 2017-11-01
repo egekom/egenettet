@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Personal note list view feature.
+ */
+
+include_once 'features_personal_note_list_view.features.inc';

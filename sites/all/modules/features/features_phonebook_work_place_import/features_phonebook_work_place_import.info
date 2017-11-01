@@ -1,0 +1,14 @@
+name = Phonebook - Work place import
+core = 7.x
+package = Feeds
+version = 7.x-1.0
+project = features_phonebook_work_place_import
+dependencies[] = ctools
+dependencies[] = feeds
+dependencies[] = feeds_tamper
+features[ctools][] = feeds:feeds_importer_default:1
+features[ctools][] = feeds_tamper:feeds_tamper_default:2
+features[features_api][] = api:2
+features[feeds_importer][] = csv_to_phonebook_work_place_tax_import
+features[feeds_tamper][] = csv_to_phonebook_work_place_tax_import-country_code-rewrite
+features[feeds_tamper][] = csv_to_phonebook_work_place_tax_import-telefon-php

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Workbench New States view feature.
+ */
+
+include_once 'features_workbench_new_states_view.features.inc';

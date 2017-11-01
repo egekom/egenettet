@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the homebox_extra module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function homebox_extra_install() {
+  variable_set('homebox_user_tab', 'user_dashboard');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function homebox_extra_uninstall() {
+  variable_del('homebox_user_tab');
+}

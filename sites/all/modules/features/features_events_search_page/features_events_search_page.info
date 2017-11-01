@@ -1,0 +1,14 @@
+name = Events Search Page
+core = 7.x
+package = Pages
+version = 7.x-1.0
+project = features_events_search_page
+dependencies[] = ctools
+dependencies[] = facetapi_fromto_daterange
+dependencies[] = page_manager
+dependencies[] = panelizer
+dependencies[] = roskilde_menu
+dependencies[] = strongarm
+features[ctools][] = page_manager:pages_default:1
+features[features_api][] = api:2
+features[page_manager_pages][] = events_search_page

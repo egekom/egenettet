@@ -1,0 +1,354 @@
+<?php
+
+/**
+ * @file
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+// TODO: Path to correct picture placeholder.
+define('ROSKILDE_USER_EXTRA_DEFAUL_IMAGE_PATH', variable_get('user_picture_default', ''));
+
+/**
+ * Implements hook_block_info().
+ */
+function roskilde_user_extra_block_info() {
+  $blocks = array();
+  // This example comes from node.module.
+  $blocks['roskilde_user_information_block'] = array(
+    'info' => t('User extra block'),
+    // TODO: research cahcing for this.
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function roskilde_user_extra_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'roskilde_user_information_block':
+      drupal_add_library('system', 'jquery.cookie');
+      drupal_add_js(drupal_get_path('module', 'roskilde_user_extra') . '/js/roskilde_profile_box.js');
+      $block = roskilde_user_information_block_view();
+      break;
+  }
+  return $block;
+}
+
+/**
+ * Handler.
+ */
+function roskilde_user_information_block_view() {
+  global $user;
+  
+  if (!$user->uid) {
+    return false;
+  }
+  // Ensure links are available.
+  $links = menu_navigation_links('user-menu', 0);
+  $picture = isset($user->picture) ? $user->picture : ROSKILDE_USER_EXTRA_DEFAUL_IMAGE_PATH;  
+  $block = array(
+    // No block title.
+    'subject' => NULL,
+    'content' => theme('roskilde_user_extra_information', array(
+      'links' => $links,
+      'user_picture' => $picture,
+      'user_name' => $user->uid != 0 ? $user->name : 'User',
+    )),
+  );
+  
+  return $block;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function roskilde_user_extra_theme() {
+  return array(
+    'roskilde_user_extra_information' => array(
+      'template' => 'roskilde_user_information_block',
+      'path' => drupal_get_path('module', 'roskilde_user_extra') . '/templates',
+      'variables' => array(
+        'links' => array(),
+        'user_picture' => ROSKILDE_USER_EXTRA_DEFAUL_IMAGE_PATH,
+        'user_name' => 'User',
+      ),
+    ),
+  );
+}
+
+/**
+ * Sets cookies for the profile box on cached pages.
+ */
+function roskilde_user_extra_profile_box_cookies($info) {
+  // set these fields in cookies so javascript can put them in the right places on cached pages
+  roskilde_user_extra_profile_box_cookie('drupal_picture', $info['picture']);
+  roskilde_user_extra_profile_box_cookie('drupal_name', $info['name']);
+}
+
+/**
+ * Sets a cookie with the same settings as drupal session cookies
+ */
+function roskilde_user_extra_profile_box_cookie($name, $value) {
+  static $expires, $path, $domain, $secure;
+  if (!isset($expires)) {
+    $expires = ini_get('session.cookie_lifetime');
+    $expires = (!empty($expires) && is_numeric($expires) ? time() + (int)$expires : 0);
+    $path = ini_get('session.cookie_path');
+    $domain = ini_get('session.cookie_domain');
+    $secure = ini_get('session.cookie_secure') == '1';
+  }
+  //if (!isset($_COOKIE[$name]) || $_COOKIE[$name] !== (string)$value) {
+    setcookie($name, $value, $expires, $path, $domain, $secure);
+  //}
+}
+
+/**
+ * Implements hook_url_outbound_alter().
+ */
+function roskilde_user_extra_url_outbound_alter($path, &$options, $original_path) {
+  if ("user/" . $GLOBALS['user']->uid == $path && $path == $original_path) {
+    $options['alias'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function roskilde_user_extra_user_login(&$edit, $account) {
+  // Set cookies for profile box replacements
+  $info = roskilde_user_extra_profile_box_info($account);
+  roskilde_user_extra_profile_box_cookies($info);
+}
+
+/**
+ * Returns info for the profile box pane or cookies.
+ */
+function roskilde_user_extra_profile_box_info($account) {
+  $profile = array();
+  
+  if ($account->uid) {
+    // Load user info
+    $nid = !empty($account->field_phonebook) ? $account->field_phonebook[LANGUAGE_NONE][0]['target_id'] : FALSE;
+    if ($nid) {
+      $node = node_load($nid);
+      if (!empty($node->field_phonebook_image)) {
+        $account->picture = (object) $node->field_phonebook_image[LANGUAGE_NONE][0];
+      }
+    }
+    $profile = array(
+      'picture' => theme('user_picture', array('account' => $account)),
+      'name' => theme('username', array('account' => $account)),
+    );
+  }
+
+  return $profile;
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function roskilde_user_extra_node_update($node) {
+  $phonebook_uid = !empty($node->field_user[LANGUAGE_NONE]) ? $node->field_user[LANGUAGE_NONE][0]['target_id'] : 0;
+  if ("phonebook" == $node->type && $phonebook_uid == $GLOBALS['user']->uid) {
+    // Get new and old picture id.
+    $new_fid = !empty($node->field_phonebook_image[LANGUAGE_NONE]) ? $node->field_phonebook_image[LANGUAGE_NONE][0]['fid'] : FALSE;
+    $old_fid = !empty($node->original->field_phonebook_image[LANGUAGE_NONE]) ? $node->original->field_phonebook_image[LANGUAGE_NONE][0]['fid'] : FALSE;
+
+    // Check for pricture changes.
+    if ($new_fid != $old_fid && (FALSE !== $new_fid || FALSE !== $old_fid)) {
+      $account = user_load($GLOBALS['user']->uid);
+      if ($new_fid && $files_obj = file_load($new_fid)) {
+        // Set new picuter.
+        $account->picture = $files_obj;
+      }
+      $picture = theme('user_picture', array('account' => $account));
+      roskilde_user_extra_profile_box_cookie('drupal_picture', $picture);
+    }
+  }
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function roskilde_user_extra_node_presave($node) {
+  if ("phonebook" == $node->type) {
+    if (!empty($node->field_phonebook_image[LANGUAGE_NONE])) {
+      $fname = !empty($node->field_first_name[LANGUAGE_NONE]) ? $node->field_first_name[LANGUAGE_NONE][0]['value'] : '';
+      $lname = !empty($node->field_last_name[LANGUAGE_NONE]) ? $node->field_last_name[LANGUAGE_NONE][0]['value'] : '';
+      $node->field_phonebook_image[LANGUAGE_NONE][0]['title'] = "$fname $lname profile picture.";
+      $node->field_phonebook_image[LANGUAGE_NONE][0]['alt'] = "$fname $lname profile picture.";
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function roskilde_user_extra_menu_alter(&$items) {
+//  if (isset($items['user/logout'])) {
+//    if (variable_get('user_logout_access', TRUE)) {
+////      $items['user/logout']['access callback'] = '_roskilde_user_extra_deny_user_logout';
+//    }
+//  }
+  if (isset($items['user/%user'])) {
+    if (variable_get('user_mypage_redirect', TRUE)) {
+      $items['user/%user']['page callback'] = 'roskilde_user_extra_mypage_redirect';
+      $items['user/%user/view']['type'] = MENU_CALLBACK;
+    }
+    $items['user/%user/edit']['access callback'] = 'roskilde_user_edit_access';
+  }
+}
+
+/**
+ * Access callback for user account editing (override).
+ *
+ * @see user_edit_access($account)
+ */
+function roskilde_user_edit_access($account) {
+  return (user_access('administer users')) && $account->uid > 0;
+}
+
+/**
+ * Override user profile page. Redirect to the user 'My page' page.
+ *
+ * @see user_view_page
+ */
+function roskilde_user_extra_mypage_redirect($account) {
+  // An administrator may try to view a non-existent account,
+  // so we give them a 404 (versus a 403 for non-admins).
+  return is_object($account) ? drupal_goto('user/' . $account->uid . '/user-dashboard') : MENU_NOT_FOUND;
+}
+
+/**
+ * Access callback for 'user/logout' menu item.
+ */
+//function _roskilde_user_extra_deny_user_logout() {
+//  return FALSE;
+//}
+
+/**
+ * Implements hook_preprocess_toolbar().
+ */
+function roskilde_user_extra_preprocess_toolbar(&$variables) {
+  if (1 == $GLOBALS['user']->uid) {
+    return;
+  }
+
+  if (isset($variables['toolbar']['toolbar_user']['#links']['logout'])) {
+    $allowed_rols = variable_get('roskilde_user_extra_logout_allowed_role_ids', array(3));
+    foreach ($allowed_rols as $rid) {
+      if (isset($GLOBALS['user']->roles[$rid])) {
+        return;
+      }
+    }
+    unset($variables['toolbar']['toolbar_user']['#links']['logout']);
+  }
+}
+
+/**
+ * Implements hook_panels_pane_content_alter().
+ */
+function roskilde_user_extra_panels_pane_content_alter(&$content, $pane) {
+  if (
+    "entity_field" == $pane->type &&
+    isset($pane->subtype) &&
+    "node:field_phonebook_image" == $pane->subtype &&
+    !$content
+  ) {
+    // Add default user picture.
+    $markup = '<div class="default-phonebook-picture">';
+    $markup .= '<img src="' . ROSKILDE_USER_EXTRA_DEFAUL_IMAGE_PATH . '" />';
+    $markup .= '</div>';
+
+    $content = new stdClass();
+    $content->type = $pane->type;
+    $content->subtype = $pane->subtype;
+    $content->content = array(
+      '#markup' => $markup,
+    );
+  }
+}
+
+/**
+ * Process variables for user-picture.tpl.php (overridden).
+ *
+ * @see template_preprocess_user_picture()
+ */
+function roskilde_user_extra_preprocess_user_picture(&$variables) {
+  $variables['user_picture'] = '';
+  if (variable_get('user_pictures', 0)) {
+    $account = $variables['account'];
+    if (!empty($account->picture)) {
+      if (is_numeric($account->picture)) {
+        $account->picture = file_load($account->picture);
+      }
+      if (!empty($account->picture->uri)) {
+        $filepath = $account->picture->uri;
+      }
+    }
+    elseif (variable_get('user_picture_default', '')) {
+      $filepath = variable_get('user_picture_default', '');
+    }
+    if (isset($filepath)) {
+      $alt = t("@user's picture", array('@user' => format_username($account)));
+      // If the image does not have a valid Drupal scheme (for eg. HTTP),
+      // don't load image styles.
+      if (module_exists('image') && file_valid_uri($filepath) && $style = variable_get('user_picture_style', '')) {
+        $variables['user_picture'] = theme('image_style', array('style_name' => $style, 'path' => $filepath, 'alt' => $alt, 'title' => $alt));
+      }
+      else {
+        $variables['user_picture'] = theme('image', array('path' => $filepath, 'alt' => $alt, 'title' => $alt));
+      }
+      if (!empty($account->uid) && (user_access('access user profiles') || $GLOBALS['user']->uid == $account->uid)) {
+        $attributes = array('attributes' => array('title' => t('View user profile.')), 'html' => TRUE);
+        $variables['user_picture'] = l($variables['user_picture'], "user/$account->uid", $attributes);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_page_delivery_callback_alter().
+ */
+function roskilde_user_extra_page_delivery_callback_alter(&$callback) {
+  // Swap out the page callback for our own.
+  if ($callback == 'drupal_deliver_html_page') {
+    $callback = 'roskilde_user_extra_deliver_html_page';
+  }
+}
+
+/**
+ * Attempts to log in anonymous users before throwing an access denied message.
+ */
+function roskilde_user_extra_deliver_html_page($page_callback_result) {
+  if (
+    $page_callback_result == MENU_NOT_FOUND &&
+    isset($_GET['q']) &&
+    FALSE !== strpos($_GET['q'], 'public/phonebook/pictures/')
+  ) {
+    $account = user_load($GLOBALS['user']->uid);
+    $info = roskilde_user_extra_profile_box_info($account);
+    roskilde_user_extra_profile_box_cookies($info);
+    if (!empty($account->picture)) {
+      $path = image_style_url('contact_image_86x86', $account->picture->uri);
+    }
+    if (isset($path)) {
+      drupal_goto($path, array(), 301);
+    }
+  }
+
+  drupal_deliver_html_page($page_callback_result);
+}
+
+/**
+ * Implements hook_user_insert().
+ */
+function roskilde_user_extra_user_insert(&$edit, $account, $category) {
+  $role = user_role_load_by_name('User');
+  user_multiple_role_edit(array($account->uid), 'add_role', $role->rid);
+}

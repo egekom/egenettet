@@ -1,0 +1,315 @@
+<?php
+
+/**
+ * @file
+ * Allows users to change their role to preview the site as a different user.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function user_role_changer_permission() {
+
+  return array(
+    'administer role change configuration' => array(
+      'title' => t('Administer role change configuration'),
+      'description' => t('Administer which roles a specific role is allowed to switch to.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function user_role_changer_menu() {
+
+  $items = array();
+  $items['admin/config/user_role_changer'] = array(
+    'title' => 'User Role Changer',
+    'description' => 'Configure user role changer options.',
+    'position' => 'right',
+    'weight' => -5,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/user_role_changer/role_change_permissions'] = array(
+    'title' => 'Role change permisssions',
+    'description' => 'Configure the roles each role is allowed to swich to.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('user_role_changer_permissions'),
+    'access arguments' => array('administer role change configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'user_role_changer.admin.inc',
+  );
+  $items['user_role_changer/role/%'] = array(
+    'title' => 'Change your role',
+    'page callback' => 'user_role_changer_change_role_page',
+    'page arguments' => array(2),
+    'access callback' => 'user_role_changer_menu_access',
+    'access arguments' => array('change_role', 2),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['user_role_changer/change_back'] = array(
+    'title' => 'Change your role',
+    'page callback' => 'user_role_changer_change_back',
+    'access callback' => 'user_role_changer_menu_access',
+    'access arguments' => array('change_back'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+/**
+ * Determine if user should be able to change role.
+ */
+function user_role_changer_menu_access($type, $role_id = NULL) {
+  switch ($type) {
+    case 'change_role':
+      return !isset($_SESSION['user_role_changer_roles']);
+
+    break;
+    case 'change_back':
+      return isset($_SESSION['user_role_changer_roles']);
+
+    break;
+  }
+
+}
+
+/**
+ * Page callback for handling role changing.
+ *
+ * @param int $role_id
+ *   The id of the role to switch to
+ *
+ * @see user_role_changer_menu
+ */
+function user_role_changer_change_role_page($role_id) {
+
+  if (user_role_changer_change_role($role_id)) {
+    drupal_goto($_SERVER['HTTP_REFERER']);
+  }
+  else {
+    drupal_access_denied();
+  }
+}
+
+/**
+ * Change currently logged in user role to the one specified.
+ *
+ * @param int $role_id
+ *   The role_id of the role to switch to
+ *
+ * @return bool
+ *   True on success
+ */
+function user_role_changer_change_role($role_id) {
+  global $user;
+
+  if (!is_numeric($role_id)) {
+    drupal_set_message(t('A proper role was not correctly passed to the switching function.'), 'error');
+    watchdog('user_role_changer', 'The role id provided to change role function was not numeric.', NULL, WATCHDOG_ERROR);
+    return drupal_goto($_SERVER['HTTP_REFERER']);
+  }
+
+  $allowed_roles = user_role_changer_get_user_allowed_roles();
+  if (!in_array($role_id, $allowed_roles)) {
+    drupal_set_message(t('You are not allowed to switch to this role.'), 'error');
+    return drupal_goto($_SERVER['HTTP_REFERER']);
+  }
+  if ($user->uid == 1) {
+    drupal_set_message(t('Superadmin user cannot switch to different role. Please try with a different user.'), 'error');
+    return drupal_goto($_SERVER['HTTP_REFERER']);
+  }
+  $new_role = user_role_load($role_id);
+
+  $_SESSION['user_role_changer_roles'] = array($new_role->rid => $new_role->name);
+
+  // If user is logged in, add 'authenticated user' role.
+  if ($user->uid && $role_id != 1) {
+    $_SESSION['user_role_changer_roles'][2] = 'authenticated user';
+  }
+  session_regenerate_id();
+  return TRUE;
+}
+
+/**
+ * Switches user roles back to default ones.
+ */
+function user_role_changer_change_back() {
+  if (!empty($_SESSION['user_role_changer_roles'])) {
+    unset($_SESSION['user_role_changer_roles']);
+    session_regenerate_id();
+    drupal_goto($_SERVER['HTTP_REFERER']);
+  }
+  else {
+    drupal_access_denied();
+  }
+}
+
+/**
+ * Implements hook_boot().
+ *
+ * Switches user role with the ones already selected.
+ */
+function user_role_changer_boot() {
+  if (!empty($_SESSION['user_role_changer_roles'])) {
+    global $user;
+    $user->roles = $_SESSION['user_role_changer_roles'];
+  }
+
+}
+
+/**
+ * Formats role changer links in format appropriate for dropdown.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - role_change_links: An Array containing:
+ *     - #heading - The text which when hovered will display the dropdown
+ *     - #links - list if links to be displayed as dropdown
+ *
+ * @return string
+ *   An HTML string representing ul list containing role changer links
+ */
+function theme_user_role_changer_rolelinks($variables) {
+  $links = $variables['role_change_links']['#links'];
+  $title = $variables['role_change_links']['#heading'];
+
+  $links_html = theme_links(array(
+    'links' => $links,
+    'attributes' => array('class' => 'role-changer-roles'),
+    'heading' => array(),
+  ));
+
+  // Inline html is used because theme_items_list function adds
+  // a div wrapper over list that is not necessary here.
+  $html = "<div class='role-changer-wrapper'>
+            <a class='role-changer-title'>{$title}</a>
+            {$links_html}
+           </div>";
+  return $html;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function user_role_changer_theme($existing, $type, $theme, $path) {
+  $items['user_role_changer_rolelinks'] = array(
+    'render element' => 'role_change_links',
+  );
+  $items['user_role_changer_permissions'] = array(
+    'render element' => 'form',
+    'file' => 'user_role_changer.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_page_alter().
+ *
+ * Configure display options of admin toolbar
+ */
+function user_role_changer_page_alter(&$page) {
+  // Disable shortcuts bar when browsing as anonymous users.
+  if (isset($_SESSION['user_role_changer_roles']['1'])) {
+    if ($key = array_search('shortcut_toolbar_pre_render', $page['page_top']['toolbar']['#pre_render'])) {
+      unset($page['page_top']['toolbar']['#pre_render'][$key]);
+    }
+  }
+  $page['footer']['role_changer']['#pre_render'][] = '_user_role_changer_add_menu_links';
+  $page['footer']['role_changer']['#access'] = isset($_SESSION['user_role_changer_roles']) ? TRUE : user_access('access toolbar');
+}
+
+/**
+ * Toolbar pre render function to build role change menu links.
+ *
+ * @see user_role_changer_page_alter
+ */
+function _user_role_changer_add_menu_links($toolbar) {
+  $link = array();
+  global $user;
+  $links = array();
+  $heading = '';
+  // If with a switched role.
+  if (isset($_SESSION['user_role_changer_roles'])) {
+    $role_names = array_values($_SESSION['user_role_changer_roles']);
+    $heading = t("Browsing as") . " " . $role_names['0'];
+
+    $link = array();
+    $link['title'] = t('Switch to original role');
+    $link['href'] = 'user_role_changer/change_back';
+    $link['attributes'] = array('onclick' => 'resetAuthCacheCookie(false);');
+    $links['role_changer_1'] = $link;
+  }
+  else {
+    $roles = user_role_changer_get_user_allowed_roles();
+    if (!empty($roles) && $user->uid != 1) {
+
+      $heading = t('Switch role to');
+      $i = 1;
+      foreach ($roles as $role_id) {
+        $role = user_role_load($role_id);
+        $link = array();
+        $link['title'] = $role->name;
+        $link['href'] = "user_role_changer/role/{$role_id}";
+        $link['attributes'] = array('onclick' => 'resetAuthCacheCookie(true);');
+        $links["role_changer_$i"] = $link;
+        $i++;
+      }
+    }
+  }
+  if (isset($toolbar) && !empty($links)) {
+    $toolbar['toolbar_role_changer']['#links'] = $links;
+    $toolbar['toolbar_role_changer']['#heading'] = $heading;
+    $toolbar['toolbar_role_changer']['#theme'] = 'user_role_changer_rolelinks';
+  }
+  // Hide account link as it breaks cache.
+  unset($toolbar['toolbar_user']['#links']['account']);
+  return $toolbar;
+}
+
+/**
+ * Get allowed role ids a user is allowed to switch to.
+ *
+ * @param int $user_id
+ *   id of the user to check (if not provided current user id is used)
+ *
+ * @return Array
+ *   Array of ids with the allowed role_ids
+ */
+function user_role_changer_get_user_allowed_roles($user_id = FALSE) {
+  if ($user_id == FALSE) {
+    global $user;
+    $user_id = $user->uid;
+  }
+  // Extracting all the allowed roles based on user roles.
+  $allowed_roles = array();
+  $perms = variable_get('user_role_changer_permissions');
+  if (isset($perms)) {
+    foreach ($user->roles as $role_id => $role_title) {
+      $allowed_perms = array_filter(array_intersect_key(
+                                      $perms,
+                                      array_flip(
+                                        preg_grep(
+                                          "/^{$role_id}_/",
+                                          array_keys($perms))
+                                      )
+                                    ));
+      $ids = array();
+      foreach ($allowed_perms as $perm => $value) {
+        $items = explode("_", $perm);
+        if (isset($items['1'])) {
+          $ids[] = $items['1'];
+        }
+      }
+      $allowed_roles = array_unique(array_merge($ids, $allowed_roles));
+    }
+    return $allowed_roles;
+  }
+  else {
+    return array();
+  }
+}

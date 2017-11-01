@@ -1,0 +1,13 @@
+name = Exchange Web Service
+description = Provide PHP Exchange Web Service integration.
+core = 7.x
+
+files[] = ews.module
+files[] = ews.theme.inc
+
+; Files that contain classes:
+files[] = includes/EWS_Actions.php
+
+dependencies[] = ctools
+;dependencies[] = libraries
+dependencies[] = homebox

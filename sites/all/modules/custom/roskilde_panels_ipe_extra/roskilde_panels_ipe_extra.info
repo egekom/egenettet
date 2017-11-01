@@ -1,0 +1,6 @@
+name = Roskilde panels ipe extra
+description = Extends Panels IPE module.
+core = 7.x
+
+; Files that contain classes:
+files[] = plugins/display_renderers/roskilde_panels_renderer_ipe_extra.class.php

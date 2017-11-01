@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content type HTML block feature.
+ */
+
+include_once 'features_content_type_html_block.features.inc';

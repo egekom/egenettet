@@ -1,0 +1,13 @@
+name = Editoral News Search Page
+core = 7.x
+package = Pages
+version = 7.x-1.0
+project = features_editoral_news_search_page
+dependencies[] = ctools
+dependencies[] = facetapi_fromto_daterange
+dependencies[] = page_manager
+dependencies[] = panelizer
+dependencies[] = strongarm
+features[ctools][] = page_manager:pages_default:1
+features[features_api][] = api:2
+features[page_manager_pages][] = editorial_news_search_page

@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Field formatters for field collections.
+ *
+ * @TODO - Configurable labels, possibly with token support.
+ */
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function field_collection_group_field_formatter_info() {
+  return FCG::formatterInfo();
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function field_collection_group_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  return FCG::formatterSettingsForm($field, $instance, $view_mode);
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function field_collection_group_field_formatter_settings_summary($field, $instance, $view_mode) {
+  return FCG::formatterSettingsSummary($field, $instance, $view_mode);
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function field_collection_group_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  return FCG::formatterView($items, $display);
+}
+
+/**
+ * Prerender function for grouping collections.
+ */
+function field_collection_group_prerender($element) {
+  return FCG::prerender($element);
+}
+
+/**
+ * Implements hook_collection_group_formatters().
+ */
+function field_collection_group_collection_group_formatters() {
+  return FCG::formatters();
+}

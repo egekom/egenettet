@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Node View Variants feature.
+ */
+
+include_once 'features_node_view_variants.features.inc';

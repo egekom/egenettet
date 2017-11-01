@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Flag bookmarks feature.
+ */
+
+include_once 'features_flag_bookmarks.features.inc';

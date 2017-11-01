@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Features Linkit Profiles feature.
+ */
+
+include_once 'features_linkit_profiles.features.inc';

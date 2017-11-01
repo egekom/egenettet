@@ -1,0 +1,90 @@
+/* PRINT STYLESHEETS ---------------------------------------------------------------------------------------------------- */
+/* line 2, ../sass/egedal_print.scss */
+.panel-col-middle .pane-node-title .flag-wrapper,
+.panel-col-first,
+.panel-col-last,
+.pane-node-comment-form,
+.pane-node-comments,
+.messages--error,
+.messages--warning,
+.view-warning-list,
+.tabs-primary,
+.tabs-secondary,
+.below-footer,
+#authcachedbg,
+.pane-flag-link,
+.left-section,
+.pane-node-field-video-data,
+.pane-phonebook-edit-info-link,
+.pane-phonebook-edit-signature-link,
+#content a[href]:after {
+  display: none;
+}
+
+/* line 24, ../sass/egedal_print.scss */
+.rsArrowIcn {
+  background-image: none !important;
+}
+
+/* line 28, ../sass/egedal_print.scss */
+.rsArrow,
+.rsNav,
+.pane-flag-link,
+.mobile-navigation {
+  display: none !important;
+}
+
+/* line 35, ../sass/egedal_print.scss */
+.pane-node-field-phonebook-image {
+  max-width: 6rem;
+}
+
+/* line 39, ../sass/egedal_print.scss */
+body,
+.panel-col-content-wrapper.top {
+  background: none !important;
+}
+
+/* line 44, ../sass/egedal_print.scss */
+.node-type-phonebook .panel-col-first {
+  display: block;
+}
+
+/* line 50, ../sass/egedal_print.scss */
+.panel-4col-25-center-stack-extended .panel-col-middle.wrapper,
+.panel-4col-25-center-stack .panel-col-middle.wrapper {
+  width: 100%;
+  margin: 0;
+}
+
+/* line 56, ../sass/egedal_print.scss */
+#page {
+  font-size: 0.875rem;
+}
+/* line 59, ../sass/egedal_print.scss */
+#page a {
+  text-decoration: none !important;
+}
+
+/* line 64, ../sass/egedal_print.scss */
+.field-item,
+.panel-pane p,
+div.view-content,
+div.view-short-news-list h4 {
+  font-size: 1rem;
+}
+
+/* line 72, ../sass/egedal_print.scss */
+#header {
+  position: relative;
+  border: 25pt solid #333333;
+  height: 0 !important;
+  min-height: 0;
+}
+/* line 78, ../sass/egedal_print.scss */
+#header .header-content {
+  position: absolute;
+  top: -30pt;
+}
+
+/*# sourceMappingURL=egedal_print.css.map */

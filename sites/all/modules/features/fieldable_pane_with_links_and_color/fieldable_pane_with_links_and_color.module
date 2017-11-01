@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Fieldable pane with links and color feature.
+ */
+
+include_once 'fieldable_pane_with_links_and_color.features.inc';

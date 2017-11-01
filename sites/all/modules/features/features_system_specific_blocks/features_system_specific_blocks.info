@@ -1,0 +1,13 @@
+name = System specific blocks
+description = Those blocks which are created using Drupal interface add block functionality.
+core = 7.x
+package = Config
+version = 7.x-1.0
+project = features_system_specific_blocks
+dependencies[] = ctools
+dependencies[] = fe_block
+dependencies[] = panelizer
+dependencies[] = strongarm
+features[fe_block_boxes][] = search_info_block
+features[fe_block_settings][] = block-search_info_block
+features[features_api][] = api:2

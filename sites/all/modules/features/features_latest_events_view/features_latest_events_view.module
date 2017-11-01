@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Latest events view feature.
+ */
+
+include_once 'features_latest_events_view.features.inc';

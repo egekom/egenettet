@@ -1,0 +1,308 @@
+<?php
+
+/**
+ * @file
+ * Module file for the facetapi_fromto_daterange module.
+ *
+ * Displays search facets for date as a from-to range widget.
+ */
+
+/**
+ * Regex pattern for date ranges.
+ */
+define('FACETAPI_FROMTO_DATERANGE_REGEX', '/^\[((' . trim(FACETAPI_REGEX_DATE, '/^$') . ')|\*) TO ((' . trim(FACETAPI_REGEX_DATE, '/^$') . ')|\*)\]$/');
+
+/**
+ * Implements hook_facetapi_widgets().
+ */
+function facetapi_fromto_daterange_facetapi_widgets() {
+  return array(
+    'facetapi_fromto_daterange' => array(
+      'handler' => array(
+        'label' => t('From To'),
+        'class' => 'DateFromToWidget',
+        'query types' => array('from_to_date'),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_facetapi_adapters_alter().
+ */
+function facetapi_fromto_daterange_facetapi_adapters_alter($id, &$class) {
+  if ('apachesolr' == $id && 'ApacheSolrFacetapiAdapter' == $class) {
+    $class = 'ApacheSolrFacetapiAdapterExtend';
+  }
+}
+
+/**
+ * Implements hook_facetapi_query_types().
+ */
+function facetapi_fromto_daterange_facetapi_query_types() {
+  return array(
+    'from_to_date' => array(
+      'handler' => array(
+        'class' => 'ApacheSolrFacetapiDateExtend',
+        'adapter' => 'apachesolr',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_facetapi_facet_info_alter().
+ *
+ * @see facetapi_fromto_daterange_associate_widget()
+ */
+function facetapi_fromto_daterange_facetapi_facet_info_alter(array &$facet_info, array $searcher_info) {
+  switch ($searcher_info['adapter']) {
+    case 'apachesolr':
+      facetapi_fromto_daterange_associate_widget($facet_info);
+      break;
+  }
+}
+
+/**
+ * Associates all date fields with the "date_range" query type.
+ *
+ * @param array &$facet_info
+ *   The facet definitions passed to hook_facetapi_facet_info_alter().
+ */
+function facetapi_fromto_daterange_associate_widget(array &$facet_info) {
+  foreach ($facet_info as $name => $info) {
+    $query_types = array_flip($info['query types']);
+
+    // The check on "field type" is specific to Search Api.
+    $field_type = empty($info['field type']) ? '' : $info['field type'];
+
+    // @todo check if there is a beter way to do this.
+    if (isset($query_types['date']) || 'list<date>' == $field_type) {
+      // Add the date_range to the query types.
+      $facet_info[$name]['query types'][] = 'from_to_date';
+    }
+  }
+}
+
+/**
+ * Implements hook_forms().
+ */
+function facetapi_fromto_daterange_forms($form_id) {
+  // Build all from-to date range facet forms on the page using the same form
+  // callback.
+  $forms = array();
+  if (strpos($form_id, 'facetapi_fromto_daterange_form_') === 0) {
+    $forms[$form_id]['callback'] = 'facetapi_fromto_daterange_form';
+  }
+  return $forms;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function facetapi_fromto_daterange_form_facetapi_facet_display_form_alter(&$form, &$form_state, $form_id) {
+  $form['#validate'][] = 'facetapi_fromto_daterange_facet_form_validate';
+}
+
+/**
+ * Form validate handler.
+ */
+function facetapi_fromto_daterange_facet_form_validate($form, &$form_state) {
+  if ("facetapi_fromto_daterange" == $form_state['values']['widget']) {
+    $pattern = '/^\d+[Yy|Mm|Ww|Dd]?$/';
+    if (!preg_match($pattern, $form_state['values']['allowed_date_max_value'])) {
+      $error = t('Max value not valid.');
+      form_set_error('allowed_date_max_value', $error);
+    }
+    if (!preg_match($pattern, $form_state['values']['allowed_date_min_value'])) {
+      $error = t('Min value not valid.');
+      form_set_error('allowed_date_min_value', $error);
+    }
+  }
+}
+
+/**
+ * Form which displays from-to date range.
+ *
+ * @param array $form
+ *   Nested array of form elements that comprise the form.
+ * @param array $form_state
+ *   A keyed array containing the current state of the form. The arguments
+ *   that drupal_get_form() was originally called with are available in the
+ *   array $form_state['build_info']['args'].
+ * @param object $widget
+ *   The widget object (e.g. of class FacetapiMultiSelectWidget) used to build
+ *   the facet.
+ * @param array $element
+ *   The facet element, containing information about each available facet in
+ *   the group.
+ * @param int $count
+ *   An integer counter.
+ */
+function facetapi_fromto_daterange_form(array $form, array &$form_state, $widget, array $element, $count) {
+  $build = $widget->getBuild();
+  // Get the widget settings.
+  $settings = $build['#settings']->settings;
+  // Record the widget and facet name in an easy-to-access part of the
+  // $form_state array. Also record a class that can be used to access the
+  // widget in front-end code.
+  $facet_name = $widget->getKey();
+  $form_state['facetapi_fromto_daterange'] = array(
+    'widget' => $widget,
+    'facet_name' => $facet_name,
+    'facet_class' => drupal_html_class("facetapi-fromto-daterange-{$facet_name}"),
+  );
+  // Record this in the form too, in case someone needs to access it there.
+  $form['#facetapi_fromto_daterange'] = $form_state['facetapi_fromto_daterange'];
+
+  $form['facets'] = array(
+    '#type' => 'fieldset',
+    '#tree' => TRUE,
+  );
+  $date_attributes = array('class' => array('date-fromto-calendar-form-input'));
+  list($default_start, $default_end) = $widget->buildDefaultValue($element);
+  $form['facets']['date_start'] = array(
+    '#type' => 'fieldset',
+  );
+  $form['facets']['date_start']['label'] = array(
+    '#type' => 'markup',
+    '#markup' => t('From date'),
+    '#attributes' => array('class' => 'fromto-date-label'),
+  );
+  $form['facets']['date_start']['date'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $default_start,
+    '#size' => 'auto',
+    '#id' => 'from-to-daterange-form-date-start-' . $count,
+    '#attributes' => $date_attributes,
+  );
+  $form['facets']['date_end'] = array(
+    '#type' => 'fieldset',
+  );
+  $form['facets']['date_end']['label'] = array(
+    '#type' => 'markup',
+    '#markup' => t('To date'),
+    '#attributes' => array('class' => 'fromto-date-label'),
+  );
+  $form['facets']['date_end']['date'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $default_end,
+    '#size' => 'auto',
+    '#id' => 'from-to-daterange-form-date_end' . $count,
+    '#attributes' => $date_attributes,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#attributes' => array('class' => array('date-popup-calendar-form-submit')),
+    '#value' => t('Submit'),
+  );
+
+  drupal_add_library('system', 'ui.datepicker');
+  $path = drupal_get_path('module', 'facetapi_fromto_daterange');
+  drupal_add_js($path . '/js/facetapi_fromto_daterange.js');
+  drupal_add_js(array(
+    'DateFormatForPopup' => 'dd.mm.yy',
+    'MinDateForPopup' => $settings['allowed_date_min_value'],
+    'MaxDateForPopup' => $settings['allowed_date_max_value'],
+    // 1 - start with Monday.
+    'FirstDay' => 0,
+  ), 'setting');
+  if ($settings['fromto_date_auto_submit']) {
+    // Add autosubmit class.
+    $date_attributes['class'][] = 'ctools-auto-submit';
+    // Read only type.
+    $date_attributes['readonly'] = array(TRUE);
+    $form['facets']['date_start']['date']['#attributes'] = $date_attributes;
+    $form['facets']['date_end']['date']['#attributes'] = $date_attributes;
+    // Hide submit button.
+    $form['submit']['#attributes']['class'][] = 'ctools-auto-submit-click';
+    $form['submit']['#attributes']['style'] = array('display:none;');
+
+    ctools_add_js('auto-submit');
+  }
+
+  return $form;
+}
+
+/**
+ * Submit handler for facetapi_fromto_daterange_form().
+ */
+function facetapi_fromto_daterange_form_submit($form, &$form_state) {
+  $facet_date_start = $facet_date_end = '*';
+  if (!empty($form_state['values']['facets']['date_start']['date'])) {
+    $date_value = $form_state['values']['facets']['date_start']['date'];
+    $facet_date_start = facetapi_isodate(strtotime(trim($date_value)));
+  }
+  if (!empty($form_state['values']['facets']['date_end']['date'])) {
+    $date_value = $form_state['values']['facets']['date_end']['date'];
+    $facet_date_end = facetapi_isodate(strtotime(trim($date_value)));
+  }
+
+  // Remove the old from-to date range (if exists)
+  // from the current list of facets, and add back only the range
+  // that were submitted with the form.
+  $query = drupal_get_query_parameters(NULL, array('q', 'page'));
+
+  if (!isset($query['f'])) {
+    $query['f'] = array();
+  }
+  $facet_name = $form['#facetapi_fromto_daterange']['facet_name'];
+  foreach ($query['f'] as $key => $f) {
+    if (strpos($f, $facet_name) === 0) {
+      unset($query['f'][$key]);
+    }
+  }
+  if ('*' != $facet_date_start || '*' != $facet_date_end) {
+    $query['f'][] = "$facet_name:[$facet_date_start TO $facet_date_end]";
+  }
+  $query['f'] = array_values($query['f']);
+
+  // Redirect to the new URL, with the new set of active facets.
+  $form_state['redirect'] = array(current_path(), array('query' => $query));
+}
+
+/**
+ * Helper function: Skip date formatting when '*' was used in date range search.
+ *
+ * Maps date ranges to human readable dates.
+ *
+ * @param array $values
+ *   An array of indexed values being mapped.
+ * @param array $options
+ *   An associative array of map options containing:
+ *   - format callback: The callback used to format the date, defaults to
+ *     "facetapi_format_timestamp".
+ *
+ * @return array
+ *   An array mapping the indexed values to human readable values.
+ *
+ * @see facetapi_map_date()
+ */
+function _facetapi_fromto_daterange_facetapi_map_date(array $values, array $options) {
+  if (empty($options['format callback'])) {
+    $options['format callback'] = 'facetapi_format_timestamp';
+  }
+  $map = array();
+  foreach ($values as $value) {
+    $range = explode(' TO ', trim($value, '{[]}'));
+    if (isset($range[1])) {
+      $gap = facetapi_get_date_gap($range[0], $range[1]);
+      if ('*' == $range[0]) {
+        $map[$value] = '';
+      }
+      else {
+        $map[$value] = facetapi_format_date($range[0], $gap, $options['format callback']);
+      }
+    }
+  }
+  return $map;
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function facetapi_fromto_daterange_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && $plugin_type == 'content_types') {
+    return 'plugins/' . $plugin_type;
+  }
+}

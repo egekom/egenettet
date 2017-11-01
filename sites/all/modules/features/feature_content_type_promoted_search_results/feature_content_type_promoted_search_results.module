@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the feature_content_type_promoted_search_results feature.
+ */
+
+include_once 'feature_content_type_promoted_search_results.features.inc';

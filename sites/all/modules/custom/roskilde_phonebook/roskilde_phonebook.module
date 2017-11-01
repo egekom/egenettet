@@ -1,0 +1,401 @@
+<?php
+
+/**
+ * @file
+ * Roskilde phonebook.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function roskilde_phonebook_menu() {
+  $items = array();
+
+  $items['ajax/phonebook_edit_links'] = array(
+    'page callback' => 'roskilde_phonebook_edit_links_callback',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Page callback: Get phonebook edit links.
+ */
+function roskilde_phonebook_edit_links_callback() {
+  $result = array(
+    'info' => '',
+    'signature' => '',
+  );
+  $user = user_load($GLOBALS['user']->uid);
+  if ($user->uid && isset($_POST['phonebook_node'])) {
+    $node = (object) $_POST['phonebook_node'];
+    if (!empty($user->field_phonebook) && $user->field_phonebook[LANGUAGE_NONE][0]['target_id'] == $node->nid) {
+      // Set the 'Edit info' link.
+      $result['info'] = l(t('Edit info'), "/node/{$node->nid}/edit");
+
+      $path = variable_get('edit_signature_info_url', 'http://DynamicDirectory.com');
+      $options = array(
+        'attributes' => array('target' => '_new'),
+      );
+      // Set the 'Edit signature' link.
+      $result['signature'] = l(t('Edit signature'), $path, $options);
+    }
+    else {
+      if (!empty($node->field_owner[LANGUAGE_NONE])) {
+        foreach ($node->field_owner[LANGUAGE_NONE] as $owner) {
+          if ($user->uid == $owner['target_id']) {
+            // Set the 'Edit info' link.
+            $result['info'] = l(t('Edit info'), "/node/{$node->nid}/edit");
+            break;
+          }
+        }
+      }
+    }
+  }
+  // Send the output.
+  drupal_json_output($result);
+  exit();
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function roskilde_phonebook_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'phonebook_node_form') {
+    if (isset($form['type']) && isset($form['field_user']) && isset($form['field_email'])) {
+      $form['field_user']['und'][0]['target_id']['#ajax'] = array(
+        'callback' => 'roskilde_phonebook_set_user_email',
+        'progress' => array(
+          'message' => '',
+          'type' => 'throbber',
+        ),
+      );
+    }
+
+    _roskilde_phonebook_node_form_add_dependency($form, $form_state);
+
+    if (1 != $GLOBALS['user']->uid) {
+      $form['field_unit']['#disabled'] = TRUE;
+      $form['title']['#printed'] = TRUE;
+      $form['actions']['preview_changes']['#printed'] = TRUE;
+    }
+    $form['#validate'][] = '_roskilde_phonebook_node_form_validate';
+  }
+}
+
+/**
+ * Form validation handler for phonebook node_form().
+ */
+function _roskilde_phonebook_node_form_validate($form, &$form_state) {
+  if (1 != $GLOBALS['user']->uid) {
+    $title = '';
+    if (!empty($form_state['values']['field_first_name'][LANGUAGE_NONE][0]['value'])) {
+      $title .= $form_state['values']['field_first_name'][LANGUAGE_NONE][0]['value'];
+    }
+    if (!empty($form_state['values']['field_last_name'][LANGUAGE_NONE][0]['value'])) {
+      $title .= ' ' . $form_state['values']['field_last_name'][LANGUAGE_NONE][0]['value'];
+    }
+    $title = trim($title);
+    if ($title) {
+      $form_state['values']['title'] = $title;
+    }
+    else {
+      form_set_error('field_first_name', t('Both fields for name are empty. At least one should not be.'));
+      form_set_error('field_last_name');
+    }
+  }
+}
+
+/**
+ * Hendler function: Alter the phonebook node form.
+ *
+ * Add ajax functionality to provide dependency between field department
+ * and field work place.
+ */
+function _roskilde_phonebook_node_form_add_dependency(&$form, &$form_state) {
+  if (empty($form['field_unit'][LANGUAGE_NONE]['#default_value'][0])) {
+    return;
+  }
+
+  $callback = '__feeds_import_taxonomy_term_id_by_term_field';
+  if (!function_exists($callback) || !is_callable($callback)) {
+    return;
+  }
+
+  $center = taxonomy_term_load($form['field_unit'][LANGUAGE_NONE]['#default_value'][0]);
+
+  $center_id = $center->field_phonebook_tax_center_id[LANGUAGE_NONE][0]['value'];
+  // Get departments tids with this particular center id.
+  $departments_ids = $callback('phonebook_department', 'field_phonebook_tax_center_id', $center_id);
+
+  $options = $departments_ids;
+  array_unshift($options, '_none');
+
+  $form['field_department'][LANGUAGE_NONE]['#options'] = array_intersect_key($form['field_department'][LANGUAGE_NONE]['#options'], array_flip($options));
+  $form['field_department'][LANGUAGE_NONE]['#ajax'] = array(
+    'event' => 'change',
+    'callback' => '_roskilde_phonebook_workplace_dropdown',
+    'wrapper' => 'edit-field-work-place',
+  );
+
+  if (isset($form_state['values']['field_department'][LANGUAGE_NONE][0]['tid'])) {
+    $term_departmens = taxonomy_term_load_multiple(array($form_state['values']['field_department'][LANGUAGE_NONE][0]['tid']));
+  }
+  elseif (!empty($form['field_department'][LANGUAGE_NONE]['#default_value'][0])) {
+    $term_departmens = taxonomy_term_load_multiple(array($form['field_department'][LANGUAGE_NONE]['#default_value'][0]));
+  }
+  else {
+    $term_departmens = taxonomy_term_load_multiple($departments_ids);
+  }
+
+  // Get workplace ids occured in these departments.
+  $workplace_ids = NULL;
+  foreach($term_departmens as $department) {
+    if (!empty($department->field_phonebook_tax_workplace_id[LANGUAGE_NONE][0]['value'])) {
+       $v = $department->field_phonebook_tax_workplace_id[LANGUAGE_NONE][0]['value'];
+       $workplace_ids[$v] = $v;
+    }
+  }
+
+  // Get workplace tids with these workplace ids.
+  $options = $callback('phonebook_work_place', 'field_phonebook_tax_workplace_id', $workplace_ids);
+  array_unshift($options, '_none');
+  $form['field_work_place'][LANGUAGE_NONE]['#options'] = array_intersect_key($form['field_work_place'][LANGUAGE_NONE]['#options'], array_flip($options));
+}
+
+/**
+ * AJAX Callback: Get rendered workplace field options.
+ */
+function _roskilde_phonebook_workplace_dropdown($form, $form_state) {
+  $callback = '__feeds_import_taxonomy_term_id_by_term_field';
+  if (!function_exists($callback) || !is_callable($callback)) {
+    $term = taxonomy_term_load($form_state['values']['field_department'][LANGUAGE_NONE][0]['tid']);
+    $value = $term->field_phonebook_tax_workplace_id[LANGUAGE_NONE][0]['value'];
+    $options = $callback('phonebook_work_place', 'field_phonebook_tax_workplace_id', $value);
+    array_unshift($options, '_none');
+    $form['field_work_place'][LANGUAGE_NONE]['#options'] = array_intersect_key($form['field_work_place'][LANGUAGE_NONE]['#options'], array_flip($options));
+  }
+
+  $output = '<div id="edit-field-work-place" class="field-type-taxonomy-term-reference field-name-field-work-place field-widget-options-select form-wrapper">';
+  $output .= render($form['field_work_place'][LANGUAGE_NONE]);
+  $output .= '</div>';
+
+  return $output;
+}
+
+/**
+ * Ajax callback for field user.
+ *
+ * When a user reference is selected in field_user set the
+ * field_email to the email of the selected user.
+ */
+function roskilde_phonebook_set_user_email(&$form, &$form_state) {
+  $commands = array();
+  if (isset($form_state['values']['field_user']['und']['0']['target_id'])
+     && !empty($form_state['values']['field_user']['und']['0']['target_id'])) {
+
+    $user_id = $form_state['values']['field_user']['und']['0']['target_id'];
+    if ($user = user_load($user_id)) {
+      // Unset currently set e-mail.
+      unset(
+        $form_state['input']['field_email']['und']['0']['email'],
+        $form_state['values']['field_email']['und']['0']['email'],
+        $form['field_email']['und']['0']['email']['#value']
+      );
+
+      $form['field_email']['und']['0']['email']['#value'] = $user->mail;
+
+      // Make sure the css id of the element stays the same.
+      $form['field_email']['#id'] = 'edit-field-email';
+      $built_email = form_builder($form['#id'], $form['field_email'], $form_state);
+
+      $commands[] = ajax_command_replace("#edit-field-email", render($built_email));
+    }
+  }
+
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands,
+  );
+}
+/**
+ * Implements hook_preprocess_node().
+ *
+ * Remove phonebook title field from display.
+ */
+function roskilde_phonebook_preprocess_node(&$variables) {
+  if ($variables['node']->type == 'phonebook') {
+    $variables['title'] = FALSE;
+  }
+}
+
+
+/**
+ * Define a view mode to be used for front page news list pane.
+ */
+function roskilde_phonebook_entity_info_alter(&$entity_info) {
+  $entity_info['node']['view modes']['my_page'] = array(
+    'label' => t('My page'),
+    'custom settings' => FALSE,
+  );
+}
+
+/**
+ * Implements hook_feeds_before_import().
+ */
+function roskilde_phonebook_feeds_before_import(FeedsSource $source) {
+  if ("ldap_data_to_phonebook" == $source->id) {
+    ini_set('max_execution_time', variable_get('php_max_execution_time', 120));
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function roskilde_phonebook_block_info() {
+  $blocks = array();
+
+  $blocks['phonebook_search_form'] = array(
+    'info' => t('Phonebook search form'),
+    'status' => 0,
+    'region' => -1,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function roskilde_phonebook_block_view($delta = '') {
+  $block = array(
+    'subject' => NULL,
+    'content' => array(),
+  );
+
+  if ($delta == 'phonebook_search_form') {
+    $search_form = drupal_get_form('search_block_form', array(
+      'search_block_type' => 'phonebook'
+    ));
+    $search_form['search_block_form']['#attributes']['placeholder'] = t('Search in phonebook');
+    $search_form['search_block_form']['#attributes']['searche_type'] = 'phonebook';
+    $search_form['search_block_form']['#title'] = t('Find person');
+    $search_form['#action'] = url('search/phonebook');
+    $search_form['#search_block_type'] = 'phonebook';
+    $block['content'] = drupal_render($search_form);
+  }
+
+  return $block;
+}
+
+/**
+ * Implementation of hook_cron_queue_info().
+ */
+function roskilde_phonebook_cron_queue_info() {
+  $queues['roskilde_phonebook_import_queue'] = array(
+    'worker callback' => 'roskilde_phonebook_import_queue_runner',
+    'time' => 300,
+  );
+  $queues['roskilde_phonebook_author_queue'] = array(
+    'worker callback' => 'roskilde_phonebook_author_queue_runner',
+    'time' => 30,
+  );
+
+  return $queues;
+}
+
+/**
+ * Worker callback: Execute 'LDAP Data to phonebook' importer.
+ */
+function roskilde_phonebook_import_queue_runner($settings) {
+  $importer = feeds_source($settings['source']);
+  $importer->setConfigFor($importer->importer->fetcher, $settings['config']);
+  $importer->startImport();
+}
+
+/**
+ * Worker callback: Execute 'LDAP Data to phonebook' importer.
+ */
+function roskilde_phonebook_author_queue_runner($settings) {
+  db_update('node')
+    ->fields(array(
+      'uid' => $settings->uid,
+    ))
+    ->condition('nid', $settings->nid)
+    ->execute();
+}
+
+/**
+ * Implementation of hook_cron().
+ */
+function roskilde_phonebook_cron() {
+  $import_id = 'ldap_data_to_phonebook';
+  $importers = feeds_importer_load_all();
+  if (array_key_exists($import_id, $importers)) {
+    $queue = DrupalQueue::get('roskilde_phonebook_import_queue');
+
+    foreach($importers[$import_id]->fetcher->config['query_ids'] as $k => $v) {
+      $settings = array(
+        'source' => $import_id,
+        'config' => array('query_ids' => array($k => $v)),
+      );
+      $queue->createItem($settings);
+    }
+  }
+  else {
+    watchdog('phonebook_import', "Importer '$import_id' was not found");
+  }
+
+  $select = db_select('field_data_field_user', 'fdfu');
+  $select->leftJoin('node', 'n', 'fdfu.entity_id = n.nid && n.uid = 0');
+  $select->addField('n', 'nid');
+  $select->addField('fdfu', 'field_user_target_id', 'uid');
+  $select->condition('n.nid', NULL, 'IS NOT NULL');
+
+  $queue = DrupalQueue::get('roskilde_phonebook_author_queue');
+
+  foreach ($select->execute() as $row) {
+    $queue->createItem($row);
+  }
+}
+
+/**
+ * Get phonebook by user id.
+ */
+function roskilde_phonebook_get_by_userid($user_id = '') {
+  $uid = is_integer($user_id) ? $user_id : $GLOBALS['user']->uid;
+  $user = user_load($uid);
+
+  if (!empty($user->field_phonebook[LANGUAGE_NONE][0]['target_id'])) {
+    return node_load($user->field_phonebook[LANGUAGE_NONE][0]['target_id']);
+  }
+
+  return;
+}
+
+/**
+ * Get phonebook by user name.
+ */
+function roskilde_phonebook_get_by_username($name = '') {
+  $username = !empty($name) ? $name : $GLOBALS['user']->name;
+  $user = user_load_by_name($username);
+
+  if (!empty($user->field_phonebook[LANGUAGE_NONE][0]['target_id'])) {
+    return node_load($user->field_phonebook[LANGUAGE_NONE][0]['target_id']);
+  }
+
+  return;
+}
+
+/**
+ * Implements hook_field_group_pre_render().
+ */
+function roskilde_phonebook_field_group_pre_render_alter(&$element, $group, $form) {
+  if (isset($form['#view_mode']) && 'teaser' == $form['#view_mode']) {
+    $element['#prefix'] = $element['#prefix'] . '<a href="/'
+                          . drupal_get_path_alias('node/' . $form['#node']->nid)
+                          . '" class="phonebook-teaser-marker">';
+    $element['#suffix'] = '</a>' . $element['#suffix'];
+  }
+}

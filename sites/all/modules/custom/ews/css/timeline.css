@@ -1,0 +1,62 @@
+.ews_timeline {
+    width: 100%;
+}
+
+.ews_timeline .ews_header, .ews_timeline .ews_row {
+    width: 100%;
+    float: left;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid gray;
+}
+
+.ews_timeline .ews_row {
+}
+
+.ews_timeline .ews_title {
+    float: left;
+    width: 20%;
+}
+
+.ews_timeline_multitable .ews_table_chunk {
+    float: left;
+}
+
+.ews_timeline .ews_tl_container {
+    float: left;
+    width: 80%;
+    position: relative;
+}
+
+.ews_timeline .ews_tl_container a {
+    font-size: 11px;
+    color: #000;
+    display: block;
+    position: absolute;
+    overflow: hidden;
+    height: 20px;
+}
+.ews_timeline .ews_tl_container a span {
+    margin-left: 5px;
+}
+
+.ews_timeline .ews_x_label {
+    float: left;
+}
+
+.ews_prev_button, .ews_next_button {
+    display: block;
+    float: right;
+    width: 50px;
+    padding: 0 5px 0 5px;
+    border: 1px solid gray;
+    margin: 0 5px 0 5px;
+}
+
+select.ews_select {
+    display: inline-block;
+    float: right;
+    width: 200px;
+    padding: 0 5px 0 5px;
+    margin: 0 5px 0 650px;
+}

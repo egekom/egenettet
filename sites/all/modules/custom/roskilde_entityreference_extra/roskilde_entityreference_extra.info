@@ -1,0 +1,6 @@
+name = Roskilde entityreference extra
+description = Extends entityreference module.
+core = 7.x
+
+; Files that contain classes:
+files[] = plugins/selection/Roskilde_EntityReference_SelectionHandler_Generic_Extra.class.php

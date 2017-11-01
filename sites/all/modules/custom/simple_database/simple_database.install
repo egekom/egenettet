@@ -1,0 +1,53 @@
+<?php
+/**
+ * @file
+ * Install, update, and uninstall functions for the simple_database module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function simple_database_schema() {
+  $schema['simple_database'] = array(
+
+    'description' => 'The base table for the Simple Database module.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'bundle' => array(
+        'description' => 'The {node_type} of this column.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'unique keys' => array(
+      'bundle' => array('bundle'),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function simple_database_uninstall() {
+  db_delete('simple_database');
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Introduced a new class. To take effect, this requires a rebuild of the
+ * registry to force *.info files re-scan by D7 core.
+ */
+function simple_database_update_7001() {
+  registry_rebuild();
+}

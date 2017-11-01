@@ -1,0 +1,144 @@
+/* Article, News, Events, Webform Pages---------------------------------------------------------------------------------------------------- */
+
+.webform-client-form {
+  .form-item.form-type-select {
+    width: 30%;
+    float: left;
+    margin-right: 1%;
+  }
+  .select-wrapper .chosen-container {
+    width: 100% !important;
+  }
+  input.webform-calendar {
+    display: none !important;
+  }
+}
+
+
+
+/* Title and Bookmarks Flag */
+.panel-col-middle {
+  .pane-node-title {
+    h1 {
+      display: inline;
+    }
+
+    .flag-wrapper {
+      display: none;
+      top: - $space * 0.75;
+      left: $space / 4;
+    }
+
+    span.flag-message {
+      visibility: hidden;
+    }
+
+    .flag-link-toggle span {
+      display: none;
+    }
+
+    .flag-link-toggle:before {
+      font-size: $small-title-s * 2;
+      line-height: 2;
+
+    }
+
+    @include breakpoint(smallest-only) {
+      .flag-wrapper {
+        top: 0;
+
+        .flag-link-toggle:before {
+          font-size: $small-title-l;
+        }
+      }
+    }
+  }
+}
+
+@include breakpoint(small-only-three) {
+  .panel-col-middle {
+    .pane-node-title {
+      .flag-wrapper {
+        display: inline-block;
+      }
+    }
+  }
+
+  .panel-col-last {
+    .pane-print-bookmark-and-read-laud-but {
+      display: none;
+    }
+  }
+}
+
+.panel-pane.pane-node-field-related-content {
+  @extend %reset-box;
+}
+
+/* Article Royal Slider ***********************************************************************************/
+.royalSlider {
+  width: 100%;
+}
+
+.rsMinW {
+  .rsOverflow {
+    background-color: $white;
+    cursor: pointer !important;
+  }
+
+  .rsSlide {
+    background-color: $white;
+
+    .field-name-field-video,
+    .field-name-field-image {
+      //padding-top: 53.25%;
+    }
+  }
+
+  .rsArrowIcn {
+    width: 34px;
+    height: 34px;
+    background-image: url(/sites/all/themes/egedal/images/slider-icons.png);
+    background-repeat: no-repeat;
+    background-color: transparent;
+  }
+
+  .rsArrowRight,
+  .rsArrowLeft {
+    bottom: 75px;
+  }
+
+  .rsArrowRight {
+    right: 10px;
+  }
+
+  .rsArrowLeft {
+    right: 55px;
+  }
+
+  &.rsHor .rsArrowLeft .rsArrowIcn {
+    background-position: 0 -35px;
+
+    &:hover {
+      background-position: 0 0;
+    }
+  }
+
+  &.rsHor .rsArrowRight .rsArrowIcn {
+    background-position: -35px -35px;
+
+    &:hover {
+      background-position: -35px 0;
+    }
+  }
+
+  .rsBullets {
+    right: 100px;
+    bottom: 78px;
+  }
+
+  .rsBullet span {
+    width: 10px;
+    height: 10px;
+  }
+}

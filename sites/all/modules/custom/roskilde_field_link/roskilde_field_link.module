@@ -1,0 +1,269 @@
+<?php
+
+/**
+ * @file
+ * Module file for roskile_field_link module.
+ */
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function roskilde_field_link_element_info_alter(&$type) {
+  if (isset($type['link_field'])) {
+    // Add callback function to provide the option attach link to field.
+    $type['link_field']['#process'][] = '_roskilde_attach_field_options';
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Add 'Enable attach to field' checkbox.
+ */
+function roskilde_field_link_form_alter(&$form, &$form_state, $form_id) {
+  if (
+    'field_ui_field_edit_form' == $form_id &&
+    'link_field' == $form['#field']['type']
+  ) {
+    $instance = field_info_instance($form['#instance']['entity_type'],
+                                    $form['#instance']['field_name'],
+                                    $form['#instance']['bundle']);
+    $default_value = FALSE;
+    if (
+      isset($instance['settings']['attachable']) &&
+      $instance['settings']['attachable'] !== ''
+    ) {
+      $default_value = $instance['settings']['attachable'];
+    }
+    $form['instance']['settings']['attachable'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable attach to field'),
+      '#default_value' => $default_value,
+      '#description' => t('If checked, the setting provide the option the link to be attached to other fields. Notice: If any field was selected, this field get hidden automatically.'),
+    );
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function roskilde_field_link_entity_insert($entity, $entity_type) {
+  if ('node' == $entity_type) {
+    _roskilde_save_link_field_data($entity);
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function roskilde_field_link_entity_update($entity, $entity_type) {
+  if ('node' == $entity_type) {
+    _roskilde_save_link_field_data($entity);
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function roskilde_field_link_preprocess_field(&$vars) {
+  $element = $vars['element'];
+  $node = $element['#object'];
+  $instances = field_info_instances('node', $node->type);
+
+  foreach ($instances as $instance_field_name => $instance) {
+    if (
+      'link_field' == $instance['widget']['type'] &&
+      $element['#field_name'] == $instance['field_name'] &&
+      isset($instance['settings']['attachable']) &&
+      $instance['settings']['attachable']
+    ) {
+      $vars['items']['hidden_link_field'] = TRUE;
+      continue;
+    }
+
+    $fields = _roskilde_get_attached_links($node->nid,
+                                           $node->vid,
+                                           $instance_field_name);
+    $links = array();
+    if (isset($node->{$instance_field_name}[LANGUAGE_NONE])) {
+      $links = $node->{$instance_field_name}[LANGUAGE_NONE];
+    }
+    foreach ($links as $delta => $link) {
+      if (
+        isset($instance['settings']['attachable']) &&
+        $instance['settings']['attachable'] &&
+        isset($fields[$delta]) &&
+        array_key_exists($element['#field_name'],
+                         $fields[$delta]->attach_to_fields)
+      ) {
+        // Render the link only one time per field
+        // if the field has multiple values ($vars['items'][0]).
+        if (!isset($vars['items'][0]['#attached_links'])) {
+          $vars['items'][0]['#attached_links'] = array();
+        }
+        $vars['items'][0]['#attached_links'][] = $link;
+      }
+    }
+  }
+}
+
+/**
+ * Callback function processed the element form type field_link.
+ *
+ * Provide the option a link to be attached to a field.
+ */
+function _roskilde_attach_field_options($element, $form_state, $complete_form) {
+  // Get the field instance.
+  $current = field_info_instance($element['#entity_type'],
+                                  $element['#field_name'],
+                                  $element['#bundle']);
+  // Check if the link field is attachable.
+  if (
+    isset($current['settings']['attachable']) &&
+    $current['settings']['attachable']
+  ) {
+    if (isset($element['#entity']->nid)) {
+      $entity = $element['#entity'];
+      $results = _roskilde_get_attached_links($entity->nid,
+                                              $entity->vid,
+                                              $element['#field_name']);
+    }
+
+    $element['fields'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Fields to attach'),
+    );
+    $instances = field_info_instances($element['#entity_type'],
+                                      $element['#bundle']);
+    foreach ($instances as $field_name => $instance) {
+      // Skip changes when the field is 'link' type.
+      if ('link_field' == $instance['widget']['type']) {
+        continue;
+      }
+      $default_value = FALSE;
+      if (
+        isset($results[$element['#delta']]) &&
+        array_key_exists($field_name,
+                         $results[$element['#delta']]->attach_to_fields)
+      ) {
+        $default_value = TRUE;
+      }
+      $element['fields'][$field_name] = array(
+        '#type' => 'checkbox',
+        '#title' => $instance['label'],
+        '#default_value' => $default_value,
+      );
+    }
+  }
+
+  return $element;
+}
+
+/**
+ * Helper function: Get attached link configurations.
+ *
+ * Get attached link configurations by node id, revision id
+ * and link field name.
+ *
+ * @param int $entity_id
+ *   The node id.
+ *
+ * @param int $revision_id
+ *   The revision id.
+ *
+ * @param string $bundle_field
+ *   The field machine name.
+ *
+ * @return array
+ *   The all records for specific node, revision and field.
+ */
+function _roskilde_get_attached_links($entity_id, $revision_id, $bundle_field) {
+  $cache = &drupal_static(__FUNCTION__, array());
+
+  if (!isset($cache[$entity_id][$revision_id][$bundle_field])) {
+    $cache[$entity_id][$revision_id][$bundle_field] = array();
+
+    $table = 'roskilde_link_field_references';
+    $select = db_select($table, 'lfr');
+    $select->fields('lfr', array());
+    $select->condition('lfr.entity_id', $entity_id);
+    $select->condition('lfr.revision_id', $revision_id);
+    $select->condition('lfr.bundle_field', $bundle_field);
+
+    $results = $select->execute()->fetchAllAssoc('delta');
+    foreach ($results as $row) {
+      $fields = explode(',', $row->attach_to_fields);
+      $fields = array_combine($fields, $fields);
+      $row->attach_to_fields = $fields;
+    }
+    $cache[$entity_id][$revision_id][$bundle_field] = $results;
+  }
+
+  return $cache[$entity_id][$revision_id][$bundle_field];
+}
+
+/**
+ * Helper function: Save attached links configuration.
+ *
+ * @param object $entity
+ *   The node.
+ */
+function _roskilde_save_link_field_data($entity) {
+  $table = 'roskilde_link_field_references';
+  $instances = field_info_instances('node', $entity->type);
+
+  // Process all fields from type link_field.
+  foreach ($instances as $instance_field_name => $instance) {
+    if ('link_field' != $instance['widget']['type']) {
+      continue;
+    }
+
+    // Copy the old revision if the node was reverted.
+    if (isset($entity->old_vid) && !isset($entity->op)) {
+      // Get the old link configurations.
+      $old_fields = _roskilde_get_attached_links($entity->nid,
+                                                 $entity->old_vid,
+                                                 $instance_field_name);
+      if (!empty($old_fields)) {
+        foreach ($old_fields as $field) {
+          $insert = db_insert($table)
+            ->fields(array(
+              'entity_id' => $field->entity_id,
+              'revision_id' => $entity->vid,
+              'delta' => $field->delta,
+              'bundle_field' => $field->bundle_field,
+              'attach_to_fields' => implode(',', $field->attach_to_fields),
+            ))
+            ->execute();
+        }
+      }
+    }
+    // Save a new link configuration record if node was added or updated.
+    else {
+      // Get link configurations.
+      $field_links = $entity->{$instance_field_name}[LANGUAGE_NONE];
+      foreach ($field_links as $delta => $link) {
+        if (isset($link['fields'])) {
+          $fields = array();
+          foreach ($link['fields'] as $field_name => $checked) {
+            if ($checked) {
+              // Add the field name where the link should be attached.
+              $fields[] = $field_name;
+            }
+          }
+          if (!empty($fields)) {
+            $insert = db_insert($table)
+              ->fields(array(
+                'entity_id' => $entity->nid,
+                'revision_id' => $entity->vid,
+                'delta' => $delta,
+                'bundle_field' => $instance_field_name,
+                'attach_to_fields' => implode(',', $fields),
+              ))
+              ->execute();
+          }
+        }
+      }
+    }
+  }
+}

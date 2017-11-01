@@ -1,0 +1,3 @@
+name = Roskilde Media Configurations
+description = Provide some custom configurations like hooks etc.
+core = 7.x

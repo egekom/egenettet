@@ -1,0 +1,10 @@
+<?php
+/**
+ * @file
+ * Roskilde Migration install file.
+ */
+
+function roskilde_migration_enable() {
+  //clear the cache to display in Feeds as available plugin.
+  cache_clear_all('plugins:feeds:plugins', 'cache');
+}

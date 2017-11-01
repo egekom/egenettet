@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * Display views content inside a balloon when hovering a link.
+ */
+
+/**
+ * Implements hook_init().
+ */
+function views_hover_balloon_init() {
+  drupal_add_js(drupal_get_path('module', 'views_hover_balloon') . '/views_hover_balloon.js');
+  drupal_add_css(drupal_get_path('module', 'views_hover_balloon') . '/views_hover_balloon.css');
+}
+
+/**
+ * Implements hook_menu().
+ */
+function views_hover_balloon_menu() {
+
+  $items['views-hover-balloon/%/%/%'] = array(
+    'title' => '',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'views_hover_balloon_ajax_callback',
+    'page arguments' => array(1, 2, 3),
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+/**
+ * Ajax callback for the ballon hover action.
+ *
+ * Returns the rendered view contents to fill in the balloon.
+ */
+function views_hover_balloon_ajax_callback($view, $display, $args) {
+  $args_array = array();
+  parse_str($args, $args_array);
+
+  $params = array($view, $display);
+  $params = array_merge($params, $args_array);
+
+  $html = '';
+  $html = call_user_func_array('views_embed_view', $params);
+  $result = array("html" => $html);
+  return drupal_json_output($result);
+}

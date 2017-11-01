@@ -1,0 +1,13 @@
+name = Simple Database
+description = Provide simple database functionalities.
+core = 7.x
+
+dependencies[] = views
+
+files[] = simple_database.install
+files[] = simple_database.module
+files[] = simple_database.views.inc
+
+; Files that contain classes:
+files[] = includes/SimpleDatabaseService.inc
+files[] = includes/views/handlers/simple_database_handler_filter_node_type.inc

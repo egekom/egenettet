@@ -1,0 +1,12 @@
+name = Feature Mini Panels
+core = 7.x
+package = Panes
+dependencies[] = ctools
+dependencies[] = panelizer
+dependencies[] = panels_mini
+dependencies[] = strongarm
+features[ctools][] = panels_mini:panels_default:1
+features[features_api][] = api:2
+features[panels_mini][] = print_bookmark_and_read_laud_but
+features[panels_mini][] = print_bookmark_read_phonebook
+features[panels_mini][] = topic_front_page_menu

@@ -1,0 +1,63 @@
+/* VARIABLES ---------------------------------------------------------------------------------------------------- */
+
+/* Colors */
+$white: #fff;
+$black: #000;
+$red: #bc060e;
+$blue: #4d6477;
+$pink: #ce2260;
+
+$body-bg: #333333;
+$body-bg-dark: #252525;
+$content-bg: #f6f5f5;
+$body-font-color: #333333;
+$warning-default: #fecc00;
+$warning-dark: #ecbe00;
+
+$blue-link: #5c94b9;
+$border-color: #8fbcda;
+$border-color-lighter: #cfdfe9;
+$cmis-tree-view-blue: #e1ebf1;
+
+/* Gray colors */
+$grey-light: #e3e3dd;
+$grey-dark: #858c97;
+$grey-text: #87867c;
+
+/* Hover colors */
+$blue-link-hover: #508ab1;
+$blue-button-hover: #44799c;
+$blue-bg-hover: #d6e4ed;
+$blue-bg-hover-lighter: #e8f1f7;
+$pink-link-hover: #d01c60;
+$pink-link-hover-dark: #ae1750;
+$gray-hover: #f0f0f0;
+$select-blue-hover: #bfd2de;
+$red-dark: darken($red, 10%);
+
+/* Font family and weights */
+$light: 'Max-Light';
+$regular: 'Max-Regular';
+$medium: 'Max-SemiBold';
+$bold: 'Max-Bold';
+
+/* Font sizes */
+$text-xl: 1.375rem; /* 22px */    $small-text-xl: 1.0625rem; /* 17px */
+$text-l: 1.188rem; /* 19px */     $small-text-l: 0.9375rem; /* 15px */
+$text-m: 1rem; /* 16px */         $small-text-m: 0.813rem; /* 13px */
+$text-s: 0.875rem; /* 14px */     $small-text-s: 0.75rem; /* 12px */
+$text-xs: 0.75rem; /* 12px */     $small-text-xs: 0.688rem; /* 11px */
+
+$title-l: 2.25rem; /* 36px */     $small-title-l: 1.375rem; /* 22px */
+$title-m: 1.5rem; /* 24px */      $small-title-m: 1.125rem; /* 18px */
+$title-s: 1.25rem; /* 20px */     $small-title-s: 1rem; /* 16px */
+$title-xs: 1.0625rem; /* 17px */  $small-title-xs: 0.875rem; /* 14px */
+$title-xxs: 1rem; /* 16px */      $small-title-xxs: 0.813rem; /* 13px */
+
+/* Paddings, Margins */
+$space: 16px; /* 0.9375rem - based on 16px body font size */
+$grid-space: 16px; /* 1.25rem - based on 16px body font size */
+
+/* Times */
+$time: 200ms; /* same as JS transition time */
+

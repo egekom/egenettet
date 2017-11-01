@@ -1,0 +1,12 @@
+name = Context Config
+core = 7.x
+package = Config
+version = 7.x-1.0
+project = features_context_config
+dependencies[] = context
+dependencies[] = ctools
+dependencies[] = panelizer
+dependencies[] = strongarm
+features[context][] = user_dashboard
+features[ctools][] = context:context:3
+features[features_api][] = api:2

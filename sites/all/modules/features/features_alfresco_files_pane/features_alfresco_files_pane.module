@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Alfresco files pane feature.
+ */
+
+include_once 'features_alfresco_files_pane.features.inc';

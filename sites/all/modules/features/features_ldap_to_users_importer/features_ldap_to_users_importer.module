@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Ldap to Users Importer feature.
+ */
+
+include_once 'features_ldap_to_users_importer.features.inc';

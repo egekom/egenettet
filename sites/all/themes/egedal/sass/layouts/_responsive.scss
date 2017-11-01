@@ -1,0 +1,641 @@
+/**
+ * @file
+ * Positioning for a responsive layout.
+ *
+ * Define CSS classes to create a fluid grid layout with optional sidebars
+ * depending on whether blocks are placed in the left or right sidebars.
+ *
+ * This layout uses the Zen Grids plugin for Compass: http://zengrids.com
+ */
+
+// We are going to create a fluid grid with 1, 3, or 5 columns and 20px gutters
+// between columns (applied as 10px of left/right padding on each column).
+$zen-column-count:  1;
+$zen-gutter-width:  0;
+
+// If you need IE6/7 support for box-sizing: border-box (default), see _init.scss
+//$zen-box-sizing: content-box;
+
+// You can generate more efficient CSS if you manually apply the
+// zen-grid-item-base mixin to all grid items from within a single ruleset.
+$zen-auto-include-item-base: false;
+// $zen-auto-include-flow-item-base: false;
+
+/**
+ * Center the page.
+ *
+ * For screen sizes larger than 1200px, prevent excessively long lines of text
+ * by setting a max-width.
+ */
+.header-content,
+#main-menu,
+#main,
+.above-content,
+.below-content,
+.page-agreements-list .view-filters form,
+.page-agreements-list .view-content,
+.page-agreements-list .view-empty,
+.page-faq-list .view-filters form,
+.page-faq-list .view-content,
+.page-faq-list .view-empty,
+//#footer,
+.footer-wrapper .content,
+.below-footer .region-bottom {
+  max-width: 1263px;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  outline: 0;
+}
+
+/* Apply the shared properties of grid items in a single, efficient ruleset. */
+.breadcrumb,
+.header-content,
+.region-above-content,
+.region-below-content,
+/* .panels-ipe-portlet-wrapper, */
+.panel-col-bottom .panel-pane,
+.panel-col-first,
+.panel-col-middle,
+.panel-col-last,
+.panel-col-top-left,
+.panel-col-bottom-left,
+.panel-panel {
+  // See the note about $zen-auto-include-item-base above.
+  @include zen-grid-item-base();
+}
+
+/* Containers for grid items and flow items. */
+#main,
+.region-above-content,
+.panel-col-content-wrapper,
+.panel-col-top,
+.panel-col-bottom,
+.panel-panel .inside,
+.view-content,
+.sidebars,
+.region-below-content,
+.panel-col-first,
+.panel-col-middle,
+.panel-col-last,
+.panel-col-top-left,
+.panel-col-bottom-left,
+//#footer,
+.footer-wrapper .content,
+.panel-3col-33-threerow .row ,
+.panel-4col-25-left-stack-profile-topic-fp .row {
+  @include zen-grid-container();
+}
+.panel-panel.nested {
+  @include zen-nested-container(); // Since we're making every block in this region be a grid item.
+  //@include zen-clear(both);
+}
+
+/* All Media ---------------------------------------------------------------------------------------------------- */
+$zen-column-count: 4;
+/**
+ * The layout when there is only one sidebar, the left one.
+ */
+.sidebar-first {
+  /* Span 2 columns, starting in 2nd column from left. */
+  #content {
+    @include zen-grid-item-base();
+    @include zen-grid-item(3, 2);
+  }
+  /* Span 1 column, starting in 1st column from left. */
+  .sidebars.first {
+    @include zen-grid-item-base();
+    @include zen-grid-item(1, 1, left);
+  }
+}
+/**
+ * The layout when there is only one sidebar, the right one.
+ */
+.sidebar-second {
+  /* Span 2 columns, starting in 1st column from left. */
+  #content {
+    @include zen-grid-item-base();
+    @include zen-grid-item(3, 1);
+  }
+
+  /* Span 1 column, starting in 3th column from left. */
+  .sidebars.second {
+    @include zen-grid-item-base();
+    @include zen-grid-item(1, 4);
+  }
+}
+/**
+ * The layout when there are two sidebars.
+ */
+.two-sidebars {
+  /* Span 1 columns, starting in 2nd column from left. */
+  #content {
+    @include zen-grid-item-base();
+    @include zen-grid-item(2, 2);
+  }
+  /* Span 1 column, starting in 1st column from left. */
+  .sidebars.first {
+    @include zen-grid-item-base();
+    @include zen-grid-item(1, 1);
+  }
+  /* Span 1 column, starting in 3th column from left. */
+  .sidebars.second {
+    @include zen-grid-item-base();
+    @include zen-grid-item(1, 4);
+  }
+}
+
+.panel-2col-75-25-top-stacked {
+  .panel-col-first {
+    @include zen-grid-item(3, 1);
+  }
+  .panel-col-last {
+    @include zen-grid-item(1, 4);
+  }
+}
+
+.panel-4col-25-center-stack,
+.panel-4col-25-center-stack-extended {
+  .panel-col-first {
+    @include zen-grid-item(1, 1);
+  }
+  .panel-col-middle {
+    @include zen-grid-item(2, 2);
+  }
+  .panel-col-last {
+    @include zen-grid-item(1, 4);
+  }
+}
+
+.panel-4col-25-left-stack {
+  .panel-col-first {
+    @include zen-grid-item(2, 1);
+  }
+  .panel-col-middle {
+    @include zen-grid-item(1, 3);
+  }
+  .panel-col-last {
+    @include zen-grid-item(1, 4);
+  }
+}
+
+.panel-4col-25-left-stack-profile {
+  .panel-col-first {
+    @include zen-grid-item(3, 1);
+  }
+  .panel-col-last {
+    @include zen-grid-item(1, 4);
+  }
+
+  .panel-col-one {
+    @include zen-grid-item(1, 1);
+  }
+  .panel-col-two {
+    @include zen-grid-item(1, 2);
+  }
+  .panel-col-three {
+    @include zen-grid-item(1, 3);
+  }
+  .panel-col-four {
+    @include zen-grid-item(1, 4);
+  }
+}
+
+.panel-4col-25-left-stack-profile-extended {
+  .panel-col-first {
+    @include zen-grid-item(3, 1);
+  }
+  .panel-col-last {
+    @include zen-grid-item(1, 4);
+  }
+
+  .panel-col-one {
+    @include zen-grid-item(1, 1);
+  }
+  .row-one .panel-col-two {
+    @include zen-grid-item(1, 2);
+  }
+  .row-two .panel-col-two {
+    @include zen-grid-item(2, 2);
+  }
+  .panel-col-three {
+    @include zen-grid-item(1, 3);
+  }
+  .panel-col-four {
+    @include zen-grid-item(1, 4);
+  }
+
+  .row-two,
+  .panel-col-left-bottom {
+    clear: both;
+  }
+}
+
+.panel-4col-25-left-stack-profile-topic-fp {
+  > .panel-col-first {
+    @include zen-grid-item(3, 1);
+  }
+  > .panel-col-last {
+    @include zen-grid-item(1, 4);
+  }
+
+  .row .panel-col-first {
+    @include zen-grid-item(1, 1, left, 3);
+  }
+  .row .panel-col {
+    @include zen-grid-item(1, 2, left, 3);
+  }
+  .row .panel-col-last {
+    @include zen-grid-item(1, 3, left, 3);
+  }
+
+  .row {
+    overflow: hidden;
+    padding-bottom: $space * 3.5;
+  }
+
+  .panel-row-forth {
+    padding-bottom: $space;
+  }
+
+  //Make the columns 3 only here
+  .panel-col-one {
+    @include zen-grid-item(1, 1, left, 3);
+  }
+  .panel-col-two {
+    @include zen-grid-item(2, 2, left, 3);
+  }
+  .panel-col-bottom {
+    clear: both;
+  }
+}
+
+.panel-3col-33-threerow {
+  .panel-col-first {
+    @include zen-grid-item(1, 1, left, 3);
+  }
+  .panel-col {
+    @include zen-grid-item(1, 2, left, 3);
+  }
+  .panel-col-last {
+    @include zen-grid-item(1, 3, left, 3);
+  }
+
+  .row {
+    padding-bottom: $space * 3.5;
+  }
+
+  .panel-row-third {
+    padding-bottom: $space;
+  }
+}
+
+.panel-4col-25-left-stack-topic {
+  .panel-col-first {
+    @include zen-grid-item(2, 1);
+  }
+  .panel-col-middle {
+    @include zen-grid-item(1, 3);
+  }
+  .panel-col-last {
+    @include zen-grid-item(1, 4);
+  }
+  .panel-col-top-left {
+    @include zen-grid-item(3, 1);
+  }
+  .panel-col-top-right {
+    @include zen-grid-item(1, 4);
+  }
+}
+
+
+.panel-2col-stacked {
+  .panel-col-first {
+    @include zen-grid-item(2, 1);
+  }
+  .panel-col-last {
+    @include zen-grid-item(2, 3);
+  }
+}
+
+
+.panel-col-middle.nested {
+  @include zen-grid-item(4, 1);
+  @include zen-clear(both);
+  padding: 0;
+}
+
+.panel-col-last.nested {
+  @include zen-grid-item(2, 3);
+  @include zen-clear(right);
+  padding-left: 0;
+}
+
+.panel-col-first.nested {
+  @include zen-grid-item(2, 1);
+  @include zen-clear(left);
+}
+
+.panel-col-bottom {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.panel-4col-25-50-25-tworows {
+  .panel-col-first {
+    @include zen-grid-item(1, 1);
+  }
+  .panel-col-middle {
+    @include zen-grid-item(2, 2);
+  }
+  .panel-col-last {
+    @include zen-grid-item(1, 4);
+  }
+}
+
+/* Media 1079px ---------------------------------------------------------------------------------------------------- */
+@include breakpoint(small-and-medium) {
+  .panel-4col-25-left-stack-profile,
+  .panel-4col-25-left-stack-profile-extended,
+  .panel-4col-25-left-stack-profile-topic-fp {
+    .panel-col-one {
+      @include zen-grid-item(2, 1);
+      width: 50%;
+    }
+    .panel-col-first .panel-col-two {
+      @include zen-grid-item(2, 3);
+      @include zen-clear(right);
+      width: 50%;
+    }
+    .panel-col-three {
+      @include zen-grid-item(2, 1);
+      @include zen-clear(left);
+      width: 50%;
+    }
+    .panel-col-four {
+      @include zen-grid-item(2, 3);
+      width: 50%;
+    }
+  }
+}
+
+
+/* Media 800px ---------------------------------------------------------------------------------------------------- */
+@include breakpoint(small-only) {
+
+  .sidebar-first {
+    #content {
+      @include zen-grid-item(3, 2);
+    }
+    .sidebars.first {
+      @include zen-grid-item(1, 1);
+    }
+  }
+  .sidebar-second {
+    #content {
+      @include zen-grid-item(3, 1);
+    }
+    .sidebars.second {
+      @include zen-grid-item(1, 4);
+    }
+  }
+  .two-sidebars {
+    #content {
+      @include zen-grid-item(3, 2);
+    }
+    .sidebars.first {
+      @include zen-grid-item(1, 1);
+    }
+    .sidebars.second {
+      @include zen-grid-item(3, 2);
+      @include zen-clear(both);
+    }
+  }
+
+  .panel-2col-75-25-top-stacked {
+    .panel-col-first {
+      @include zen-grid-item(2, 1);
+    }
+    .panel-col-last {
+      @include zen-grid-item(2, 3);
+    }
+  }
+
+  .panel-4col-25-left-stack-topic,
+  .panel-4col-25-left-stack,
+  .panel-4col-25-center-stack,
+  .panel-4col-25-center-stack-extended {
+    .panel-col-first {
+      @include zen-grid-item(2, 1);
+    }
+    .panel-col-middle {
+      @include zen-grid-item(2, 3);
+    }
+    .panel-col-last {
+      @include zen-grid-item(2, 3);
+      @include zen-clear(both);
+    }
+    .panel-col-top-left {
+      @include zen-grid-item(2, 1);
+    }
+    .panel-col-top-right {
+      @include zen-grid-item(2, 3);
+    }
+
+  }
+
+  .panel-4col-25-left-stack-profile,
+  .panel-4col-25-left-stack-profile-extended,
+  .panel-4col-25-left-stack-profile-topic-fp {
+    > .panel-col-first {
+      @include zen-grid-item(4, 1);
+      @include zen-clear(both);
+    }
+    > .panel-col-last {
+      @include zen-grid-item(4, 1);
+      @include zen-clear(both);
+    }
+  }
+
+
+  .view-editorial-news-list .views-row-odd,
+  .view-editorial-news-list .views-row-even,
+  .double .view-short-news-list .views-row-odd,
+  .double .view-short-news-list .views-row-even,
+  .double .view-latest-news .views-row-odd,
+  .double .view-latest-news .views-row-even,
+  .panel-col-middle.nested,
+  .panel-col-first.nested,
+  .panel-col-last.nested {
+    @include zen-grid-item(4, 1);
+    @include zen-clear(both);
+    padding: 0;
+  }
+
+  .panel-col-middle.nested {
+    .view-editorial-news-list .views-row-odd,
+    .view-editorial-news-list .views-row-even {
+      @include zen-grid-item(4, 1);
+      @include zen-clear(both);
+      padding: 0;
+    }
+
+  }
+
+  .panel-4col-25-50-25-tworows {
+    .panel-col-first {
+      @include zen-grid-item(2, 1);
+    }
+    .panel-col-middle {
+      @include zen-grid-item(2, 3);
+    }
+    .panel-col-last {
+      @include zen-grid-item(2, 3);
+      @include zen-clear(both);
+    }
+    .panel-col-content-wrapper.bottom {
+      .panel-col-middle {
+        @include zen-grid-item(4, 1);
+        @include zen-clear(both);
+      }
+    }
+  }
+
+}
+
+/* Media 640px ---------------------------------------------------------------------------------------------------- */
+//@media (max-width: 640px) {
+@include breakpoint(small-only-three) {
+
+  //$zen-column-count: 1;
+
+  .sidebar-first {
+    #content {
+      @include zen-grid-item(4, 1);
+    }
+    .sidebars.first {
+      @include zen-grid-item(4, 1);
+    }
+  }
+  .sidebar-second {
+    #content {
+      @include zen-grid-item(4, 1);
+    }
+    .sidebars.second {
+      @include zen-grid-item(4, 1);
+    }
+  }
+  .two-sidebars {
+    #content {
+      @include zen-grid-item(4, 1);
+    }
+    .sidebars.first {
+      @include zen-grid-item(4, 1);
+    }
+    .sidebars.second {
+      @include zen-grid-item(4, 1);
+    }
+  }
+
+  .panel-panel,
+  .panel-pane,
+  .sidebars.first,
+  #content,
+  .sidebars.second {
+    @include zen-clear(both);
+  }
+
+  .panel-2col .panel-col-first,
+  .panel-col-first {
+    @include zen-grid-item(4, 1);
+    padding: 0;
+  }
+  .panel-2col .panel-col-last,
+  .panel-col-last {
+    @include zen-grid-item(4, 1);
+    padding: 0;
+  }
+
+  .panel-2col-75-25-top-stacked {
+    .panel-col-first,
+    .panel-col-last {
+      @include zen-grid-item(4, 1);
+      @include zen-clear(both);
+    }
+  }
+
+  .panel-4col-25-left-stack-topic,
+  .panel-4col-25-left-stack,
+  .panel-4col-25-center-stack,
+  .panel-4col-25-center-stack-extended  {
+    .panel-col-top-left,
+    .panel-col-top-right,
+    .panel-col-first,
+    .panel-col-middle,
+    .panel-col-last {
+      @include zen-grid-item(4, 1);
+      @include zen-clear(both);
+    }
+  }
+
+  .panel-4col-25-left-stack-profile,
+  .panel-4col-25-left-stack-profile-extended,
+  .panel-4col-25-left-stack-profile-topic-fp {
+    .panel-col-four,
+    .panel-col-three,
+    .panel-col-first .panel-col-two,
+    .panel-col-one,
+    .panel-col-last,
+    .panel-col-first {
+      @include zen-grid-item(4, 1);
+      @include zen-clear(both);
+    }
+  }
+
+  .panel-2col-stacked {
+    .panel-col-first,
+    .panel-col-last {
+      @include zen-grid-item(4, 1);
+      @include zen-clear(both);
+    }
+  }
+
+  .panel-col-middle.nested,
+  .panel-col-first.nested,
+  .panel-col-last.nested,
+  .panel-3col-33-threerow .panel-col,
+  .panel-4col-25-left-stack-profile-topic-fp .row  .panel-panel  {
+    @include zen-grid-item(4, 1);
+    @include zen-clear(both);
+    padding: 0;
+  }
+
+  .panel-col-middle.nested {
+    .view-editorial-news-list .views-row-odd,
+    .view-editorial-news-list .views-row-even,
+    &.double .view-short-news-list .views-row-odd,
+    &.double .view-short-news-list .views-row-even
+    &.double .view-latest-news .views-row-odd,
+    &.double .view-latest-news .views-row-even {
+      @include zen-grid-item(4, 1);
+      @include zen-clear(both);
+      padding: 0;
+    }
+  }
+
+  .panel-4col-25-50-25-tworows {
+    .panel-col-first,
+    .panel-col-middle,
+    .panel-col-last {
+      @include zen-grid-item(4, 1);
+      @include zen-clear(both);
+      padding: 0;
+    }
+  }
+
+  .panel-3col-33-threerow div.row,
+  .panel-4col-25-left-stack-profile-topic-fp div.row {
+    padding: 0;
+  }
+
+}// End of @media all and (min-width: 480px)

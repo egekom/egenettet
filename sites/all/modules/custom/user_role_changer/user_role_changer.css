@@ -1,0 +1,16 @@
+.role-changer-wrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.role-changer-roles {
+  position: absolute;
+  left: 0;
+  display: none;
+  list-style: none;
+}
+
+.role-changer-wrapper:hover .role-changer-roles {
+  display: block;
+}
+

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the View Warning List feature.
+ */
+
+include_once 'features_view_warning_list.features.inc';

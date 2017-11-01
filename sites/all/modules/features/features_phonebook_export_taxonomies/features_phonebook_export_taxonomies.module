@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Phonebook export taxonomies feature.
+ */
+
+include_once 'features_phonebook_export_taxonomies.features.inc';

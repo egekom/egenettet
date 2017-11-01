@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Banner link pane feature.
+ */
+
+include_once 'features_banner_link_pane.features.inc';

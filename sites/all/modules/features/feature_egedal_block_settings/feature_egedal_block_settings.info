@@ -1,0 +1,13 @@
+name = Feature Egedal Block settings
+description = Egedal Block settings
+core = 7.x
+package = Features
+dependencies[] = ctools
+dependencies[] = fe_block
+dependencies[] = panelizer
+dependencies[] = strongarm
+features[fe_block_boxes][] = footer_elements
+features[fe_block_boxes][] = footer_logo_block
+features[fe_block_settings][] = block-footer_elements
+features[fe_block_settings][] = block-footer_logo_block
+features[features_api][] = api:2

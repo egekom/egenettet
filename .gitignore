@@ -10,9 +10,6 @@ sites/*/private
 *.css.map
 
 permissions.tar
-sites/all/modules/contrib/hierarchical_select/
-sites/all/modules/contrib/menu_link_weight/
-sites/all/modules/contrib/unique_field/
 sites/default/files_old/
 sites/default/test
 t2.php

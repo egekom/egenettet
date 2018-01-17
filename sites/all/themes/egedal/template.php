@@ -1,4 +1,10 @@
 <?php
+
+// Redirect user to saml
+global $user;
+if($user->uid == 0 && $_SERVER['REQUEST_URI'] != "/da/user")
+    header("Location: /saml_login");
+
 /**
  * @file
  * Contains the theme's functions to manipulate Drupal's default markup.

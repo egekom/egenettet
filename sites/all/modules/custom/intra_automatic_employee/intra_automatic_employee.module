@@ -1,0 +1,42 @@
+<?php
+
+function intra_automatic_employee_menu() {
+  $items = array();
+
+  $items['admin/config/system/intra-automatic-employee'] = array(
+    'title' => t("Intra Automatic Employee"),
+    'description' => t("Settings page where you can configure the syncronization with alfresco"),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('intra_automatic_employee_admin'),
+    'access arguments' => array('access administration pages'),
+   );
+
+  return $items;
+}
+
+/**
+ * Creates a form for settings
+ */
+function intra_automatic_employee_admin() {
+  $form = array();
+
+    $form['intra_automatic_employee_hostname'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Hostname for Alfresco'),
+        '#default_value' => variable_get('intra_automatic_employee_hostname', ""),
+        '#size' => 50,
+        '#maxlength' => 255,
+        '#required' => TRUE,
+    );
+
+  $form['intra_automatic_employee_ext_auth_password'] = array(
+    '#type' => 'password',
+    '#title' => t('Password for Alfresco External Authentication'),
+    '#default_value' => variable_get('intra_automatic_employee_ext_auth_password', ""),
+    '#size' => 50,
+    '#maxlength' => 255,
+    '#required' => TRUE,
+  );
+
+  return system_settings_form($form);
+}

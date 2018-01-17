@@ -1,0 +1,6 @@
+name = Magenta SAML Attribute Configuration
+description = Lets you map custom SAML attributes to Drupal
+package = Magenta
+version = 1.0
+core = 7.x
+dependencies[] = simplesamlphp_auth

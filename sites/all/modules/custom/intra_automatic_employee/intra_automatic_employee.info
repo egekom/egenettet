@@ -1,0 +1,5 @@
+name = Automatic employee handling
+description = Syncs employees with AD and Alfresco
+package = Intranet
+version = 1.0
+core = 7.x

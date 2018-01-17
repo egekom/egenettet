@@ -1,0 +1,505 @@
+<?php
+
+/**
+ * @file
+ * Roskilde menu.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function roskilde_menu_menu() {
+  $items['my-department'] = array(
+    'title' => 'MIN ENHED',
+    'description' => 'My department page',
+    'page callback' => 'roskilde_menu_mydeparment_page',
+    'access callback' => 'roskilde_menu_mydeparment_user_access',
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'main-menu',
+    'weight' => 3,
+    'file' => 'includes/roskilde_menu.page.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Access callback for 'my-department' link.
+ */
+function roskilde_menu_mydeparment_user_access() {
+  $my_department = _roskilde_menu_get_user_department();
+  return ($my_department && !empty($my_department->field_unit_page));
+}
+
+/**
+ * Helper function: Get user department.
+ */
+function _roskilde_menu_get_user_department() {
+  global $user;
+  $current_user = user_load($user->uid);
+  if (isset($current_user->field_phonebook['und'][0]['target_id']) && $current_user->field_phonebook['und'][0]['target_id']) {
+    $phonebook = node_load($current_user->field_phonebook['und'][0]['target_id']);
+    if (empty($phonebook->field_unit)) {
+      return FALSE;
+    }
+    $tid = $phonebook->field_unit[LANGUAGE_NONE][0]['tid'];
+
+    return taxonomy_term_load($tid);
+  }
+}
+
+/**
+ * Implements hook_menu_block_blocks().
+ */
+function roskilde_menu_menu_block_blocks() {
+  // The array key is the block delta used by menu block.
+  return array(
+    'topic_pages_menu_two_levels' => array(
+      'menu_name'   => 'main-menu',
+      'parent_mlid' => 0,
+      'title_link'  => 0,
+      'admin_title' => 'Topic Pages Menu (3 levels)',
+      'level'       => 2,
+      'follow'      => '0',
+      'depth'       => 4,
+      'expanded'    => 0,
+      'sort'        => 0,
+    ),
+    'topic_pages_menu' => array(
+      'menu_name'   => 'main-menu',
+      'parent_mlid' => 0,
+      'title_link'  => 0,
+      'admin_title' => 'Topic Pages Menu',
+      'level'       => 2,
+      'follow'      => '0',
+      'depth'       => 1,
+      'expanded'    => 0,
+      'sort'        => 0,
+    ),
+    'topic_pages_sub_menu' => array(
+      'menu_name'   => 'main-menu',
+      'parent_mlid' => 0,
+      'title_link'  => 0,
+      'admin_title' => 'Topic Pages Sub Menu',
+      'level'       => 3,
+      'follow'      => '0',
+      'depth'       => 1,
+      'expanded'    => 0,
+      'sort'        => 0,
+    ),
+    'footer_menu_block' => array(
+      'menu_name'   => 'footer-menu',
+      'parent_mlid' => 0,
+      'title_link'  => 0,
+      'admin_title' => 'Footer menu block',
+      'level'       => 1,
+      'follow'      => '0',
+      'depth'       => 2,
+      'expanded'    => 1,
+      'sort'        => 0,
+    ),
+    'news_events_menu' => array(
+      'menu_name'   => 'news-events',
+      'parent_mlid' => 0,
+      'title_link'  => 0,
+      'admin_title' => 'News/Events menu block',
+      'level'       => 1,
+      'follow'      => '0',
+      'depth'       => 0,
+      'expanded'    => 1,
+      'sort'        => 0,
+    ),
+  );
+
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function roskilde_menu_block_info() {
+  $blocks['roskilde_user_dashboard_menu'] = array(
+    'info' => t('User dashboard menu'),
+    'weight' => -99,
+    'status' => 0,
+    'region' => -1,
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_node_access().
+ */
+function roskilde_menu_node_access($node, $op, $account) {
+  if (is_object($node) && "update" == $op) {
+    // Grant user to edit the own phonebook.
+    $user = user_load($account->uid);
+    $nid = !empty($user->field_phonebook) ? $user->field_phonebook[LANGUAGE_NONE][0]['target_id'] : FALSE;
+    if ($nid == $node->nid) {
+      return NODE_ACCESS_ALLOW;
+    }
+    elseif (!empty($node->field_owner[LANGUAGE_NONE])) {
+      foreach ($node->field_owner[LANGUAGE_NONE] as $owner) {
+        if ($GLOBALS['user']->uid == $owner['target_id']) {
+          return NODE_ACCESS_ALLOW;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function roskilde_menu_block_view($delta = '', $block_settings = NULL) {
+  switch ($delta) {
+    case 'roskilde_user_dashboard_menu':
+      if ($uid = $GLOBALS['user']->uid) {
+        $account = user_load($uid);
+        $phonebook_id = !empty($account->field_phonebook) ? $account->field_phonebook[LANGUAGE_NONE][0]['target_id'] : FALSE;
+
+        $defaults = array(
+          '#theme' => 'menu_link',
+          '#below' => array(),
+          '#attributes' => array('class' => array('user-dashboard-link')),
+        );
+
+        $menu_links = array('#theme_wrappers' => array('menu_tree'));
+        $menu_links[] = array(
+          '#theme' => 'menu_link',
+          '#title' => t('Bookmarks'),
+          '#href' => "user/$uid/bookmarks",
+        ) + $defaults;
+        $menu_links[] = array(
+          '#title' => t('Colleagues'),
+          '#href' => "user/$uid/favorite-colleagues",
+        ) + $defaults;
+        if (FALSE !== $phonebook_id) {
+          $menu_links[] = array(
+            '#title' => t('Edit'),
+            '#href' => "node/$phonebook_id/edit",
+          ) + $defaults;
+        }
+
+        if (1 == $uid) {
+          $additional_links = _roskilde_menu_get_additional_links();
+          foreach ($additional_links as $module => $data) {
+            if (module_exists($module)) {
+              if (isset($data['access_callback']) && function_exists($data['access_callback'])) {
+                if (!call_user_func_array($data['access_callback'], $data['access_arguments'])) {
+                  continue;
+                }
+              }
+              $menu_links[] = array(
+                '#title' => $data['title'],
+                '#href' => "user/$uid/{$data['path']}",
+              ) + $defaults;
+            }
+          }
+        }
+
+        return array(
+          'subject' => t('Overview'),
+          'content' => array(
+            0 => $menu_links,
+            1 => array(
+              0 => array(
+                '#theme' => 'menu_link',
+                '#title' => t('Add content'),
+                '#href' => 'node/add',
+                '#below' => array(),
+                '#attributes' => array('class' => array('user-dashboard-add-conent-link')),
+              ),
+              '#theme_wrappers' => array('menu_tree__user_dashboard_menu'),
+            ),
+          ),
+        );
+      }
+  }
+}
+
+/**
+ * Helper function: Get additinal links.
+ *
+ * @return array
+ *   An array with additional links.
+ */
+function _roskilde_menu_get_additional_links() {
+  return array(
+    'scheduler' => array(
+      'title' => t('Scheduled'),
+      'path' => 'scheduler',
+      'access_callback' => 'scheduler_list_access_callback',
+      'access_arguments' => array('user_only', $GLOBALS['user']->uid),
+    ),
+    'linkchecker' => array(
+      'title' => t('Broken links'),
+      'path' => 'linkchecker',
+      'access_callback' => 'linkchecker_user_report_page',
+      'access_arguments' => array($GLOBALS['user']),
+    ),
+    'ds' => array(
+      'title' => t('Manage display'),
+      'path' => 'display',
+      'access_callback' => 'user_access',
+      'access_arguments' => array('administer users'),
+    ),
+    'devel' => array(
+      'title' => t('Devel'),
+      'path' => 'devel',
+      'access_callback' => 'user_access',
+      'access_arguments' => array('access devel information'),
+    ),
+    'tracker' => array(
+      'title' => t('Track'),
+      'path' => 'track',
+      'access_callback' => '_tracker_user_access',
+      'access_arguments' => array($GLOBALS['user']),
+    ),
+    'statistics' => array(
+      'title' => t('Track page visits'),
+      'path' => 'track/navigation',
+      'access_callback' => 'user_access',
+      'access_arguments' => array('access statistics'),
+    ),
+    'shortcut' => array(
+      'title' => t('Shortcuts'),
+      'path' => 'shortcuts',
+      'access_callback' => 'shortcut_set_switch_access',
+      'access_arguments' => array($GLOBALS['user']),
+    ),
+    'openid' => array(
+      'title' => t('OpenID identities'),
+      'path' => 'openid',
+      'access_callback' => 'user_edit_access',
+      'access_arguments' => array($GLOBALS['user']),
+    ),
+    'contact' => array(
+      'title' => t('Contact'),
+      'path' => 'contact',
+      'access_callback' => '_contact_personal_tab_access',
+      'access_arguments' => array($GLOBALS['user']),
+    ),
+  );
+}
+
+/**
+ * Implements hook_views_default_views_alter().
+ */
+function roskilde_menu_views_default_views_alter(&$views) {
+  if (isset($views['flag_bookmarks_tab'])) {
+    unset($views['flag_bookmarks_tab']->display['page']->display_options['menu']);
+  }
+}
+
+/**
+ * Define a view mode to be used for front page news list pane.
+ */
+function roskilde_menu_entity_info_alter(&$entity_info) {
+  $entity_info['node']['view modes']['news_list_first'] = array(
+    'label' => t('News list first'),
+    'custom settings' => FALSE,
+  );
+  $entity_info['field_collection_item']['view modes']['news_list_first'] = array(
+    'label' => t('News list first'),
+    'custom settings' => FALSE,
+  );
+}
+
+/**
+ * Implements hook_preprocess_panels_pane().
+ */
+function roskilde_menu_preprocess_panels_pane(&$vars) {
+  if (is_array($vars['content']) && array_key_exists('#delta', $vars['content'])) {
+
+    // Topick page menu two levels.
+    if ("topic_pages_menu_two_levels" == $vars['content']['#delta']) {
+      // Get the raw menu tree data.
+      $config = $vars['content']['#config'];
+      $tree = menu_tree_block_data($config);
+
+      $active_links = array();
+      foreach ($tree as $key => $link) {
+        if ($link['link']['in_active_trail']) {
+          $active_links[] = $key;
+        }
+      }
+
+      if (empty($active_links)) {
+        // All links are parts from active trail.
+        _roskilde_menu_set_active_property($tree);
+      }
+      else {
+        // Some of links are parts from active trail.
+        foreach ($active_links as $key) {
+          _roskilde_menu_set_active_property($tree[$key]['below']);
+        }
+      }
+
+      // Override the content to remove links with depth 2 but not inactive trial.
+      $vars['content']['#content'] = roskilde_menu_menu_block_tree_output($tree, $config);
+    }
+
+    // Topick page menu.
+    if ("topic_pages_menu" == $vars['content']['#delta']) {
+      $count = 1;
+      foreach (element_children($vars['content']['#content']) as $key) {
+        $vars['content']['#content'][$key]['#attributes']['class'][] = ($n = fmod($count++, 3)) ? "nth-child-3n$n" : 'nth-child-3n';
+      }
+    }
+  }
+}
+
+/**
+ * Helper function: Gives active property.
+ *
+ * @param array $links
+ *   An array with links from menu tree.
+ */
+function _roskilde_menu_set_active_property(&$links) {
+  foreach ($links as &$link) {
+    $link['#active_parent'] = TRUE;
+  }
+}
+
+/**
+ * Returns a renderable menu tree.
+ *
+ * Returns menu tree without links which have depth 2
+ * and they aren't in active trail.
+ *
+ * @param array $tree
+ *   A data structure representing the tree as returned from menu_tree_data.
+ *
+ * @return string
+ *   The rendered HTML of that data structure.
+ *
+ * @see menu_block_tree_output
+ */
+function roskilde_menu_menu_block_tree_output(&$tree, $config = array()) {
+  $build = array();
+  $items = array();
+
+  // Create context if no config was provided.
+  if (empty($config)) {
+    $config['delta'] = 0;
+    // Grab any menu item to find the menu_name for this tree.
+    $menu_item = current($tree);
+    $config['menu_name'] = $menu_item['link']['menu_name'];
+  }
+  $hook_delta = str_replace('-', '_', $config['delta']);
+  $hook_menu_name = str_replace('-', '_', $config['menu_name']);
+
+  // Pull out just the menu links we are going to render so that we
+  // get an accurate count for the first/last classes.
+  foreach ($tree as $key => &$value) {
+    if (!isset($value['#active_parent']) && !$value['link']['in_active_trail']) {
+      continue;
+    }
+    if ($tree[$key]['link']['access'] && !$tree[$key]['link']['hidden']) {
+      _roskilde_menu_set_active_property($tree[$key]['below']);
+      $items[] = $tree[$key];
+    }
+  }
+
+  $router_item = menu_get_item();
+  $num_items = count($items);
+  foreach ($items as $i => &$data) {
+    $class = array();
+    if ($i == 0) {
+      $class[] = 'first';
+    }
+    if ($i == $num_items - 1) {
+      $class[] = 'last';
+    }
+    // Set a class for the <li>-tag. Since $data['below'] may contain local
+    // tasks, only set 'expanded' class if the link also has children within
+    // the current menu.
+    if ($data['link']['has_children'] && $data['below']) {
+      $class[] = 'expanded';
+    }
+    elseif ($data['link']['has_children']) {
+      $class[] = 'collapsed';
+    }
+    else {
+      $class[] = 'leaf';
+    }
+    if (!empty($data['link']['leaf_has_children'])) {
+      $class[] = 'has-children';
+    }
+    // Set a class if the link is in the active trail.
+    if ($data['link']['in_active_trail']) {
+      $class[] = 'active-trail';
+      // Check if the active-trial class exist.
+      if (!isset($data['link']['localized_options']['attributes']['class']) || !in_array('active-trail', $data['link']['localized_options']['attributes']['class'])) {
+        $data['link']['localized_options']['attributes']['class'][] = 'active-trail';
+      }
+    }
+    if ($data['link']['href'] == $_GET['q'] || ($data['link']['href'] == '<front>' && drupal_is_front_page())) {
+      $class[] = 'active';
+    }
+    // Set a menu link ID class.
+    $class[] = 'menu-mlid-' . $data['link']['mlid'];
+    // Normally, l() compares the href of every link with $_GET['q'] and sets
+    // the active class accordingly. But local tasks do not appear in menu
+    // trees, so if the current path is a local task, and this link is its
+    // tab root, then we have to set the class manually.
+    if ($data['link']['href'] == $router_item['tab_root_href'] && $data['link']['href'] != $_GET['q']) {
+      $data['link']['localized_options']['attributes']['class'][] = 'active';
+    }
+
+    // Allow menu-specific theme overrides.
+    $element['#theme'] = array(
+      'menu_link__menu_block__' . $hook_delta,
+      'menu_link__menu_block__' . $hook_menu_name,
+      'menu_link__menu_block',
+      'menu_link__' . $hook_menu_name,
+      'menu_link',
+    );
+    $element['#attributes']['class'] = $class;
+    $element['#title'] = $data['link']['title'];
+    $element['#href'] = $data['link']['href'];
+    $element['#localized_options'] = !empty($data['link']['localized_options']) ? $data['link']['localized_options'] : array();
+    $element['#below'] = $data['below'] ? roskilde_menu_menu_block_tree_output($data['below'], $config) : $data['below'];
+    $element['#original_link'] = $data['link'];
+    $element['#bid'] = array('module' => 'menu_block', 'delta' => $config['delta']);
+    // Index using the link's unique mlid.
+    $build[$data['link']['mlid']] = $element;
+  }
+  if ($build) {
+    // Make sure drupal_render() does not re-order the links.
+    $build['#sorted'] = TRUE;
+    // Add the theme wrapper for outer markup.
+    // Allow menu-specific theme overrides.
+    $build['#theme_wrappers'][] = array(
+      'menu_tree__menu_block__' . $hook_delta,
+      'menu_tree__menu_block__' . $hook_menu_name,
+      'menu_tree__menu_block',
+      'menu_tree__' . $hook_menu_name,
+      'menu_tree',
+    );
+  }
+
+  return $build;
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function roskilde_menu_module_implements_alter(&$implementations, $hook) {
+  if ("form_alter" == $hook && isset($implementations['roskilde_menu'])) {
+    $data = $implementations['roskilde_menu'];
+    unset($implementations['roskilde_menu']);
+    $implementations['roskilde_menu'] = $data;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function roskilde_menu_form_node_form_alter(&$form, &$form_state, $form_id) {
+  if (isset($form['menu']['link'], $form['menu']['link']['options']['attributes']) && isset($form['#node']->menu)) {
+    $form['menu']['link']['options']['attributes']['#collapsed'] = TRUE;
+  }
+}

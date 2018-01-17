@@ -1,0 +1,5 @@
+name = Roskilde Favourite Pages
+description = Roskilde Favourite Pages
+core = 7.x
+
+dependencies[] = homebox

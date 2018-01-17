@@ -1,0 +1,14 @@
+name = Administration theme
+description = This is a simple sub-theme of theme Seven
+core = 7.x
+base theme = seven
+
+stylesheets[screen][] = css/custom.css
+
+settings[shortcut_module_link] = 1
+
+
+; Information added by Drupal.org packaging script on 2015-05-07
+version = "7.37"
+project = "drupal"
+datestamp = "1430973154"

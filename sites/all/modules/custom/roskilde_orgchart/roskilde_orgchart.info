@@ -1,0 +1,7 @@
+name = Roskilde Organizational Chart Pane
+description = Display a taxonomy as orgchart in a pane.
+core = 7.x
+
+;files[] = cmis_extra.theme.inc
+
+dependencies[] = ctools

@@ -1,0 +1,387 @@
+<?php
+
+/**
+ * @file
+ * Module file for the simple_database module.
+ */
+
+/**
+ * Implements hook_query_alter().
+ */
+function simple_database_query_alter(QueryAlterableInterface $query) {
+  // Change queries contains {node} table.
+  if ($query->hasTag('simple_database_bundles') || $query->hasTag('roskildedk_export') ) {
+    return;
+  }
+
+    // Skip entity reference autocomplete pages to be filtered.
+  if (strpos(current_path(), 'entityreference/autocomplete', 0) !== FALSE) {
+    return;
+  }
+
+  // Skip entity reference autocomplete pages to be filtered.
+  if (strpos(current_path(), 'linkit/', 0) !== FALSE) {
+    return;
+  }
+
+  // Skip ctools autocomplete pages to be filtered.
+  if (strpos(current_path(), 'ctools/autocomplete', 0) !== FALSE) {
+    return;
+  }
+
+  // Do not change these queries which selects by node ids.
+  if (_simple_database_check_conditions($query->conditions(), $query->getTables())) {
+    return;
+  }
+
+  // Remove nodes flagged as Simple Database type.
+  _simple_database_change_node_query($query);
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function simple_database_views_api() {
+  return array(
+    'api' => 3,
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function simple_database_permission() {
+  return array(
+    'administer simple database' => array(
+      'title' => t('Administer simple database'),
+    ),
+    'access simple database' => array(
+      'title' => t('Access simple database'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_views_default_views().
+ */
+function simple_database_views_default_views() {
+  $module = 'simple_database';
+  $directory = 'includes/views';
+  $extension = 'view.inc';
+
+  // From workbench_load_all_exports().
+  $return = array();
+  // Find all the files in the directory with the correct extension.
+  $files = file_scan_directory(drupal_get_path('module', $module) . "/$directory", "/.$extension/");
+  foreach ($files as $path => $file) {
+    $view = include $path;
+    if (isset($view)) {
+      $return[$view->name] = $view;
+    }
+  }
+
+  return $return;
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function simple_database_form_node_type_form_alter(&$form, $form_state) {
+  if (user_access('administer simple database')) {
+    if (isset($form['type'])) {
+      $form['simple_database'] = array(
+        '#title' => t('Simple Database'),
+        '#type' => 'fieldset',
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#group' => 'additional_settings',
+        '#weight' => 10,
+        '#attached' => array(
+          'js' => array(drupal_get_path('module', 'simple_database') . '/js/simple_database.js'),
+        ),
+      );
+      $form['simple_database']['simple_database_node'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Enable Simple Database functionality'),
+        '#description' => t('Allows a type to be determined as simple database.'),
+        '#weight' => 0,
+        '#default_value' => simple_database()->isEnabled($form['type']['#default_value']),
+        '#attributes' => array(
+          'data-enabled-description' => t('Enabled'),
+          'data-disabled-description' => t('Disabled'),
+        ),
+      );
+
+      $form['actions']['submit']['#submit'][] = 'node_type_form_submit';
+      $form['actions']['submit']['#submit'][] = 'simple_database_node_type_form_submit';
+    }
+  }
+}
+
+/**
+ * Implements hook_node_type_delete().
+ */
+function simple_database_node_type_delete($info) {
+  simple_database()->disable($info->type);
+}
+
+/**
+ * Submit handoler for simple database settings.
+ */
+function simple_database_node_type_form_submit($form, &$form_state) {
+  $values = $form_state['values'];
+  simple_database()->changeBundleConfiguration($values['simple_database_node'], $values['type']);
+}
+
+/**
+ * Helper function: search for query conditions like 'node.nid IN (...)'.
+ */
+function _simple_database_check_conditions(array $query, $tables) {
+  $flag = FALSE;
+  foreach (element_children($query) as $id) {
+    $field = $query[$id]['field'];
+    if (is_object($field) && $field instanceof QueryConditionInterface) {
+      $flag = _simple_database_check_conditions($field->conditions(), $tables);
+    }
+    // Check if the field is 'nid' for {node}.
+    elseif ('IN' == $query[$id]['operator']) {
+      $parsed_field = explode('.', $field);
+      $table_alias = $parsed_field[0];
+      $table_column = $parsed_field[1];
+      if ('node' == $tables[$table_alias]['table'] && 'nid' == $table_column) {
+        $flag = TRUE;
+      }
+    }
+
+    if ($flag) {
+      break;
+    }
+  }
+
+  return $flag;
+}
+
+/**
+ * Filter by Simple Database type.
+ *
+ * Check if query has table {node} and if so join with {simple_database} table.
+ */
+function _simple_database_change_node_query($query) {
+  // Search for base table.
+  // The array value define the column by which the table get joined to node.
+  $base_tables = array(
+    'node' => 'nid',
+    'node_revision' => 'nid',
+  );
+
+  // Find out the base table into the query.
+  $query_tables = $query->getTables();
+  foreach ($query_tables as $table_info) {
+    if (!isset($table_info['join type'])) {
+      $base_table = $table_info;
+      break;
+    }
+  }
+
+  // Skip on missing or incorrect base tables.
+  if (!isset($base_table) || !isset($base_tables[$base_table['table']])) {
+    return;
+  }
+
+  // Join {node} table to the query
+  // without considering whether there is others like this one.
+  if ($base_table['table'] != 'node') {
+    // We need more complex alias to reduce alias collisions.
+    $node_join_alias = _simple_database_check_alias('nsdb', $query_tables);
+    $join_condition = "{$base_table['alias']}.{$base_tables[$base_table['table']]} = $node_join_alias.nid";
+    $query->addJoin('INNER', 'node', $node_join_alias, $join_condition);
+  }
+
+  // Join {simple_database} table to strip these nodes
+  // which are flagged as Simple Database type.
+  $join_alias = _simple_database_check_alias('sdb', $query_tables);
+  $join_table_alias = $base_table['table'] == 'node' ? $base_table['alias'] : $node_join_alias;
+  $join_condition = "$join_table_alias.type = $join_alias.bundle";
+  $query->addJoin('LEFT', 'simple_database', $join_alias, $join_condition);
+  $query->where("$join_alias.bundle IS NULL");
+}
+
+/**
+ * Helper function to prevent alias collisions.
+ */
+function _simple_database_check_alias($join_alias, $query_tables) {
+  if (array_key_exists($join_alias, $query_tables)) {
+    $counter = 0;
+    while (array_key_exists($join_alias . ++$counter, $query_tables)) {
+    }
+    $join_alias = $join_alias . $counter;
+  }
+
+  return $join_alias;
+}
+
+/**
+ * Simple singleton factory method for the simple_database service calss.
+ *
+ * @staticvar null $instance
+ * @return \SimpleDatabaseService
+ *   Returns a ready to use instance of the service class.
+ */
+function simple_database() {
+  static $instance = NULL;
+  if ($instance === NULL) {
+    $instance = new SimpleDatabaseService();
+  }
+  return $instance;
+}
+
+/**
+ * Hooks on features revert and listen for reverted variables.
+ *
+ * Whenever such event happens, pre-generate the whole simple_database table.
+ *
+ * @param string $op
+ *   Operation.
+ * @param array $items
+ *   Items.
+ */
+function simple_database_features_post_restore($op, $items) {
+  // Find revert of a variable component.
+  if ($op === 'revert') {
+    foreach ($items as $components) {
+      if (array_search('variable', $components) !== FALSE) {
+        simple_database()->refreshTableData();
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function simple_database_ctools_plugin_directory($owner, $plugin_type) {
+  if ('ctools' == $owner && !empty($plugin_type)) {
+    return 'plugins/' . $plugin_type;
+  }
+}
+
+/**
+ * Implements hook_ctools_plugin_post_alter().
+ */
+function simple_database_ctools_plugin_post_alter(&$plugin, &$info) {
+  if ("content_types" == $info['type']) {
+    // Override the category defined by the plugin.
+    if ("cmis_extra_folder_pane" == $plugin['name']) {
+      $plugin['content types']['cmis_extra_folder_pane']['category'] = t('Elements');
+    }
+  }
+}
+
+/**
+ * Implements hook_ctools_content_subtype_alter().
+ */
+function simple_database_ctools_content_subtype_alter(&$subtype, &$plugin) {
+  $categories = array(
+    'Miscellaneous' => array(
+      0 => array(
+        'property' => 'title',
+        'names' => array('CMIS Custom Documents', 'CMIS repository switcher', 'CMIS Search form'),
+        'new_category' => t('Elements'),
+      ),
+      1 => array(
+        'property' => 'title',
+        'names' => array('Exchange Calendar', 'EWS Timeline', 'EWS Day Events'),
+        'new_category' => t('Elements'),
+      ),
+    ),
+    'Fielded panes' => array(
+      0 => array(
+        'property' => 'bundle',
+        'names' => array('banner_element_pane', 'banner_element_img_pane', 'alfresco_files', 'tabbed_content', 'link_list_pane', 'banner_link', 'faq_pane', 'agreements_pane'),
+        'new_category' => t('Elements'),
+      ),
+    ),
+  );
+  foreach ($categories as $category_name => $data_array) {
+    if ($subtype['category'] == $category_name) {
+      foreach ($data_array as $data) {
+        // Override the category.
+        $panes = $data['names'];
+        if (in_array($subtype[$data['property']], $panes)) {
+          $subtype['category'] = $data['new_category'];
+          return;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function simple_database_form_fieldable_panels_panes_entity_edit_form_alter(&$form, &$form_state) {
+  $form['reusable']['category']['#default_value'] = t('Recycled Items');
+}
+
+/**
+ * Implements hook_views_default_views_alter().
+ */
+function simple_database_views_default_views_alter(&$views) {
+  $view_panes = array(
+    'latest_events' => array(
+      'display' => 'panel_pane_2',
+    ),
+    'latest_news' => array(
+      'display' => 'panel_pane_1',
+    ),
+    'most_visited_topic_pages' => array(
+      'display' => 'panel_pane_1',
+    ),
+  );
+
+  foreach ($view_panes as $view_name => $data) {
+    if (isset($views[$view_name])) {
+      $data = array_merge(array('category' => array('name' => t('Elements'), 'weight' => '0')), $data);
+      // Override the category defined by the views pane.
+      $views[$view_name]->display[$data['display']]->display_options['pane_category'] = $data['category'];
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function simple_database_theme() {
+  $themes['my_page_info_signature_links'] = array(
+    'path' => drupal_get_path('module', 'simple_database') . '/templates',
+    'template' => 'my-page-info-signature-links',
+  );
+  return $themes;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function simple_database_preprocess_my_page_info_signature_links(&$variables) {
+  $user = user_load($GLOBALS['user']->uid);
+  if (!empty($user->field_phonebook)) {
+    $path = '/node/' . $user->field_phonebook[LANGUAGE_NONE][0]['target_id'] . '/edit';
+    $variables['edit_info_link'] = l(t('Edit info'), $path);
+  }
+  $variables['edit_signature_link'] = l(t('Edit signature'), 'http://DynamicDirectory.com', array('attributes' => array('target' => '_new')));
+}
+
+/**
+ * Implements hook_node_view_alter().
+ */
+function simple_database_node_view_alter(&$build) {
+  if ("phonebook" == $build['#bundle'] && "my_page" == $build['#view_mode']) {
+    $build['info_signature_links'] = array(
+      '#weight' => 11,
+      0 => array(
+        '#markup' => theme('my_page_info_signature_links'),
+      ),
+    );
+  }
+}

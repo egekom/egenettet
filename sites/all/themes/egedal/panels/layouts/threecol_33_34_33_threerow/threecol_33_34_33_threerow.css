@@ -1,0 +1,39 @@
+
+.panel-3col-33-threerow {
+/*  overflow: hidden;  */
+}
+
+.panel-3col-33-threerow .panel-col-first {
+  float: left;
+  width: 33%;
+}
+
+.panel-3col-33-threerow.rows-3 .row {
+  clear: both;
+}
+
+.panel-3col-33-threerow .panel-col-first .inside {
+  margin: 0 .5em 1em 0;
+}
+
+.panel-3col-33-threerow .panel-col {
+  float: left;
+  width: 33%;
+}
+
+.panel-3col-33-threerow .panel-col .inside {
+  margin: 0 .5em 1em .5em;
+}
+
+.panel-3col-33-threerow .panel-col-last {
+  float: left;
+  width: 33%;
+}
+
+.panel-3col-33-threerow .panel-col-last .inside {
+  margin: 0 0 1em .5em;
+}
+
+.panel-3col-33-threerow .panel-separator {
+  margin: 0 0 1em 0;
+}

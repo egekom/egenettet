@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Additional features to Homebox module.
+ */
+
+
+/**
+ * Implements hook_homebox().
+ */
+function homebox_extra_homebox() {
+  include 'includes/pages/homebox_extra.pages.inc';
+
+  return $homeboxes;
+}

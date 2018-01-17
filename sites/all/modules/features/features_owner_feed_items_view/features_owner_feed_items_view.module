@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Owner Feed Items view feature.
+ */
+
+include_once 'features_owner_feed_items_view.features.inc';

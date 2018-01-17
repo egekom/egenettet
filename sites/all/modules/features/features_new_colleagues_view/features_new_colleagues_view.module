@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the New Colleagues View feature.
+ */
+
+include_once 'features_new_colleagues_view.features.inc';

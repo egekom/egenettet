@@ -1,0 +1,6 @@
+name = User Role Changer
+description = Allows users to change their role to preview the site as a different user.
+core = 7.x
+files[] = user_role_changer.admin.inc
+scripts[] = user_role_changer.js
+stylesheets[all][] = user_role_changer.css

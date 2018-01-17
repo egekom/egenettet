@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content type Personal Note feature.
+ */
+
+include_once 'features_content_type_personal_note.features.inc';

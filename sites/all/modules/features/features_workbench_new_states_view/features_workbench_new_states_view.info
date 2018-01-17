@@ -1,0 +1,11 @@
+name = Workbench New States view
+core = 7.x
+package = Views
+version = 7.x-1.1
+dependencies[] = ctools
+dependencies[] = strongarm
+dependencies[] = views
+dependencies[] = workbench_moderation
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = workbench_moderation_content_new_states

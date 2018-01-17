@@ -1,0 +1,7 @@
+name = Roskilde Search
+description = Search pages alterations
+core = 7.x
+
+dependencies[] = apachesolr
+dependencies[] = field_group
+dependancies[] = cmis_extra

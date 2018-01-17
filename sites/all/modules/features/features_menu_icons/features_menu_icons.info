@@ -1,0 +1,11 @@
+name = Features Menu Icons
+core = 7.x
+package = Features
+dependencies[] = image
+dependencies[] = menu_icons
+features[features_api][] = api:2
+features[image][] = menu_icon_custom
+features[menu_custom][] = management
+features[menu_links][] = management_menu-icon-settings:admin/config/user-interface/menu_icons
+features_exclude[dependencies][features] = features
+features_exclude[dependencies][menu] = menu

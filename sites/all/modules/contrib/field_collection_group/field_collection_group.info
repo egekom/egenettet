@@ -1,0 +1,17 @@
+name = Field collection group
+description = Groups individual collections items of a multi-value field collection
+core = 7.x
+dependencies[] = field_group
+dependencies[] = field_collection
+
+files[] = "include/FCG.inc"
+files[] = "include/CollectionFormatter.inc"
+files[] = "include/CollectionFormatterHorizontal.inc"
+files[] = "include/CollectionFormatterVertical.inc"
+files[] = "include/CollectionFormatterAccordion.inc"
+files[] = "include/CollectionFormatterFieldset.inc"
+files[] = "include/CollectionGroup.inc"
+files[] = "include/CollectionGroupHorizontal.inc"
+files[] = "include/CollectionGroupVertical.inc"
+files[] = "include/CollectionGroupAccordion.inc"
+files[] = "include/CollectionGroupFieldset.inc"

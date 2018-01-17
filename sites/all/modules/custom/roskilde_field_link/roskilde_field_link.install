@@ -1,0 +1,63 @@
+<?php
+/**
+ * @file
+ * Install, update, and uninstall functions for the roskilde_field_link module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function roskilde_field_link_schema() {
+  $schema['roskilde_link_field_references'] = array(
+
+    'description' => 'The base table for the Roskilde Field Link module.',
+    'fields' => array(
+      'entity_id' => array(
+        'description' => 'The entity id.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'revision_id' => array(
+        'description' => 'The revision id.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'delta' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'bundle_field' => array(
+        'description' => 'The link field.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'attach_to_fields' => array(
+        'description' => 'The fields where link to be attached.',
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'normal',
+      ),
+    ),
+    'indexes' => array(
+      'entity_id_revision_id_bundle_field' => array(
+        'entity_id',
+        'revision_id',
+        'bundle_field',
+      ),
+    ),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function roskilde_field_link_uninstall() {
+  db_delete('roskilde_link_field_references');
+}

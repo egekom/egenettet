@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Module file for roskilde_panels_ipe_extra module.
+ */
+
+/**
+ * Implements hook_ctools_plugin_pre_alter().
+ */
+function roskilde_panels_ipe_extra_ctools_plugin_pre_alter(&$plugin, &$info) {
+  if ("panels_ipe" == $plugin['module'] && "panels_renderer_ipe" == $plugin['renderer']) {
+    $plugin['file'] = $plugin['renderer'] . '.class.php';
+    $plugin['renderer'] = 'roskilde_panels_renderer_ipe_extra';
+  }
+}
+
+/**
+ * Add a class for our bundle to the normal panels pane theme.
+ */
+function roskilde_panels_ipe_extra_preprocess_panels_pane(&$vars) {
+    if ('fieldable_panels_pane' == $vars['pane']->type) {
+
+        if (empty($vars['content']['#bundle'])) {
+            return;
+        }
+        if (('custom_block_with_links_and_color' == $vars['content']['#bundle'])||
+            ('banner_link_element' == $vars['content']['#bundle'])) {
+            if(isset($vars['content']['field_color'][0]['#markup'])) {
+                drupal_add_css(
+                    'div#panels-ipe-paneid-' . $vars['pane']->pid . ' .pane-fpid-'.$vars['content']['#element']->fpid.'  { background-color: ' . $vars['content']['field_color'][0]['#markup'] . ' !important; }', array('type' => 'inline')
+                );
+                $vars['content']['field_color'][0]['#markup'] = ' ';
+            }
+        }
+    }
+}

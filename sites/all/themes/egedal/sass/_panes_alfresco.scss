@@ -1,0 +1,431 @@
+/* Alfresco Document pane ---------------------------------------------------------------- */
+
+.pane-node-field-alfresco-document,
+.pane-bundle-alfresco-files,
+[class *= "pane-cmis-"] {
+  background-color: $blue-bg-hover;
+
+  ul {
+    margin-left: 0;
+    list-style: none;
+  }
+
+  button,
+  .button,
+  input[type=button],
+  input[type=submit],
+  input[type=reset] {
+    margin-bottom: 0;
+  }
+}
+
+.pane-node-field-alfresco-document,
+.pane-bundle-alfresco-files,
+.pane-cmis-extra-search-results-pane {
+
+  .cmisposts {
+    margin: 0;
+
+    strong {
+      font-family: $regular;
+    }
+
+    li {
+      margin-bottom: $space / 4;
+      list-style: none;
+
+      a.cmislink:before {
+        display: none;
+      }
+
+      .block-post > .cmislink {
+        float: left;
+        clear: left;
+        overflow: hidden;
+        display: block;
+        max-width: $space;
+        max-height: $space;
+        margin-top: $space / 4;
+
+        img {
+          display: block;
+        }
+      }
+
+      .cmisdetails {
+        padding-left: $space * 2;
+      }
+    }
+  }
+
+  .cmisdetails {
+    float: none;
+  }
+
+  .cmisposts .block-post {
+    margin: 0;
+  }
+}
+
+/* Popular documents (alfresco) ---------------------------------------------------------------------------------------------------- */
+.pane-cmis-extra-folder-pane {
+  .pane-title {
+    margin-bottom: $space;
+  }
+
+  table {
+    margin: 0;
+    min-width: 1px;
+  }
+
+  th,
+  thead {
+    display: none;
+  }
+
+  tr:last-child {
+    td {
+      padding-bottom: 0;
+    }
+  }
+
+  tr.even td,
+  tr.odd td,
+  tr.even,
+  tr.odd {
+    background-color: transparent;
+    border: 0;
+  }
+
+  td {
+    width: 100%;
+    padding: 0;
+    padding-bottom: $space;
+  }
+
+  a {
+    float: left;
+    width: 88%;
+    line-height: 1.3;
+  }
+
+  img {
+    width: 9%;
+    max-width: 25px;
+    float: left;
+    margin-right: 3%;
+  }
+}
+
+/* CMIS Browser ---------------------------------------------------------------------------------------------------- */
+.pane-cmis-browser2-treeview {
+  .aciTree.aciTreeBig.aciTreeArrow .aciTreeIcon,
+  .aciTree.aciTreeBig.aciTreeArrow .aciTreeButton,
+  .aciTree.aciTreeBig.aciTreeArrow .aciTreePush {
+    background-image: url(../images/cmis_browser/tree-arrow-big.png?aft);
+  }
+
+  .aciTreeLine {
+    border-bottom: 1px solid $blue-bg-hover;
+    background-color: $blue-bg-hover-lighter;
+
+    &:hover,
+    &:focus {
+      background-color: $cmis-tree-view-blue;
+    }
+  }
+
+  .select-wrapper .chosen-single,
+  .select-wrapper .chosen-container-multi ul {
+    background: $blue-bg-hover-lighter;
+  }
+
+  .aciTree {
+    width: 100%;
+    height: inherit;
+    max-height: 250px;
+  }
+
+  .mCSB_container_wrapper.mCS_no_scrollbar_x.mCS_x_hidden > .mCSB_container {
+    min-width: 100% ;
+  }
+
+  .mCSB_container_wrapper {
+    position: relative;
+  }
+
+  div.aciTree,
+  div.aciTree .aciTreeSelected > .aciTreeLine,
+  .aciTree.aciTreeFocus .aciTreeFocus > .aciTreeLine {
+    div.aciTreeEntry {
+      .aciTreeItem {
+        display: block;
+        margin: 0 0 0 35px;
+        padding: $space/1.6 0;
+        border-color: transparent;
+        background-color: transparent;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+  }
+
+  .aciTreeEntry {
+    position: relative;
+    overflow: visible;
+
+    .aciTreeButton {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: block;
+      width: inherit;
+      height: inherit;
+      padding: $space/1.6 $space/3.2 $space/1.6 $space/1.6;
+      cursor: pointer;
+    }
+  }
+
+  .aciTree .aciTreeLi {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Hide the whole btn when we have a file */
+  .aciTree .aciTreeLeaf > .aciTreeLine .aciTreeButton {
+    display: none;
+  }
+
+
+  @include breakpoint(large-only) {
+    .aciTreeBranch.aciTreeLevel0,
+    .aciTreeBranch.aciTreeLevel1 {
+      padding-left: $space * 2;
+    }
+  }
+
+  .aciTree.aciTreeBig {
+    .aciTreeIcon {
+      float: left;
+    }
+
+    /* MIME types' icons */
+    .file.jpg,
+    .file.jpeg,
+    .file.png,
+    .file.gif {
+      background-position: -276px -5px;
+    }
+
+    .file.doc,
+    .file.docx {
+      background-position: -215px -5px;
+    }
+
+    .file.pdf {
+      background-position: -329px -5px;
+    }
+
+    .file.xls,
+    .file.xlam,
+    .file.xlsb,
+    .file.xltm,
+    .file.xlsm {
+      background-position: -354px -5px;
+    }
+
+    .file.xml,
+    .file.atom {
+      background-position: -492px -5px;
+    }
+
+    .file.zip,
+    .file.tar,
+    .file.rar {
+      background-position: -246px -5px;
+    }
+
+    .file.ppt,
+    .file.pptx,
+    .file.ppam,
+    .file.sldm,
+    .file.pptm {
+      background-position: -302px -5px;
+    }
+
+    .aciTreeText {
+      display: block;
+      margin-left: $space / 1.6;
+      padding-left: $space * 1.25;
+      font-size: $text-s;
+
+      a {
+        display: block;
+      }
+    }
+
+  }
+
+  .cmis-browser-form {
+    padding-bottom: $space * 2.1875;
+
+    .form-item-mimetype {
+      margin-top: 0;
+    }
+  }
+
+}
+
+/*  Cmis Extra File View Pane */
+.pane-cmis-extra-file-view-pane iframe {
+  width: 100%;
+}
+
+/* Global styles for the custom scrollbar ------------------------------------------------------------------------------------------- */
+.mCSB_inside > .mCSB_container {
+  margin-right: $space;
+}
+
+.mCSB_container_wrapper {
+  margin-right: $space * 0.75;
+  margin-bottom: $space * 0.75;
+}
+
+.mCSB_container_wrapper > .mCSB_container {
+  padding-right: 0;
+  padding-bottom: $space * 0.75;
+}
+
+.mCSB_vertical_horizontal > .mCSB_scrollTools.mCSB_scrollTools_horizontal {
+  right: $space * 0.75;
+  height: $space * 0.75;
+}
+
+.mCSB_scrollTools {
+  width: $space * 0.75;
+  background-color: $content-bg;
+
+  .mCSB_draggerRail {
+    display: none;
+  }
+
+  .mCSB_dragger,
+  .mCSB_dragger:hover,
+  .mCSB_dragger:active,
+  .mCSB_dragger.mCSB_dragger_onDrag {
+    .mCSB_dragger_bar {
+      border-radius: 0;
+      background-color: $blue-link;
+    }
+  }
+
+  &.mCSB_scrollTools_vertical .mCSB_dragger  {
+    .mCSB_dragger_bar {
+      width: $space * 0.75;
+    }
+  }
+
+  &.mCSB_scrollTools_horizontal .mCSB_dragger {
+    .mCSB_dragger_bar {
+      height: $space * 0.75;
+      margin: 0;
+    }
+  }
+
+}
+
+
+/* Cmis Search OrderBy & Smis Switcher ---------------------------------------------------------------------------------------------- */
+.pane-cmis-extra-search-orderby,
+.pane-cmis-cmis-switcher {
+  .chosen-single {
+    background-color: $blue-bg-hover-lighter;
+  }
+}
+
+.pane-cmis-extra-search-facets-pane {
+  a {
+    padding-left: $space / 2;
+  }
+}
+
+/* CMIS Webform  *****************************************************************************************************************************/
+.cmis-browser-form {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+
+  label {
+    height: 1em;
+    width: 100%;
+    display: block;
+
+    span {
+      line-height: 1;
+      height: 1em;
+    }
+  }
+  .form-item {
+    margin: 0;
+  }
+
+  .form-type-textfield {
+    float: right;
+    max-width: 20em;
+    width: 58.3%;
+
+    input {
+      margin: 0;
+    }
+  }
+
+  .form-type-select {
+    float: left;
+    max-width: 9.33em;
+    width: 35%;
+  }
+
+  .form-actions {
+    position: absolute;
+    right: 0;
+    max-width: 45px;
+
+    &::before {
+      @extend %font-icon;
+      content: '\e800';
+      position: absolute;
+      top: 50%;
+      left: $space * 0.625;
+      margin-top: - $space * 0.375;
+      color: $body-font-color;
+    }
+  }
+
+   .form-submit {
+    float: right;
+    width: 100%;
+    height: 3.3em;
+    text-indent: -9999px;
+    margin-top: 0;
+    margin-bottom: 0;
+    background-color: transparent;
+    border: none;
+    z-index: 1;
+
+    &:hover,
+    &:focus {
+      outline: 0;
+      color: #858c97;
+      background-color: transparent;
+    }
+  }
+
+  .container-inline.form-wrapper {
+    display: inline-block;
+    width: 100%;
+  }
+}

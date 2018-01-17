@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Editoral News Search page feature.
+ */
+
+include_once 'features_editoral_news_search_page.features.inc';

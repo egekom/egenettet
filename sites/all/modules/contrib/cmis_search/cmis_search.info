@@ -1,0 +1,7 @@
+name = CMIS Search
+description = Displays a block of data returned from a CMIS repository  
+package = CMIS
+dependencies[] = cmis
+dependencies[] = cmis_query
+core = "7.x"
+configure = admin/config/cmis/search

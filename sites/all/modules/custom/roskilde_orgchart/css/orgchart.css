@@ -1,0 +1,77 @@
+.roskildeOrgChart table {
+  width: 100%;
+  min-width: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.roskildeOrgChart table tbody tr {
+  border-bottom: 0px solid white;
+}
+
+.roskildeOrgChart div.rootbox {
+  display: inline-block;
+  border: 2px solid #4D6477;
+  border-radius: 7px;
+  background-color: #F7F7F7;
+  color: #fff;
+  width: 150px;
+}
+.roskildeOrgChart div.box {
+  display: inline-block;
+  border: 2px solid #789BB9;
+  border-radius: 7px;
+  background-color: #F7F7F7;
+  color: #fff;
+  width: 150px;
+}
+.roskildeOrgChart div.box .text {
+  background-color: #789BB9;
+  padding: 15px;
+  text-align: center;
+}
+.roskildeOrgChart div.rootbox .text {
+  background-color: #4D6477;
+  padding: 15px;
+  text-align: center;
+}
+.roskildeOrgChart .arrow {
+  background: url(../assets/orgchart_down.png) no-repeat center;
+  text-align: center;
+  text-indent: -9999px;
+}
+.roskildeOrgChart div.rootbox .arrow {
+  background: url(../assets/orgchart_up.png) no-repeat center;
+}
+.roskildeOrgChart td {
+  vertical-align: middle;
+  height: 30px;
+  width: auto;
+  padding: 0;
+  width: 42%;
+}
+.roskildeOrgChart td.leftCol {
+  text-align: right;
+}
+.roskildeOrgChart td.rightCol {
+  text-align: left;
+}
+.roskildeOrgChart td.lines {
+  width: 8%;
+}
+.roskildeOrgChart td.bleft {
+  border-left: 2px solid #4D6477;
+}
+.roskildeOrgChart td.bright {
+  border-right: 2px solid #4D6477;
+}
+.roskildeOrgChart td.btop {
+  border-top: 2px solid #4D6477;
+}
+.roskildeOrgChart td.bbottom {
+  border-bottom: 2px solid #4D6477;
+}
+.roskildeOrgChart td a {
+  display: block;
+  color: white;
+}

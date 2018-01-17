@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Related editorial news feature.
+ */
+
+include_once 'features_related_editorial_news_view.features.inc';

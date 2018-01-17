@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content type Editorial news feature.
+ */
+
+include_once 'features_content_type_editorial_news.features.inc';

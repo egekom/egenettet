@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Link List Pane feature.
+ */
+
+include_once 'features_link_list_pane.features.inc';

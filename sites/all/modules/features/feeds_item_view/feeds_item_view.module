@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Feeds Item view feature.
+ */
+
+include_once 'feeds_item_view.features.inc';

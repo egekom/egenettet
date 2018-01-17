@@ -1,0 +1,147 @@
+/**
+ * @file
+ * Print styling
+ *
+ * We provide some sane print styling for Drupal using Zen's layout method.
+ */
+
+/**
+ * By importing this CSS file as media "all", we allow this print file to be
+ * aggregated with other stylesheets, for improved front-end performance.
+ */
+@media print {
+
+  /* Underline all links. */
+  a:link,
+  a:visited {
+    text-decoration: underline !important;
+
+    /* Don't underline header. */
+    &.header__site-link {
+      text-decoration: none !important;
+    }
+  }
+
+  #content {
+    /* Add visible URL after links. */
+    a[href]:after {
+      content: " (" attr(href) ")";
+      font-weight: normal;
+      font-size: $base-font-size;
+    }
+
+    /* Only display useful links. */
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+      content: "";
+    }
+
+    /* Add visible title after abbreviations. */
+    abbr[title]:after {
+      content: " (" attr(title) ")";
+    }
+  }
+
+  /* Un-float the content. */
+  #content {
+    float: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Turn off any background colors or images. */
+  body,
+  #page,
+  #main,
+  #content {
+    color: #000;
+    //background-color: transparent !important;
+    //background-image: none !important;
+  }
+
+  /* Hide sidebars and nav elements. */
+  .footer-wrapper,
+  #mobile-menu-toggle,
+  #mobile-search-toggle,
+  #mobile-search-container,
+  #skip-link,
+  #toolbar,
+  #navigation,
+  .region-sidebar-first,
+  .region-sidebar-second,
+  #footer,
+  .breadcrumb,
+  .tabs,
+  .action-links,
+  .links,
+  .book-navigation,
+  .forum-topic-navigation,
+  .pager,
+  .feed-icons {
+    visibility: hidden;
+    display: none;
+  }
+
+  #block-user-login,
+  .panel-pane,
+  .block.block-system {
+    box-shadow: none;
+    padding: 0;
+    border: 0;
+    //background: transparent;
+    border-radius: 0;
+  }
+
+  .front,
+  .node-type-unit,
+  .node-type-front-page,
+  .node-type-topic-page,
+  .node-type-topic-frontpage {
+    .panel-col-middle {
+      .panel-pane {
+          box-shadow: none;
+          padding: 0;
+          border: 0;
+          //background: transparent;
+          border-radius: 0;
+      }
+    }
+  }
+
+  .node-type-phonebook {
+    .panel-col-first {
+      box-shadow: none;
+      padding: 0;
+      border: 0;
+      //background: transparent;
+      border-radius: 0;
+    }
+  }
+
+  #homebox {
+    .homebox-portlet {
+      box-shadow: none;
+      padding: 0;
+      border: 0;
+      //background: transparent;
+      border-radius: 0;
+    }
+  }
+
+  #block-ews-ews-timeline,
+  #block-ews-ews-day-events {
+    box-shadow: none;
+    padding: 0;
+    border: 0;
+    //background: transparent;
+    border-radius: 0;
+  }
+
+  #mobile-menu {
+    background-color: $blue !important;
+    -webkit-print-color-adjust: exact;
+  }
+
+}
+

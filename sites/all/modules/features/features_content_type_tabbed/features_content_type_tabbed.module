@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content type Tabbed feature.
+ */
+
+include_once 'features_content_type_tabbed.features.inc';

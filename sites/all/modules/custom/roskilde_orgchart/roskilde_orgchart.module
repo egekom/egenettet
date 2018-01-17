@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @file
+ * Roskilde Organizational Chart Pane
+ */
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function roskilde_orgchart_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && $plugin_type == 'content_types') {
+    return 'plugins/content_types';
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function roskilde_orgchart_menu() {
+  $items['roskilde_orgchart_taxonomy'] = array(
+    'page callback' => '_roskilde_orgchart_options',
+    'type' => MENU_CALLBACK,
+    // TODO: what is the proper access arguments key?
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+
+/**
+ * Ajax callback.
+ */
+function _roskilde_orgchart_options() {
+  $commands = array();
+  $vocabulary = $_REQUEST['taxonomy_vocabulary'];
+  $option_values = _roskilde_orgchart_options_build($vocabulary);
+  $options = '';
+  foreach ($option_values as $k => $v) {
+    $options .= '<option value="' . check_plain($k) . '">' . filter_xss_admin($v) . '</option>';
+  }
+  $commands[] = ajax_command_invoke('#edit-taxonomy-term', 'html', array($options));
+  print ajax_render($commands);
+}
+
+/**
+ * Build options array.
+ */
+function _roskilde_orgchart_options_build($vocabulary) {
+  $options = array();
+  $taxonomy_tree = taxonomy_get_tree($vocabulary);
+  foreach ($taxonomy_tree as $t) {
+    $options[$t->tid] = str_repeat('-', $t->depth) . ' ' . $t->name;
+  }
+  return $options;
+}

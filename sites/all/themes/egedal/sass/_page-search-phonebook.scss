@@ -1,0 +1,488 @@
+/**
+ * Page Phonebook Search
+ */
+
+.page-search-phonebook {
+  td.mail a::before,
+  .phonebook-item-phone-number::before {
+    padding-right: $space/2;
+  }
+  .serach-design-row.bottom {
+    @include breakpoint(small-only) {
+      background-color: $content-bg
+    }
+  }
+}
+
+.search-results {
+  margin: 0;
+  thead th {
+    background-color: $blue-bg-hover-lighter;
+    border-right: 1px solid #fff;
+    &:last-child {
+      border-right: 0;
+    }
+  }
+  th {
+    line-height: 1;
+    padding: $space*2.1875 0;
+    width: 15%;
+  }
+  td {
+    box-spacing: border-box;
+    line-height: 1;
+    padding: $space;
+    vertical-align: top;
+    width: 15%;
+  }
+  td:first-child,
+  th:first-child {
+    width: 25%;
+    //max-width: 283px;
+  }
+  td.position,
+  td.area {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 157px;
+  }
+  td.tel {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 94px;
+    width: 10%;
+  }
+  td:last-child,
+  th:last-child {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 220px;
+    width: 20%;
+  }
+}
+
+
+
+
+.search-info-block,
+.pane-apachesolr-info {
+  padding: 0;
+}
+
+.search-result {
+  img {
+    border-radius: 32px;
+    height:64px;
+    width: 64px;
+  }
+  span.image {
+    float: left;
+    margin-right: $space;
+  }
+}
+
+td.tel {
+  background-color: rgba(232, 241, 247, 0.5) !important;
+  //border-left: 1px solid #fff;
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.search-results th .header-email,
+.search-results th .header-phone,
+.views-field-field-email span,
+.views-field-field-phone-number span,
+td.mail a,
+.phonebook-item-phone-number,
+.phonebook-item-phone-mobile-number,
+.phonebook-item-phone-main-numberm,
+.favorite-colleague-phone,
+.favorite-colleague-mobile-phone {
+  line-height: 1;
+  &:before {
+    @extend %font-icon;
+    color: $blue-link;
+    font-size: $text-m;
+    padding-right: 14px;
+    @media (max-width: 1279px) {
+      font-size: $text-xs;
+    }
+  }
+}
+.flag-link-toggle:before {
+  @media (max-width: 1279px) {
+    font-size: $text-xs;
+  }
+}
+.phonebook-item-phone-number,
+.phonebook-item-phone-main-number,
+.favorite-colleague-phone {
+  &:before {
+    content: '\e81f';
+  }
+}
+.search-results th .header-phone,
+.views-field-field-phone-number span,
+.phonebook-item-phone-mobile-number,
+.favorite-colleague-mobile-phone {
+  &:before {
+    content: '\e81e';
+  }
+}
+.search-results th .header-email,
+.views-field-field-email span,
+td.mail a {
+  &:before {
+    content: '\e81d';
+  }
+}
+
+td.name a {
+  display: inline-block;
+}
+
+/* search form */
+
+.pane-apachesolr-form {
+  background-color: $blue-bg-hover;
+  box-sizing: border-box;
+  width: 100%;
+  form {
+    background-color: $white;
+    display: inline-block;
+    padding: 5px;
+    width: 100%;
+    border-radius: 30px;
+  }
+}
+
+.pane-apachesolr-form {
+  margin: 0;
+  //padding-bottom: $space*0.625;
+  padding: $space*1.875 0;
+  height: 147px;
+  padding-bottom: $space*3.125;
+  form {
+    position: relative;
+    box-sizing: border-box;
+  }
+  .form-item {
+    float: left;
+    width: 90%;
+  }
+  .form-actions {
+    background-color: $blue-link;
+    border-radius: 25px;
+    color: $white;
+    cursor: pointer;
+    float: right;
+    font-size: $title-s;
+    height: 49px;
+    max-width: 100%;
+    position: absolute;
+    right: 5px;
+    width: 49px;
+    input {
+      background: transparent;
+    }
+    &::before {
+      @extend %font-icon;
+      font-size: $title-m;
+      content: '\e800';
+      position: absolute;
+      top: 13px;
+      color: $white;
+      left: 13px;
+    }
+    &:hover {
+       background-color: $blue-button-hover;
+    }
+  }
+  .form-text {
+    @include border-radius(30px);
+    width: 100%;
+    height: auto;
+    border: 0;
+    margin-bottom: 0;
+    padding: 12px 20px;
+    font-size: $title-s;
+    color: $body-font-color;
+  }
+}
+.search-info-block,
+.pane-apachesolr-info {
+  background-color: $blue-bg-hover;
+  //padding-left: $space*3.4375;
+  padding-left: $space*2;
+  //padding-bottom: $space;
+  padding-bottom: 0;
+  margin-top: -40px;
+  float: left;
+  .placeholder {
+    color: $blue-link;
+  }
+}
+
+.search-results li:last-child {
+  margin-bottom: 0;
+}
+
+.serach-design-wrapper {
+  left: 0;
+  line-height: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: -1;
+}
+.serach-design-row.top {
+  background-color: $blue-bg-hover;
+  height: 147px;
+}
+.serach-design-row.bottom {
+  background-color: $blue-bg-hover-lighter;
+  height: 89px;
+}
+
+.pane-apachesolr-form,
+.search-info-block,
+.pane-apachesolr-info,
+.pane-apachesolr-result {
+  z-index: 1;
+}
+
+.search-info-block {
+  p {
+    margin: 0;
+  }
+  a {
+    color: $blue-link;
+  }
+}
+
+.page-search .contextual-links-region {
+  position: inherit; //Changed from initial because of an IE bug, it doesn't recognize this property (EK-102)
+}
+
+/* pager */
+
+.pager {
+  margin: 0;
+  padding: $space*4 0;
+  padding-bottom: $space*3.6875;
+  li {
+    background-color: $blue-link;
+    border-radius: 5px;
+    padding: 0;
+    display: inline-block;
+    margin-bottom: 5px;
+    &.pager-current {
+      background-color: $pink-link-hover;
+    }
+    &.pager-current:hover {
+      background-color: $pink-link-hover-dark;
+    }
+    &:hover{
+      background-color: $blue-button-hover;
+    }
+  }
+  .pager-ellipsis,
+  .pager-current,
+  a {
+    display: inline-block;
+    color: $white;
+    line-height: 1;
+    padding: 11px $space 13px;
+    &:hover{
+      color: $white;
+    }
+  }
+  .pager-ellipsis {
+    color: $blue-link;
+    &:hover {
+      color: $blue-link;
+      background-color: $blue-bg-hover;
+    }
+  }
+  .pager-ellipsis,
+  .pager-first,
+  .pager-previous,
+  .pager-last,
+  .pager-next {
+    background-color: $blue-bg-hover;
+    border-radius: 5px;
+    & a {
+      color: $blue-link;
+    }
+    & a:hover {
+      color: $white;
+    }
+  }
+}
+  .employee-name {
+    font-family: $bold;
+  }
+@include breakpoint(small-only) {
+  .search-result {
+    box-sizing: border-box;
+    padding: 30px 20px;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    img {
+      border-radius: 72px;
+      height: 143px;
+      width: 143px;
+    }
+  }
+  .search-results thead {
+    display: none;
+  }
+  .search-result td:last-child,
+  .search-result td:first-child,
+  .search-result td {
+    display: inline-block;
+    padding: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+  .search-result td:last-child {
+    padding-bottom: 0;
+  }
+  td.tel {
+    background-color: transparent !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  td.unit,
+  td.area {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  .employee-name {
+    font-size: $text-m*2.25;
+    font-family: $bold;
+    height: 2.25em;
+    overflow: hidden;
+    display: block;
+    line-height: 1.1;
+  }
+  td.position {
+    left: 181px;
+    max-width: 60% !important;
+    padding: 0;
+    position: absolute;
+    top: 112px;
+  }
+}
+
+/* table responsive */
+
+td.name {
+  position: relative;
+  .icon {
+    display: none;
+    position: absolute;
+    top: 10%;
+    right: 0;
+    &:before {
+      font-size: $title-m;
+    }
+  }
+}
+
+@include breakpoint(small-only) {
+  td.name {
+    padding-top: $space;
+  }
+  td.name .icon {
+    display: block;
+  }
+  td.position {
+   font-size: $text-m*1.5;
+  }
+  .search-result td:last-child,
+  td.mail,
+  td.tel,
+  td.area,
+  td.unit {
+    font-size: $text-m*1.625;
+    padding-top: $space*2.8;
+    display: none;
+  }
+
+  .phonebook-item-phone-number,
+  .phonebook-item-phone-main-number {
+    &:before {
+      font-size: $text-m*1.875;
+    }
+  }
+  .phonebook-item-phone-mobile-number {
+    &:before {
+      font-size: $text-m*2.1875;
+    }
+  }
+  td.mail a {
+    &:before {
+      font-size: $text-m*1.875;
+    }
+  }
+}
+
+@include breakpoint(smallest-only) {
+  .search-result {
+    img {
+      border-radius: 32px;
+      height: 64px;
+      width: 64px;
+    }
+  }
+  .employee-name {
+    font-size: $text-l;
+  }
+  td.position {
+   font-size: $text-m;
+   left: 101px;
+  }
+  .search-result td:last-child,
+  td.mail,
+  td.tel,
+  td.area,
+  td.unit {
+    font-size: $text-l;
+    padding-top: $space*1.8;
+  }
+
+  .phonebook-item-phone-number,
+  .phonebook-item-phone-main-number {
+    &:before {
+      font-size: $text-m;
+    }
+  }
+  .phonebook-item-phone-mobile-number {
+    &:before {
+      font-size: $text-m;
+    }
+  }
+  td.mail a {
+    &:before {
+      font-size: $text-m;
+    }
+  }
+
+  td.position {
+    top: 77px;
+  }
+}
+
+.panel-2col-stacked .panel-col-top,
+.panel-2col-stacked .panel-col-bottom {
+  width: 100%;
+}

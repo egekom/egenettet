@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Features Field Bases feature.
+ */
+
+include_once 'features_field_bases.features.inc';

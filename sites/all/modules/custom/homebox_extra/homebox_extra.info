@@ -1,0 +1,5 @@
+name = Homebox Extra
+description = Additional features to Homebox module
+core = 7.x
+
+dependencies[] = homebox

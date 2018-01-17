@@ -1,0 +1,618 @@
+"Card_ID";"Navn";"Arbejdssted_ID";"SD_ID";"Center_ID";"Leder";"EAN";"AfdelingsMail"
+
+"312";"10. klasse Center";"334";"TIKL";"CSD ";"";"";""
+
+"354";"Administration";"235";"CSOA";"CSO ";"";"";""
+
+"315";"Afd. Bækkegårdssskolen";"331";"SBAK";"CSD ";"";"";""
+
+"313";"Afd. Balsmoseskolen";"124";"SBAL";"CSD ";"";"";""
+
+"314";"Afd. Boesagerskolen";"108";"SBOE";"CSD ";"";"";""
+
+"318";"Afd. Ganløse Skole";"226";"SGAN";"CSD ";"";"";""
+
+"319";"Afd. Hampelandskolen";"332";"SHAM";"CSD ";"";"";""
+
+"321";"Afd. Lærkeskolen";"228";"SLAR";"CSD ";"";"";""
+
+"322";"Afd. Maglehøjskolen";"335";"SMAG";"CSD ";"";"";""
+
+"338";"Afd. Slagslunde Skole";"225";"SSLA";"CSD ";"";"";""
+
+"342";"Afd. Søagerskolen";"113";"SSOE";"CSD ";"";"";""
+
+"339";"Afd. Stengårdsskolen";"330";"SSTE";"CSD ";"";"";""
+
+"344";"Afd. Toftehøjskolen";"333";"STOF";"CSD ";"";"";""
+
+"346";"Afd. Veksø Skole";"227";"SVEK";"CSD ";"";"";""
+
+"350";"Afdeling Skelhøj";"237";"SKEL";"CSS ";"";"";""
+
+"352";"Afdeling Søvænge";"343";"SOEV";"CSS ";"";"";""
+
+"509";"Aften Nat Teams";"235";"UAN";"CSO ";"";"";""
+
+"510";"Aktivitetscenter";"103";"AKT";"CSO ";"";"";""
+
+"511";"Aktivitetscentret Porsebakken";"103";"AKTC";"CSO ";"";"";""
+
+"381";"Aktivteam";"400J";"AKTI";"JOB ";"";"";""
+
+"382";"Arbejdsmarkedsteam og modtagelse";"400J";"ARBM";"JOB ";"";"";""
+
+"433";"Bækkegårdsskolen, samlet";"331";"SBK";"CSD ";"";"";""
+
+"549";"Bakkehuset";"221";"BAKK";"CSS ";"";"";""
+
+"430";"Balsmoseskolen, samlet";"124";"SBA";"CSD ";"";"";""
+
+"285";"Biblioteker";"310";"BIB";"CBS ";"";"";""
+
+"512";"Blomme- og Syrenhaven";"235";"BLOM";"CSO ";"";"";""
+
+"431";"Boesagerskolen, samlet";"108";"SBO";"CSD ";"";"";""
+
+"286";"Borgerkontakt";"400R";"BOST";"CBS ";"";"";""
+
+"401";"Borgerkontakt Team I";"200";"BOS1";"CBS ";"";"";""
+
+"402";"Borgerkontakt Team II";"200";"BOS2";"CBS ";"";"";""
+
+"362";"Borgervejleder";"400R";"";"UVS ";"";"";""
+
+"367";"Borgmestersekretariatet";"400R";"BSEK";"BMS ";"";"";""
+
+"400";"Borgmestersekretariatet, leder";"300";"BORS";"BMS ";"";"";""
+
+"464";"Børnehuset Åkandehaven";"117";"BAAK";"CSD ";"";"";""
+
+"440";"Børnehuset Bækkegården";"329";"BBAE";"CSD ";"";"";""
+
+"434";"Børnehuset Basthøj";"207";"BBAS";"CSD ";"";"";""
+
+"435";"Børnehuset Bavnehøj";"213";"BBAV";"CSD ";"";"";""
+
+"437";"Børnehuset Blåmejsen";"203";"BBLA";"CSD ";"";"";""
+
+"436";"Børnehuset Blomsterhaven";"222";"BBLO";"CSD ";"";"";""
+
+"438";"Børnehuset Boelholm";"220";"BBOE";"CSD ";"";"";""
+
+"439";"Børnehuset Brøndsted";"219";"BBRO";"CSD ";"";"";""
+
+"441";"Børnehuset De 4 årstider";"210";"BAAR";"CSD ";"";"";""
+
+"442";"Børnehuset Degnebakken";"223";"BDEG";"CSD ";"";"";""
+
+"443";"Børnehuset Eventyrhuset";"320";"BEVE";"CSD ";"";"";""
+
+"444";"Børnehuset Hampeland";"322";"BHAM";"CSD ";"";"";""
+
+"445";"Børnehuset Havrevænget";"224";"BHAV";"CSD ";"";"";""
+
+"446";"Børnehuset Hvidehøj";"204";"BHVI";"CSD ";"";"";""
+
+"447";"Børnehuset Jordbærvangen";"109";"BJOR";"CSD ";"";"";""
+
+"448";"Børnehuset Junglen";"123";"BJUN";"CSD ";"";"";""
+
+"449";"Børnehuset Kildeholm";"318";"BKIL";"CSD ";"";"";""
+
+"454";"Børnehuset Mælkebøtten";"105";"BMAE";"CSD ";"";"";""
+
+"450";"Børnehuset Maglehøj";"301";"BMAG";"CSD ";"";"";""
+
+"451";"Børnehuset Margrethebakken";"303";"BMBA";"CSD ";"";"";""
+
+"452";"Børnehuset Mariehønen";"102";"BMAH";"CSD ";"";"";""
+
+"453";"Børnehuset Marienlyst";"327";"BMAR";"CSD ";"";"";""
+
+"455";"Børnehuset Møllehøj";"205";"BMOE";"CSD ";"";"";""
+
+"456";"Børnehuset Paletten";"345";"BPAL";"CSD ";"";"";""
+
+"457";"Børnehuset Regnbuehytten";"126";"BREG";"CSD ";"";"";""
+
+"458";"Børnehuset Solsikken";"130";"BSOL";"CSD ";"";"";""
+
+"459";"Børnehuset Stangkær";"110";"BSTA";"CSD ";"";"";""
+
+"460";"Børnehuset Stengården";"319";"BSTG";"CSD ";"";"";""
+
+"461";"Børnehuset Troldehøj";"302";"BTRO";"CSD ";"";"";""
+
+"462";"Børnehuset Tryllefløjten";"328";"BTRY";"CSD ";"";"";""
+
+"463";"Børnehuset Vandfaldet";"240";"BVAN";"CSD ";"";"";""
+
+"289";"Brandvæsen";"200A";"REDN";"CEI ";"";"";"brand@egekom.dk"
+
+"290";"Byg, Teknik og Energi";"400R";"KBYG";"CEI ";"";"";""
+
+"432";"Byggelegeplads Stengården";"307";"KSTG";"CSD ";"";"";""
+
+"307";"Byggesagsafdelingen";"400R";"BYGG";"CPK ";"";"";""
+
+"550";"Cafe Zigzag";"206";"ZIGZ";"CSS ";"";"";""
+
+"705";"CAS Sekretariat";"400R";"";"CAS ";"";"";"borgmestersekretariat@egekom.dk"
+
+"284";"CBS Sekretariat";"400R";"CBSS";"CBS ";"";"";""
+
+"416";"CEI Sekretariat";"200";"CEIS";"CEI ";"";"";""
+
+"403";"Center for Borgerservice";"200";"CBS";"CBS ";"";"";""
+
+"409";"Center for Ejendomme og Intern Service";"200";"CEI";"CEI ";"";"";""
+
+"418";"Center for Plan, Kultur og Erhverv";"300";"CPK";"CPK ";"";"";""
+
+"465";"Center for Skole og Dagtilbud";"100";"CSD";"CSD ";"";"";""
+
+"551";"Center for Social Service";"100";"CSS";"CSS ";"";"";""
+
+"513";"Center for Sundhed og Omsorg";"100";"CSO";"CSO ";"";"";""
+
+"588";"Center for Teknik og Miljø";"400R";"CTM";"CTM ";"";"";""
+
+"610";"Centerchef CAS";"400R";"";"CAS";"";"";""
+
+"611";"Centerchef CBS";"400R";"";"CBS";"";"";""
+
+"612";"Centerchef CEI";"400R";"";"CEI";"";"";""
+
+"613";"Centerchef CPK";"400R";"";"CPK";"";"";""
+
+"614";"Centerchef CSD";"400R";"";"CSD";"";"";""
+
+"616";"Centerchef CSO";"400R";"";"CSO";"";"";""
+
+"615";"Centerchef CSS";"400R";"";"CSS";"";"";""
+
+"617";"Centerchef CTM";"400R";"";"CTM";"";"";""
+
+"618";"Centerchef JOB";"400J";"";"JOB";"";"";""
+
+"600";"Centerchefer m. fl";"400R";"TCHE";"TDI ";"";"";""
+
+"422";"CPK Sekretariat";"300";"CPKS";"CPK ";"";"";""
+
+"426";"CPOS - Administrationselever";"300";"ADME";"CPOS ";"";"";""
+
+"427";"CPOS - Center for Personale og Økonomiservice";"300";"CPO";"CPOS ";"";"";""
+
+"294";"CPOS - Forhandlingsteam";"300";"FORH";"CPOS ";"";"";""
+
+"295";"CPOS - HR og Arbejdsmiljø Team";"300";"HRMI";"CPOS ";"";"";""
+
+"296";"CPOS - Indkøbsteam";"300";"INDK";"CPOS ";"";"";""
+
+"302";"CPOS - KOS Team";"300";"KOSX";"CPOS ";"";"";""
+
+"428";"CPOS - Løn- og Personale Teams";"300";"LOEN";"CPOS ";"";"";""
+
+"299";"CPOS - LønTeam 1";"300";"";"CPOS ";"";"";""
+
+"300";"CPOS - LønTeam 2";"300";"";"CPOS ";"";"";""
+
+"429";"CPOS - Økonomi og Support Teams";"300";"OKSU";"CPOS ";"";"";""
+
+"298";"CPOS - Økonomiservice, ledelse";"300";"OKON";"CPOS ";"";"";""
+
+"297";"CPOS - Personaleservice, ledelse";"300";"PERS";"CPOS ";"";"";""
+
+"301";"CPOS - Projektkontor";"300";"";"CPOS ";"";"";""
+
+"303";"CPOS - Team SIKF";"300";"";"CPOS ";"";"";""
+
+"304";"CPOS - Team Social";"300";"";"CPOS ";"";"";""
+
+"305";"CPOS - Team Support";"300";"";"CPOS ";"";"";""
+
+"337";"CSD Sekretariat";"100";"CSDS";"CSD ";"";"";""
+
+"347";"CSS Sekretariat";"100";"CSSS";"CSS ";"";"";""
+
+"591";"CTM Sekretariat";"400R";"CTMS";"CTM ";"";"";""
+
+"466";"Daginst.område Ganløse/Slangerup";"207";"BOGS";"CSD ";"";"";""
+
+"469";"Daginst.område Ølstykke 1";"329";"BOO1";"CSD ";"";"";""
+
+"470";"Daginst.område Ølstykke 2";"300";"BOO2";"CSD ";"";"";""
+
+"467";"Daginst.område Smørum";"100";"BOSM";"CSD ";"";"";""
+
+"468";"Daginst.område Stenløse";"224";"BSTE";"CSD ";"";"";""
+
+"320";"Daginstitutioner & Klubber";"100";"";"CSD ";"";"";""
+
+"316";"Dagplejen";"116";"DAGP";"CSD ";"";"";""
+
+"474";"Dagplejen, Ølstykke";"116";"DAOL";"CSD ";"";"";""
+
+"471";"Dagplejen, Sekretariat";"116";"DASE";"CSD ";"";"";""
+
+"472";"Dagplejen, Smørum";"116";"DASM";"CSD ";"";"";""
+
+"473";"Dagplejen, Stenløse";"116";"DAST";"CSD ";"";"";""
+
+"317";"Dagtilbud";"100";"DAG";"CSD ";"";"";""
+
+"475";"Dagtilbud (leder)";"100";"DAGL";"CSD ";"";"";""
+
+"552";"Dambo";"233D";"DAMB";"CSS ";"";"";""
+
+"514";"Damgårdsparken";"235";"DAM";"CSO ";"";"";""
+
+"621";"Den Tværfaglige Myndighed";"400V";"";"CBS";"";"";"visitator@egekom.dk"
+
+"553";"Det Sociale Team";"100";"SOCT";"CSS ";"";"";""
+
+"287";"Digitalisering";"200";"";"CBS ";"";"";""
+
+"620";"Digitalisering & Effektivisering";"400R";"DIEF";"CAS";"";"";"digitalisering@egekom.dk"
+
+"363";"Digitaliserings-og effektiviseringsteam";"400R";"DIGI";"UVS ";"";"";""
+
+"597";"Direktør, social";"400R";"SDI";"SDI ";"";"";""
+
+"599";"Direktør, teknik";"400R";"TDI";"TDI ";"";"";""
+
+"596";"Direktører og centerchefer";"400R";"DICH";"DCC ";"";"";""
+
+"291";"Drift og Service";"400R";"SERV";"CEI ";"";"";""
+
+"554";"Egehuset";"238";"HUSE";"CSS ";"";"";""
+
+"592";"EGU elever";"400J";"EGUE";"JOB ";"";"";""
+
+"308";"Ejendom og GIS";"400R";"";"CPK ";"";"";""
+
+"515";"Engbo";"346";"ENGB";"CSO ";"";"";""
+
+"516";"Engbo, Solkrogen og Demensdagcentre";"235";"ESD";"CSO ";"";"";""
+
+"306";"Erhverv";"400R";"";"CPK";"";"";"erhverv@egekom.dk"
+
+"517";"Flyvere";"104H";"UFLY";"CSO ";"";"";""
+
+"355";"Forebyggelse og Sundhed";"321";"FOR";"CSO ";"";"";""
+
+"518";"Forebyggelse, Sundhed";"321";"FOS";"CSO ";"";"";""
+
+"476";"Fritidscentret Sødalen";"101";"KSOE";"CSD ";"";"";""
+
+"477";"Fritidsklubben Hampen";"315";"KHAM";"CSD ";"";"";""
+
+"479";"Fritidsklubben Ørnebjerg";"306";"KOER";"CSD ";"";"";""
+
+"478";"Fritidsklubben Springbrættet";"106";"KSPR";"CSD ";"";"";""
+
+"480";"Ganløse Fritids- og Ungdomsklub";"232";"KGAN";"CSD ";"";"";""
+
+"419";"Ganløse Idrætsanlæg";"202";"IGAN";"CPK ";"";"";""
+
+"519";"Ganløsegruppen";"241";"UGAN";"CSO ";"";"";""
+
+"593";"Genbrugsprojektet";"400J";"JPRO";"JOB ";"";"";""
+
+"520";"Genoptræning";"234";"GENO";"CSO ";"";"";""
+
+"521";"Genoptræning og Sundhed";"234";"GES";"CSO ";"";"";""
+
+"522";"Gl. Ølstykkegruppen";"312H";"UGOL";"CSO ";"";"";""
+
+"481";"Hampelandskolen, samlet";"332";"SHA";"CSD ";"";"";""
+
+"555";"Handicapteam";"100";"HANDI";"CSS ";"";"";""
+
+"701";"HR & Kommunikation";"400R";"";"CAS ";"";"";"CAS.HRKommunikation@egekom.dk"
+
+"380";"Idrætsanlæg";"111";"IDRA";"CPK ";"";"";""
+
+"523";"Indegrupper";"235";"IND";"CSO ";"";"";""
+
+"524";"Indegrupper, afløsere";"235";"IAFL";"CSO ";"";"";""
+
+"292";"IT-drift/service";"100";"DRIT";"CEI ";"";"";""
+
+"384";"Jobbroen";"312";"JOBB";"JOB ";"";"";""
+
+"594";"Jobcenter Sekretariat";"400J";"JOBS";"JOB ";"";"";""
+
+"525";"Kløverhaven";"233A";"KLØ";"CSO ";"";"";""
+
+"595";"Kommunaldirektør";"400R";"KOD";"KOD ";"";"";""
+
+"410";"Kommunale bygninger";"200";"KOB";"CEI ";"";"";""
+
+"526";"Konsulenter og ledere";"235";"CSOS";"CSO ";"";"";""
+
+"702";"Koordinering & Ledelsesinfo";"400R";"";"CAS ";"";"";"CAS_KLI@egekom.dk"
+
+"527";"Kostfremstilling";"235";"KOS";"CSO ";"";"";""
+
+"309";"Kultur Administration";"400R";"";"CPK ";"";"";""
+
+"310";"Kultur og Fritid";"400R";"KULT";"CPK ";"";"";""
+
+"420";"Ledøje-Smørum Idrætsanlæg";"111";"ILED";"CPK ";"";"";""
+
+"482";"Ledøje-Smørum Tandklinik";"108T";"LSTA";"CSD ";"";"";""
+
+"556";"Lillestræde";"241";"LILL";"CSS ";"";"";""
+
+"411";"LKV";"200";"LKVX";"CEI ";"";"";""
+
+"357";"Madservice";"235";"MADS";"CSO ";"";"";""
+
+"483";"Maglehøjskolen, samlet";"335";"SMA";"CSD ";"";"";""
+
+"359";"Materielgård";"215";"MATE";"CTM ";"";"";""
+
+"589";"Materielgård, grøn gruppe";"215";"MATG";"CTM ";"";"";""
+
+"590";"Materielgård, sort gruppe";"215";"MATS";"CTM ";"";"";""
+
+"365";"Medlem af Direktionen";"400R";"";"DIR ";"";"";""
+
+"557";"Misbrugsbehandling";"239";"MISB";"CSS ";"";"";""
+
+"379";"Museer og arkiv";"310A";"MUSE";"CPK ";"";"";""
+
+"421";"Musikskolen";"300";"MUSK";"CPK ";"";"";""
+
+"349";"Myndighed og Bestiller";"100";"MYB";"CSS ";"";"";""
+
+"558";"Myndighed og Tilsyn";"100";"MYTI";"CSS ";"";"";""
+
+"703";"Økonomistyring & Finans";"400R";"";"CAS ";"";"";"okonomi@egekom.dk"
+
+"408";"Ølstykke Bibliotek";"310";"BIBO";"CBS ";"";"";""
+
+"424";"Ølstykke Hallen";"324";"IOLH";"CPK ";"";"";""
+
+"547";"Ølstykke Stationsgruppen";"349";"UOLS";"CSO ";"";"";""
+
+"425";"Ølstykke Svømmehal";"323";"IOLS";"CPK ";"";"";""
+
+"508";"Ølstykke Tandklinik";"331T";"OLTA";"CSD ";"";"";""
+
+"548";"Ølstykkegrupperne";"349";"UOL";"CSO ";"";"";""
+
+"484";"Område Klub Egedal";"116";"OKLU";"CSD ";"";"";""
+
+"324";"Pædagogisk Central";"104";"";"CSD ";"";"";""
+
+"404";"Pasning af nærtstående";"321";"TVPL";"CBS ";"";"";""
+
+"485";"PAU elever";"100";"PAUE";"CSD ";"";"";""
+
+"704";"Personale & Forhandling";"400R";"";"CAS ";"";"";"personale@egekom.dk"
+
+"311";"Planlægning";"400R";"PLAN";"CPK ";"";"";""
+
+"358";"Plejen";"235";"PLE";"CSO ";"";"";""
+
+"528";"Porsebakken";"103";"POR";"CSO ";"";"";""
+
+"529";"Porsebakken A og B";"103";"POAB";"CSO ";"";"";""
+
+"530";"Porsebakken C , aflastning";"103";"POCD";"CSO ";"";"";""
+
+"323";"PPR";"100";"PPRX";"CSD ";"";"";""
+
+"383";"Projekt Egelund";"400J";"";"JOB ";"";"";""
+
+"559";"Rådgiver team";"100";"RADG";"CSS ";"";"";""
+
+"412";"Rådhusbetjente og Rengøring";"200";"RADB";"CEI ";"";"";""
+
+"413";"Rådhuskantine, Ledøje-Smørum";"100";"KANL";"CEI ";"";"";""
+
+"415";"Rådhuskantine, Ølstykke";"300";"KANO";"CEI ";"";"";""
+
+"414";"Rådhuskantine, Stenløse";"200";"KANS";"CEI ";"";"";""
+
+"531";"Rehabilitering";"234";"UREH";"CSO ";"";"";""
+
+"348";"Sandbjerghus";"239";"";"CSS ";"";"";""
+
+"598";"Sekretariat og centerchefer";"400R";"SCHE";"SDI ";"";"";""
+
+"532";"Selvvalgt hjælp";"321";"USHJ";"CSO ";"";"";""
+
+"405";"Selvvalgt hjælp";"321";"TVHJ";"CBS ";"";"";""
+
+"325";"SFO Bækkegårdsskolen";"331F";"FBAK";"CSD ";"";"";""
+
+"326";"SFO Firkløveren";"108F";"FFIR";"CSD ";"";"";""
+
+"327";"SFO Ganløse";"226F";"FGAN";"CSD ";"";"";""
+
+"328";"SFO Hampelandsskolen";"332F";"FHAM";"CSD ";"";"";""
+
+"329";"SFO Kildekær";"113F";"FKIL";"CSD ";"";"";""
+
+"330";"SFO Lærkeskolen";"228F";"FLAR";"CSD ";"";"";""
+
+"331";"SFO Maglehøjskolen";"335F";"FMAG";"CSD ";"";"";""
+
+"332";"SFO Mosehuset";"115F";"FMOS";"CSD ";"";"";""
+
+"333";"SFO Slagslunde Skole";"225F";"FSLA";"CSD ";"";"";""
+
+"334";"SFO Stengården";"330F";"FSTE";"CSD ";"";"";""
+
+"335";"SFO Toftehøjskolen";"333F";"FTOF";"CSD ";"";"";""
+
+"336";"SFO Veksø";"227F";"FVEK";"CSD ";"";"";""
+
+"560";"Skelhøj 01";"237";"SKE1";"CSS ";"";"";""
+
+"561";"Skelhøj 02";"237";"SKE2";"CSS ";"";"";""
+
+"562";"Skelhøj 03";"237";"SKE3";"CSS ";"";"";""
+
+"563";"Skelhøj 04";"237";"SKE4";"CSS ";"";"";""
+
+"564";"Skelhøj 05";"237";"SKE5";"CSS ";"";"";""
+
+"565";"Skelhøj Adm";"237";"SKAD";"CSS ";"";"";""
+
+"566";"Skelhøj Aflast";"237";"SKAF";"CSS ";"";"";""
+
+"567";"Skelhøj Nat";"237";"SKNA";"CSS ";"";"";""
+
+"568";"Skelhøj Serv";"237";"SKSE";"CSS ";"";"";""
+
+"486";"Skoleafdeling";"100";"SKA";"CSD ";"";"";""
+
+"487";"Skoleafdeling, ledere";"100";"SKLE";"CSD ";"";"";""
+
+"488";"Skoledistrikt Ganløse";"100";"SDGA";"CSD ";"";"";""
+
+"491";"Skoledistrikt Ølstykke Nord";"100";"SDON";"CSD ";"";"";""
+
+"492";"Skoledistrikt Ølstykke Syd";"100";"SDOS";"CSD ";"";"";""
+
+"489";"Skoledistrikt Smørum";"100";"SDSM";"CSD ";"";"";""
+
+"490";"Skoledistrikt Stenløse";"100";"SDST";"CSD ";"";"";""
+
+"569";"Skovbo";"339";"SKOV";"CSS ";"";"";""
+
+"493";"Skovbørnehaven Hede Enge";"112";"BRES";"CSD ";"";"";""
+
+"494";"Skovbørnehaven Tungegården";"342";"BTUN";"CSD ";"";"";""
+
+"406";"Smørum Bibliotek";"107";"BIBS";"CBS ";"";"";""
+
+"533";"Smørum og Flyvere";"104H";"USF";"CSO ";"";"";""
+
+"534";"Smørumgruppen";"104H";"USMO";"CSO ";"";"";""
+
+"501";"Søagerskolen, samlet";"113";"SSO";"CSD ";"";"";""
+
+"570";"Soc.psyk bosteder";"238";"SOCP";"CSS ";"";"";""
+
+"535";"Solkrogen";"233E";"SOL1";"CSO ";"";"";""
+
+"536";"Solkrogen 2, demensdagcenter";"233E";"SOL2";"CSO ";"";"";""
+
+"537";"Sosu elever";"235";"SOSU";"CSO ";"";"";""
+
+"571";"Søvænget, team A";"343";"SOEA";"CSS ";"";"";""
+
+"572";"Søvænget, team B";"343";"SOEB";"CSS ";"";"";""
+
+"573";"Søvænget, team C";"343";"SOEC";"CSS ";"";"";""
+
+"574";"Søvænget, team D";"343";"SOED";"CSS ";"";"";""
+
+"575";"Søvænget, team E";"343";"SOEE";"CSS ";"";"";""
+
+"576";"Søvænget, team F";"343";"SOEF";"CSS ";"";"";""
+
+"577";"Søvænget, team G, Vejbo/Bakkebo";"326";"SOEG";"CSS ";"";"";""
+
+"578";"Søvænget, team H, Rørsangervej";"";"SOEH";"CSS ";"";"";""
+
+"579";"Søvænget, team I";"343";"SOEI";"CSS ";"";"";""
+
+"580";"Søvænget, team J";"343";"SOEJ";"CSS ";"";"";""
+
+"581";"Søvænget, team S";"343";"SOES";"CSS ";"";"";""
+
+"495";"Specialgruppen Hyldeblomsten";"203";"BSHY";"CSD ";"";"";""
+
+"496";"Specialgruppen Stjernestuen";"210";"BSPS";"CSD ";"";"";""
+
+"366";"Stabsteam";"400J";"JOB";"JOB ";"";"";""
+
+"497";"Stengårdsskolen, samlet";"330";"SST";"CSD ";"";"";""
+
+"498";"Stenløse Fritids- og Juniorklub";"231";"KSTE";"CSD ";"";"";""
+
+"538";"Stenløse Ganløse grupperne";"236";"USG";"CSO ";"";"";""
+
+"423";"Stenløse Idrætsanlæg";"214";"ISTE";"CPK ";"";"";""
+
+"499";"Stenløse Tandklinik";"228T";"STTA";"CSD ";"";"";""
+
+"539";"Stenløsegruppen";"236";"USTE";"CSO ";"";"";""
+
+"340";"Støttepæd.korps";"100";"KSTO";"CSD ";"";"";""
+
+"500";"Støttepædagogkorps";"100";"STSK";"CSD ";"";"";""
+
+"341";"Sundhedstjenesten";"341";"SUTJ";"CSD ";"";"";""
+
+"385";"Sygedagpenge- og Fleksjobteam";"400J";"SYGP";"JOB ";"";"";""
+
+"540";"Sygepleje";"235";"USYG";"CSO ";"";"";""
+
+"541";"Sygepleje og rehabilitering";"235";"USY";"CSO ";"";"";""
+
+"343";"Tandplejen";"228T";"TAN";"CSD ";"";"";""
+
+"582";"Team Børn og Familie";"239";"TEBF";"CSS ";"";"";""
+
+"583";"Team Handicap";"239";"TEHA";"CSS ";"";"";""
+
+"351";"Team Socialpsykiatri";"238";"SOPY";"CSS ";"";"";""
+
+"584";"Team Støtteperson";"238";"STOT";"CSS ";"";"";""
+
+"585";"Team Unge og Familie";"239";"TEUF";"CSS ";"";"";""
+
+"293";"Teknisk Servicemedarbejder";"400R";"SERG";"CEI ";"";"";""
+
+"417";"Tekniske Serviceassistenter";"200";"TSAS";"CEI ";"";"";""
+
+"502";"Toftehøjskolen, samlet";"333";"STO";"CSD ";"";"";""
+
+"361";"Trafik og Miljø";"400R";"VEJA";"CTM ";"";"";""
+
+"407";"Tværfaglig Myndighed";"321";"TVAR";"CBS ";"";"";""
+
+"288";"Tværfaglig Myndighed";"400R";"TVAD";"CBS ";"";"";""
+
+"542";"Udegrupper";"235";"UDE";"CSO ";"";"";""
+
+"543";"Udegrupper, afløsere";"235";"UAFL";"CSO ";"";"";""
+
+"544";"Udegrupper, Aften Team";"235";"UAFT";"CSO ";"";"";""
+
+"545";"Udegrupper, Nat Team";"235";"UNAT";"CSO ";"";"";""
+
+"353";"Udfører";"100";"UDFO";"CSS ";"";"";""
+
+"586";"Udkørende Teams";"239";"UDK";"CSS ";"";"";""
+
+"587";"Udsatte Teams";"238";"UDS";"CSS ";"";"";""
+
+"619";"Udviklingssekretariatet";"400R";"UDVS";"UVS";"";"";""
+
+"364";"Udviklingssekretariatet";"400R";"UDVS";"UVS ";"";"";""
+
+"345";"UngEgedal";"120";"UNGS";"CSD ";"";"";""
+
+"503";"UngEgedal, månedslønnede";"120";"UNGM";"CSD ";"";"";""
+
+"504";"UngEgedal, timelønnede";"120";"UNGT";"CSD ";"";"";""
+
+"505";"UngEgedal/SSP";"120";"UNG";"CSD ";"";"";""
+
+"360";"Vand og Natur";"400R";"NATU";"CTM ";"";"";""
+
+"506";"Veksø Fritids- og Ungdomsklub";"209";"KVEK";"CSD ";"";"";""
+
+"546";"Vores hus ";"338";"VORE";"CSO ";"";"";""
+
+"507";"Vuggestuen Hindbærvangen";"121";"BHIN";"CSD ";"";"";""
+

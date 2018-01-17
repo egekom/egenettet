@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Module file for the roskilde_media_configurations module.
+ */
+
+/**
+ * Implements hook_file_default_displays_alter().
+ */
+function roskilde_media_configurations_file_default_displays_alter(&$displays) {
+  if (isset($displays['image__default__file_field_image'])) {
+    $displays['image__default__file_field_image']->settings = array(
+      'image_style' => 'large',
+    );
+  }
+}

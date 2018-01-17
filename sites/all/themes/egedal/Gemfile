@@ -1,0 +1,9 @@
+# A sample Gemfile --> https://github.com/mhs/scout-app/blob/master/Gemfile
+source "http://rubygems.org"
+
+gem "compass", "~> 1.0.3"
+gem "sass", "< 3.4"
+gem 'json', '~>1.8.2' # For a better performance
+gem "zen-grids"
+#gem "rb-fsevent"
+

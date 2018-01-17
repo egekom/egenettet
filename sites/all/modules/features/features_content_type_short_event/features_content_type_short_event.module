@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content type Short Event feature.
+ */
+
+include_once 'features_content_type_short_event.features.inc';

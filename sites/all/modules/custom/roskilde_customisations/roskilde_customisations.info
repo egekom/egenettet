@@ -1,0 +1,8 @@
+name = Roskilde Customisations
+description = Roskilde genersl customisations.
+core = 7.x
+
+; Views Handlers
+files[] = views/handlers/roskilde_customisations_views_handler_field_date.inc
+files[] = views/handlers/roskilde_customisations_handler_filter_by_user_unit.inc
+files[] = views/handlers/roskilde_customisations_handler_filter_by_user_workplace.inc

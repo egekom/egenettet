@@ -1,0 +1,39 @@
+/* need to look at drupal CSS file weightings to avoid ugly !important */
+
+ul.cmisposts, ul.list{
+  margin:0;
+  padding:0;
+}
+ul.cmisposts li{
+  background:none;
+  padding:0;
+  list-style:none;
+  clear:both;
+  margin-bottom:15px;
+}
+
+.cmisdetails{
+  width:86%;
+  float:right;
+}
+
+.cmisdetails p{
+  margin:0;
+}
+
+.block-post a.left{
+  width:14%;
+  float:left;
+}
+
+ul.cmisviews{
+  list-style-type: disc;
+  margin: 0 0 1em 1em;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+}
+
+.cmisposts .block-post {
+  margin: 0 0 30px;
+}

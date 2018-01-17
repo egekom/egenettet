@@ -1,0 +1,56 @@
+
+.panel-4col-25-center-stack {
+  /*overflow: hidden;*/
+  margin-top: 0;
+  padding-top: 0;
+}
+.panel-4col-25-center-stack .panel-col-top,
+.panel-4col-25-center-stack .panel-col-content-wrapper,
+.panel-4col-25-center-stack .panel-col-bottom {
+  width: 100%;
+  clear: both;
+}
+.panel-4col-25-center-stack .panel-col-top {
+  margin-bottom: 0.75%;
+}
+
+.panel-4col-25-center-stack .panel-col-first,
+.panel-4col-25-center-stack .panel-col-last {
+  float: left;
+  width: 24.625%;
+  margin-bottom: 0.75%;
+}
+.panel-4col-25-center-stack .panel-col-first {
+  margin-right: 0.375%;
+}
+.panel-4col-25-center-stack .panel-col-last {
+  margin-left: 0.375%;
+}
+
+.panel-4col-25-center-stack .panel-col-middle {
+  float: left;
+  width: 49.25%;
+  margin-left: 0.375%;
+  margin-right: 0.375%;
+}
+
+.panel-4col-25-center-stack .panel-col-first.nested,
+.panel-4col-25-center-stack .panel-col-last.nested {
+  float: left;
+  width: 49.25%;
+  margin-bottom: 1.5%;
+}
+.panel-4col-25-center-stack .panel-col-first.nested {
+  margin-right: 0.75%;
+}
+.panel-4col-25-center-stack .panel-col-last.nested {
+  margin-left: 0.75%;
+}
+
+.panel-4col-25-center-stack .panel-col-middle.nested {
+  float: none;
+  width: 100%;
+  clear: both;
+  margin: 0;
+  margin-bottom: 1.5%;
+}

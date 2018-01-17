@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Module file for roskilde_linkit_extra module.
+ */
+
+/**
+ * Implements hook_linkit_search_plugin_alter().
+ */
+function roskilde_linkit_extra_linkit_search_plugin_alter(&$plugin) {
+  if ("entity:node" == $plugin['name']) {
+    $plugin['handler']['class'] = "RoskildeLinkitSearchPluginNodeExtra";
+    $plugin['handler']['file'] = "roskilde.node.extra.class.php";
+    $plugin['path'] = drupal_get_path('module', 'roskilde_linkit_extra') . '/plugins/linkit_search';
+  }
+}

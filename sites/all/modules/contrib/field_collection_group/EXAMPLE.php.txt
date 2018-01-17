@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * Example for grouping arbitrary render arrays.
+ */
+$elements = array(
+  array(
+    '#title' => 'Item title 1',
+    'item' => array('#markup' => 'Item body 1'),
+  ),
+  array(
+    '#title' => 'Item title 2',
+    'item' => array('#markup' => 'Item body 2'),
+  ),
+  array(
+    '#title' => 'Item title 3',
+    'item' => array('#markup' => 'Item body 3'),
+  ),
+);
+$group_classes = array(
+  'group_horizontal',
+  'group_vertical',
+  'group_accordion',
+  'group_fieldset',
+);
+$groups = array();
+foreach ($group_classes as $group_class) {
+  $group_instance = new $group_class;
+  $groups[] = $group_instance->group($elements);
+}
+print render($groups);

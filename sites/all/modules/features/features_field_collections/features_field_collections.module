@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Field Collections feature.
+ */
+
+include_once 'features_field_collections.features.inc';

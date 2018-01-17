@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Last edit info feature.
+ */
+
+include_once 'features_last_edit_info_view.features.inc';

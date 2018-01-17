@@ -1,0 +1,4 @@
+name = Roskilde Migration
+description = Helper module for migration of phonebook data from the old system
+core = 7.x
+

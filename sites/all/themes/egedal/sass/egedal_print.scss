@@ -1,0 +1,82 @@
+/* PRINT STYLESHEETS ---------------------------------------------------------------------------------------------------- */
+.panel-col-middle .pane-node-title .flag-wrapper,
+.panel-col-first,
+.panel-col-last,
+.pane-node-comment-form,
+.pane-node-comments,
+.messages--error,
+.messages--warning,
+.view-warning-list,
+.tabs-primary,
+.tabs-secondary,
+.below-footer,
+#authcachedbg,
+.pane-flag-link,
+.left-section,
+.pane-node-field-video-data,
+//.pane-node-field-image-data,
+.pane-phonebook-edit-info-link,
+.pane-phonebook-edit-signature-link,
+#content a[href]:after {
+  display: none;
+}
+
+.rsArrowIcn {
+  background-image: none !important;
+}
+
+.rsArrow,
+.rsNav,
+.pane-flag-link,
+.mobile-navigation {
+  display: none !important;
+}
+
+.pane-node-field-phonebook-image {
+  max-width: 6rem;
+}
+
+body,
+.panel-col-content-wrapper.top {
+  background: none !important;
+}
+
+.node-type-phonebook .panel-col-first {
+  display: block;
+}
+
+.panel-4col-25-center-stack-extended,
+.panel-4col-25-center-stack {
+  .panel-col-middle.wrapper {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+#page {
+  font-size: 0.875rem;
+
+  a {
+    text-decoration: none !important;
+  }
+}
+
+.field-item,
+.panel-pane p,
+div.view-content,
+div.view-short-news-list h4 {
+  font-size: 1rem;
+}
+
+
+#header {
+  position: relative;
+  border: 25pt solid #333333;
+  height: 0 !important;
+  min-height: 0;
+
+  .header-content {
+    position: absolute;
+    top: -30pt;
+  }
+}

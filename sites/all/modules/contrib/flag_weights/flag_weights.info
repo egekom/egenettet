@@ -1,0 +1,7 @@
+name = "Flag Weights"
+description = "Add flag-weights to the Flag module."
+package = Flags
+core = 7.x
+dependencies[] = flag
+files[] = views_handler_sort_flag_weights.inc
+files[] = handlers/draggableviews_handler_flag_weights.inc

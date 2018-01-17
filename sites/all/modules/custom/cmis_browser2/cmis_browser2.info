@@ -1,0 +1,13 @@
+name = CMIS Browser 2
+description = CMIS Browser2 is an ajax treeview pane for CMIS content.
+core = 7.x
+
+;files[] = cmis_extra.theme.inc
+
+dependencies[] = ctools
+dependencies[] = cmis
+dependencies[] = cmis_extra
+;dependencies[] = cmis_browser
+;dependencies[] = cmis_browser
+;dependencies[] = cmis_common
+;dependencies[] = cmis_search

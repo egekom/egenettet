@@ -1,0 +1,11 @@
+.views-hover-balloon {
+
+}
+.views-hover-balloon-wrapper {
+  margin-top:-3px;
+  position:absolute;
+  z-index:110000;
+  background:#AAA;
+  padding:5px;
+  border:1px solid #666;
+}

@@ -1,0 +1,15 @@
+name = Flag bookmarks
+description = Showing list of flagged (bookmarked) pages.
+core = 7.x
+package = Views
+dependencies[] = flag
+dependencies[] = flag_bookmark
+dependencies[] = panelizer
+dependencies[] = strongarm
+dependencies[] = views
+dependencies[] = views_content
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = flag_bookmarks_custom
+features[views_view][] = user_bookmarks
+features_exclude[dependencies][ctools] = ctools

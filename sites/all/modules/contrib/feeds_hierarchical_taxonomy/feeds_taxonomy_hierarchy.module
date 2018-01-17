@@ -1,0 +1,406 @@
+<?php
+/**
+ * @file
+ * Provide a feed mapper for hierarchical taxonomy terms.
+ *
+ * Original developer: manarth (https://drupal.org/user/321496)
+ * @link https://drupal.org/sandbox/manarth/1540722
+ *
+ * Forked by: Laurens Meurs, wiedes.nl
+ * @link https://drupal.org/user/1139006
+ *
+ * This module is shared in the "Feeds hierarchical taxonomy" issue queue.
+ * @link https://drupal.org/node/2212587
+ *
+ * @todo Add language support?
+ * @todo Add support for multiple vocabularies per field?
+ * @todo Check whether term field is required. Can we abort import from here?
+ */
+
+/*
+ * v0.5 (2014-09-14):
+ * - Supports empty terms as in "Term A >> Term B >> ", thanks to @casper83.
+ *
+ * v0.4 (2014-06-30):
+ * - Hierarchy separator can contain %s, %t and %n (space, tab and newline)
+ *   characters.
+ * - Supplied term names no longer need to be an array, strings are allowed.
+ *
+ * v0.3 (2014-05-13):
+ * - Code clean up.
+ * - Automatic term creation is now optional.
+ *
+ * v0.2 (2014-05-12):
+ * - Code clean up.
+ * - Better caching.
+ * - Support for saving term lineage.
+ *
+ * v0.1 (2014-05-11):
+ * - Initial fork.
+ */
+
+// Default hierarchy separator.
+define('FEEDS_TAXONOMY_HIERARCHY_DEFAULT_HIERARCHY_SEPARATOR', '>>');
+
+// Default save term lineage.
+define('FEEDS_TAXONOMY_HIERARCHY_DEFAULT_AUTO_CREATE_TERMS', 0);
+
+// Default save term lineage.
+define('FEEDS_TAXONOMY_HIERARCHY_DEFAULT_SAVE_TERM_LINEAGE', 0);
+
+/**
+ * Implements hook_feeds_processor_targets_alter().
+ */
+function feeds_taxonomy_hierarchy_feeds_processor_targets_alter(&$targets, $entity_type, $bundle_name) {
+  foreach (field_info_instances($entity_type, $bundle_name) as $name => $instance) {
+    $field_info = field_info_field($name);
+    if ($field_info['type'] == 'taxonomy_term_reference') {
+      $targets[$name . '_hierarchical'] = array(
+        'name' => t('@name: hierarchical by term name', array('@name' => check_plain($instance['label']))),
+        'callback' => 'feeds_taxonomy_hierarchy_feeds_set_target',
+        'description' => t('The @label field of the node.', array('@label' => $instance['label'])),
+        'form_callback' => 'feeds_taxonomy_hierarchy_form_callback',
+        'validate_callback' => 'feeds_taxonomy_hierarchy_validate_callback',
+        'summary_callback' => 'feeds_taxonomy_hierarchy_summary_callback',
+      );
+    }
+  }
+}
+
+/**
+ * Settings form callback.
+ */
+function feeds_taxonomy_hierarchy_form_callback($mapping, $target, $form, $form_state) {
+  // If we add our form fields to the as an argument received form array and
+  // return this form array, our fields will be displayed 10 times!
+  $settings = array();
+
+  // Merge custom with default map settings.
+  $mapping = feeds_taxonomy_hierarchy_get_map_settings($mapping);
+
+  // Hierarchy separator textfield.
+  $settings['hierarchy_separator'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Hierarchy separator'),
+    '#description' => t('%s will be substituted for a space, %t for a tab and %n for a newline.'),
+    '#default_value' => $mapping['hierarchy_separator'],
+  );
+
+  // Auto create checkbox.
+  $settings['auto_create_terms'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Automatically create terms'),
+    '#description' => t('Automatically create a term if it does not exist.'),
+    '#default_value' => $mapping['auto_create_terms'],
+  );
+
+  // Save term lineage checkbox.
+  $settings['save_term_lineage'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Save term lineage'),
+    '#description' => t("Save the deepest term and all parent terms as the node's value."),
+    '#default_value' => $mapping['save_term_lineage'],
+  );
+
+  return $settings;
+}
+
+/**
+ * Summary callback.
+ */
+function feeds_taxonomy_hierarchy_summary_callback($mapping, $target, $form, $form_state) {
+  // Merge custom with default map settings.
+  $mapping = feeds_taxonomy_hierarchy_get_map_settings($mapping);
+
+  // Define summary list items.
+  $items = array(
+    t('Hierarchy separator: %hierarchy_separator', array('%hierarchy_separator' => $mapping['hierarchy_separator'])),
+    t('Automatically create terms: %auto_create_terms', array('%auto_create_terms' => $mapping['auto_create_terms'] ? t('Yes') : t('No'))),
+    t('Save term lineage: %save_term_lineage', array('%save_term_lineage' => $mapping['save_term_lineage'] ? t('Yes') : t('No'))),
+  );
+
+  // Return summary (when we return a render array, summary become "Array").
+  return theme('item_list', array('items' => $items));
+}
+
+/**
+ * Callback for mapping. Here is where the actual mapping happens.
+ */
+function feeds_taxonomy_hierarchy_feeds_set_target($source, $entity, $target, $term_names = null, array $mapping = array()) {
+  // dpm(func_get_args());
+
+  // Return if no term names are defined.
+  if (empty($term_names)) {
+    return;
+  }
+  // If a string is supplied, create array.
+  elseif (is_string($term_names)) {
+    $term_names = array($term_names);
+  }
+
+  // Define shared object so other functions can also easily access them.
+  if (!$shared = &drupal_static('FEEDS_TAXONOMY_HIERARCHY_SHARED_OBJECT_IDENTIFIER')) {
+    $shared = new stdClass();
+  }
+
+  // Merge custom with default map settings.
+  $shared->mapping = feeds_taxonomy_hierarchy_get_map_settings($mapping);
+
+  // Get field name by stripping '_hierarchical' postfix from target.
+  $shared->field_name = $field_name = substr($target, 0, -13);
+
+  // This function is called for every node being imported, so cache as much as
+  // possible to prevent duplicate queries.
+  feeds_taxonomy_hierarchy_set_caches();
+
+  // Use a flat array that holds term id's so we can easily check if a field
+  // already has a certain term's id as value.
+  $term_ids = array();
+
+  // In case Feeds is updating nodes, also use existing field values.
+  if (isset($entity->$field_name)) {
+    // Get existing field values.
+    $field_values = $entity->{$field_name}[LANGUAGE_NONE];
+
+    // Iterate through id's of existing field values.
+    foreach ($field_values as $field_value) {
+      // Copy field value to our flat array.
+      $term_ids[] = $field_value['tid'];
+    }
+  }
+  // In case Feeds is replacing nodes, we can start with an empty array.
+  else {
+    $field_values = array();
+  }
+
+  // If the allowed amount of values for this entity field is set to unlimited.
+  if ($shared->cache->{$field_name}->field_info['cardinality'] == -1) {
+    // Set a very high maximum.
+    $max_allowed_values = 999999;
+  }
+  else {
+    // Subtract amount of existing values from amount of allowed values so we
+    // know how many more values we are allowed to add.
+    $max_allowed_values = $shared->cache->{$field_name}->field_info['cardinality'] - COUNT($term_ids);
+  }
+
+  // Escape hierarchy separator for usage in regular expression and substitute
+  // characters for their regular expression counterparts.
+  $preg_hierarchy_separator = str_replace(array('%s', '%t', '%n'), array('\s+', '\t+', '[\r\n]+'), preg_quote($shared->mapping['hierarchy_separator']));
+
+  // Iterate through names of to be added terms.
+  foreach ($term_names as $term_name) {
+    // Break loop if field's maximum amount of allowed values has been reached.
+    if ($max_allowed_values == 0) {
+      break;
+    }
+
+    // If term_name is actually a FeedsTermElement.
+    if ($term_name instanceof FeedsTermElement) {
+      // Add term id to field values.
+      feeds_taxonomy_hierarchy_add_term_id_to_field_values($term_name->tid, $term_ids, $field_values, $max_allowed_values);
+    }
+    else {
+      // Remove white spaces around term names, split string into an array and
+      // remove empty terms.
+      $hierarchical_term_names = array_filter(preg_split('#\s*' . $preg_hierarchy_separator . '\s*#', trim($term_name)));
+
+      // Get array of id's of hierarchical terms.
+      feeds_taxonomy_hierarchy_handle_hierarchical_term_names($hierarchical_term_names, $term_ids, $field_values, $max_allowed_values);
+    }
+  }
+
+  // Set entity's field values.
+  $entity->{$field_name}[LANGUAGE_NONE] = $field_values;
+}
+
+/**
+ * Get array with custom map settings or default values.
+ */
+function feeds_taxonomy_hierarchy_get_map_settings($mapping) {
+  // Merge custom map settings with default values.
+  return $mapping += array(
+    'hierarchy_separator' => FEEDS_TAXONOMY_HIERARCHY_DEFAULT_HIERARCHY_SEPARATOR,
+    'auto_create_terms' => FEEDS_TAXONOMY_HIERARCHY_DEFAULT_AUTO_CREATE_TERMS,
+    'save_term_lineage' => FEEDS_TAXONOMY_HIERARCHY_DEFAULT_SAVE_TERM_LINEAGE,
+  );
+}
+
+/**
+ * Set caches.
+ */
+function feeds_taxonomy_hierarchy_set_caches() {
+  // Get static shared object.
+  $shared = &drupal_static('FEEDS_TAXONOMY_HIERARCHY_SHARED_OBJECT_IDENTIFIER');
+
+  // Locally define shared variable for better readability.
+  $field_name = $shared->field_name;
+
+  // Set some caches.
+  if (!isset($shared->cache->{$field_name}->field_info)) {
+    // Cache field info.
+    $shared->cache->{$field_name}->field_info = field_info_field($field_name);
+
+    // Cache allowed values for this field.
+    $shared->cache->{$field_name}->taxonomy_allowed_values = taxonomy_allowed_values($shared->cache->{$field_name}->field_info);
+
+    // Cache vocabulary id's for this field.
+    $shared->cache->{$field_name}->vocabulary_ids = array();
+
+    // Allowed values are stored by vocabulary, so we can retrieve vocabulary
+    // id's by iterating through this array. Though an entity's taxonomy
+    // reference field normally is only referencing to terms from a single
+    // vocabulary, we iterate through all vocabularies like Feeds' original
+    // taxonomy mapper taxonomy_feeds_set_target() and taxonomy_allowed_values()
+    // do.
+    foreach ($shared->cache->{$field_name}->field_info['settings']['allowed_values'] as $tree) {
+      // Drupal used to use vocabulary id's but uses machine names nowadays, see
+      // http://drupal.org/node/881530.
+      if (isset($tree['vocabulary']) && !empty($tree['vocabulary'])) {
+        // Load vocabulary by machine name.
+        $vocabulary = taxonomy_vocabulary_machine_name_load($tree['vocabulary']);
+
+        // Add vocabulary's id.
+        $shared->cache->{$field_name}->vocabulary_ids[] = (int) $vocabulary->vid;
+      }
+      elseif (isset($tree['vid']) && !empty($tree['vid'])) {
+        // Add vocabulary's id.
+        $shared->cache->{$field_name}->vocabulary_ids[] = (int) $tree['vid'];
+      }
+      else {
+        // Is this possible? Warn user? Exit function?
+      }
+    }
+  }
+}
+
+/**
+ * Handle hierarchical terms by name.
+ */
+function feeds_taxonomy_hierarchy_handle_hierarchical_term_names($term_names, &$term_ids, &$field_values, &$max_allowed_values) {
+  // Get static shared object.
+  $shared = &drupal_static('FEEDS_TAXONOMY_HIERARCHY_SHARED_OBJECT_IDENTIFIER');
+
+  // Locally define shared variable for better readability.
+  $field_name = $shared->field_name;
+
+  // Term's parent id, starting with 0 for the vocabulary's root.
+  $parent_id = 0;
+
+  // Iterate through all hierarchical terms by name.
+  foreach ($term_names as $i => $term_name) {
+    // Set term id to null so we can check if a term has been found or created.
+    $term_id = NULL;
+
+    // Break loop if field's maximum amount of allowed values has been reached.
+    if ($max_allowed_values == 0) {
+      break;
+    }
+
+    // Try to get the id of an existing term.
+    if ($term_id = feeds_taxonomy_hierarchy_get_term_id($parent_id, $term_name)) {
+      // Return if term's id is NOT an allowed value.
+      if (!isset($shared->cache->{$field_name}->taxonomy_allowed_values[$term_id])) {
+        return;
+      }
+
+      // Set parent id.
+      $parent_id = $term_id;
+    }
+    // If no existing term has been found, check if a term should be created.
+    elseif ($shared->mapping['auto_create_terms']) {
+      // Create new term.
+      $term = feeds_taxonomy_hierarchy_create_term($parent_id, $term_name);
+
+      // Set parent and term id's.
+      $parent_id = $term_id = $term->tid;
+    }
+
+    // If a term has been found or created, check whether the term lineage needs
+    // to be saved OR the term is the deepest term.
+    if ($term_id && ($shared->mapping['save_term_lineage'] || COUNT($term_names) == $i+1)) {
+      // Add term id to field values.
+      feeds_taxonomy_hierarchy_add_term_id_to_field_values($term_id, $term_ids, $field_values, $max_allowed_values);
+    }
+  }
+}
+
+/**
+ * Add term id to field values.
+ */
+function feeds_taxonomy_hierarchy_add_term_id_to_field_values($term_id, &$term_ids, &$field_values, &$max_allowed_values) {
+  // If term id is not yet in term id array.
+  if (!in_array($term_id, $term_ids)) {
+    // Add term id array with term id's.
+    $term_ids[] = $term_id;
+
+    // Add term id to field values.
+    $field_values[] = array('tid' => $term_id);
+
+    // Increment maximum allowed values.
+    --$max_allowed_values;
+  }
+}
+
+/**
+ * Get term id by the term's parent id and term name.
+ */
+function feeds_taxonomy_hierarchy_get_term_id($parent_id, $term_name) {
+  // Get static shared object.
+  $shared = &drupal_static('FEEDS_TAXONOMY_HIERARCHY_SHARED_OBJECT_IDENTIFIER');
+
+  // Locally define shared variable for better readability.
+  $field_name = $shared->field_name;
+  $vocabulary_id = $shared->cache->{$field_name}->vocabulary_ids[0];
+
+  // If this term has not been looked up before.
+  if (!isset($shared->cache->queried_term_ids[$vocabulary_id][$parent_id][$term_name])) {
+    // Build and execute query to find term id.
+    $query = db_select('taxonomy_term_data', 'td');
+    $query->join('taxonomy_term_hierarchy', 'th', 'td.tid=th.tid');
+
+    $result = $query
+      ->fields('td', array('tid'))
+      ->condition('vid', $vocabulary_id)
+      ->condition('parent', $parent_id)
+      ->condition('name', $term_name)
+      ->execute()
+      ->fetchObject();
+
+    // Cache the query result, a term id or false.
+    $shared->cache->queried_term_ids[$vocabulary_id][$parent_id][$term_name] = isset($result->tid) ? $result->tid : FALSE;
+  }
+
+  // Return term id or false.
+  return $shared->cache->queried_term_ids[$vocabulary_id][$parent_id][$term_name];
+}
+
+/**
+ * Create a new term.
+ */
+function feeds_taxonomy_hierarchy_create_term($parent_id, $term_name) {
+  // Get static shared object.
+  $shared = &drupal_static('FEEDS_TAXONOMY_HIERARCHY_SHARED_OBJECT_IDENTIFIER');
+
+  // Locally define shared variables for better readability.
+  $field_name = $shared->field_name;
+  $vocabulary_id = $shared->cache->{$field_name}->vocabulary_ids[0];
+
+  // Define new term.
+  $term = new stdClass();
+  $term->vid = $vocabulary_id;
+  $term->parent = $parent_id;
+  $term->name = $term_name;
+
+  // Save new term.
+  taxonomy_term_save($term);
+
+  // Cache term id.
+  $shared->cache->queried_term_ids[$vocabulary_id][$parent_id][$term_name] = $term->tid;
+
+  // Add id of created term to the list of allowed values.
+  $shared->cache->{$field_name}->taxonomy_allowed_values[$term->tid] = $term->name;
+
+  // Return term.
+  return $term;
+}

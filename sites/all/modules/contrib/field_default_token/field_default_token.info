@@ -1,0 +1,11 @@
+name = Field default token
+description = Enables to use tokens as field default values.
+package = Fields
+core = 7.x
+
+; Information added by Drupal.org packaging script on 2014-10-21
+version = "7.x-1.2+1-dev"
+core = "7.x"
+project = "field_default_token"
+datestamp = "1413908029"
+

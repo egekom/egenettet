@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the My profile view feature.
+ */
+
+include_once 'features_my_profile_view.features.inc';

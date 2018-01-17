@@ -1,0 +1,60 @@
+@font-face {
+  font-family: 'Max-Regular';
+  src: url('fonts/Max-Regular.eot');
+  src: url('fonts/Max-Regular.eot?#iefix') format('embedded-opentype'),
+    url('fonts/Max-Regular.svg#Max-Regular') format('svg'),
+    url('fonts/Max-Regular.woff') format('woff'),
+    url('fonts/Max-Regular.ttf')  format('truetype');
+}
+@font-face {
+  font-family: 'Max-Bold';
+  src: url('fonts/Max-Bold.eot');
+  src: url('fonts/Max-Bold.eot?#iefix') format('embedded-opentype'),
+    url('fonts/Max-Bold.svg#Max-Bold') format('svg'),
+    url('fonts/Max-Bold.woff') format('woff'),
+    url('fonts/Max-Bold.ttf')  format('truetype');
+}
+@font-face {
+  font-family: 'Max-RegularItalic';
+  src: url('fonts/Max-RegularItalic.eot');
+  src: url('fonts/Max-RegularItalic.eot?#iefix') format('embedded-opentype'),
+    url('fonts/Max-RegularItalic.svg#Max-RegularItalic') format('svg'),
+    url('fonts/Max-RegularItalic.woff') format('woff'),
+    url('fonts/Max-RegularItalic.ttf')  format('truetype');
+}
+@font-face {
+  font-family: 'Max-BoldItalic';
+  src: url('fonts/Max-BoldItalic.eot');
+  src: url('fonts/Max-BoldItalic.eot?#iefix') format('embedded-opentype'),
+    url('fonts/Max-BoldItalic.svg#Max-BoldItalic') format('svg'),
+    url('fonts/Max-BoldItalic.woff') format('woff'),
+    url('fonts/Max-BoldItalic.ttf')  format('truetype');
+}
+body {
+  font-family: 'Max-Regular';
+}
+em, i {
+  font-family: 'Max-RegularItalic';
+  font-weight: normal;
+  font-style: normal;
+  line-height: inherit;
+}
+strong, b {
+  font-family: 'Max-Bold';
+  font-weight: normal;
+  font-style: normal;
+  line-height: inherit;
+}
+em strong,
+strong em,
+i strong,
+strong i,
+em b,
+b em,
+i b,
+b i {
+  font-family: 'Max-BoldItalic';
+  font-weight: normal;
+  font-style: normal;
+  line-height: inherit;
+}

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Popular Topic pages view feature.
+ */
+
+include_once 'features_popular_topic_pages_view.features.inc';

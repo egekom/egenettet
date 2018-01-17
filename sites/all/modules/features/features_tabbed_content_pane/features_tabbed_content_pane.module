@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Tabbed content pane feature.
+ */
+
+include_once 'features_tabbed_content_pane.features.inc';

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Events search page feature.
+ */
+
+include_once 'features_events_search_page.features.inc';

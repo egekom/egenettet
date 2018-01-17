@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the feature_rosi_performance_configurations feature.
+ */
+
+include_once 'feature_rosi_performance_configurations.features.inc';

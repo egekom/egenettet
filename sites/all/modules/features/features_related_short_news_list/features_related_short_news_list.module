@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Related Short News List feature.
+ */
+
+include_once 'features_related_short_news_list.features.inc';

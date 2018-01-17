@@ -1,0 +1,25 @@
+<?php
+/**
+ * @file
+ * Roskilde Authcache customizations.
+ */
+
+/**
+ * Implements hook_authcache_key_properties().
+ */
+function roskilde_authcache_authcache_key_properties() {
+  $properties = array();
+  $url = !empty($_SERVER['HTTP_X_ORIGINAL_URL']) ? $_SERVER['HTTP_X_ORIGINAL_URL'] : $_SERVER['REQUEST_URI'];
+  $pattern = '#^(/en|/dk|)/my-department(\?.*)?$#';
+  if (preg_match($pattern, $url)) {
+    // Find the node id used on this user's my-department page
+    // and add it to the key.
+    module_load_include('inc', 'roskilde_menu', 'includes/roskilde_menu.page');
+    $my_department = _roskilde_menu_get_user_department();
+    if ($my_department && !empty($my_department->field_unit_page)) {
+      $nid = $my_department->field_unit_page[LANGUAGE_NONE][0]['target_id'];
+      $properties['my-department'] = $nid;
+    }
+  }
+  return $properties;
+}

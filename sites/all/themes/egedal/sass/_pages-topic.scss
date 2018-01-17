@@ -1,0 +1,133 @@
+/* Topic Frontpage & Topic Page---------------------------------------------------------------------------------------------------- */
+.node-type-topic-frontpage {
+  .panel-col-top .panel-pane {
+    padding-left: 0;
+    background-color: transparent;
+  }
+}
+
+/* Topic FP Menu */
+.node-type-topic-frontpage .node-type-topic-frontpage .panel-pane {
+  padding: 0;
+}
+
+.node-type-topic-frontpage .panel-col-left-top {
+  padding: $space * 1.25 $space * 1.875;
+  padding-bottom: 0;
+  background-color: $blue-bg-hover;
+
+  .panel-pane div.node-link-list {
+    @extend %reset-box;
+    background-color: transparent !important;
+  }
+
+  .panel-col,
+  .panel-col-last {
+    div.node-link-list {
+      padding-left: $space;
+
+      @include breakpoint(small-only) {
+        padding-left: 0;
+      }
+    }
+  }
+
+  .field-name-field-title {
+    .field-item {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    &:after {
+      display: none;
+      content: '\e821';
+      @extend %font-icon;
+    }
+  }
+
+  /* Reset Link List Colors */
+  .node.dark-box,
+  .inside div.panel-pane div.dark-box {
+    color: $body-font-color;
+
+    .field-item,
+    h2,
+    a {
+      color: $body-font-color;
+    }
+
+    a {
+      &:hover,
+      &:focus {
+        color: $pink-link-hover;
+      }
+    }
+  }
+
+  @include breakpoint(small-only-three) {
+    margin: $space * 0.625;
+    padding: 0;
+    @include border-radius(4px);
+
+    .node-link-list {
+      border-bottom: 1px solid $white;
+    }
+
+    .inside {
+      margin: 0;
+    }
+
+    .field-name-field-title {
+      position: relative;
+      display: block;
+      padding: $space * 1.5625 $space * 1.25;
+      background-color: $blue-bg-hover;
+      cursor: pointer;
+
+      .field-items {
+        padding-right: $space * 2;
+      }
+
+      .field-item {
+        padding-bottom: 0;
+      }
+
+      &:after {
+        position: absolute;
+        display: block;
+        top: 50%;
+        right: $space * 1.875;
+        margin-top: -2.5%;
+      }
+    }
+
+    .panel-pane.active {
+      .field-name-field-title:after {
+        content: '\e820';
+      }
+    }
+
+    .field-name-field-links {
+      display: none;
+      padding: $space * 2.5 0 $space;
+      line-height: 1.3;
+      font-size: $small-text-m * 2;
+      background-color: $blue-bg-hover-lighter;
+
+      .field-item {
+        margin-bottom: $space * 1.5;
+        padding-left: $space * 2.1875;
+
+        a:before {
+          left: $space * 0.6875;
+        }
+      }
+    }
+
+    .field-name-field-text {
+      display: none;
+      padding: $space $space 0;
+      background-color: $blue-bg-hover-lighter;
+    }
+  }
+}

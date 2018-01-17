@@ -1,0 +1,22 @@
+#ews-timeline-scheduler {
+    width: 900px;
+    height: 250px;
+    border: none;
+}
+
+#ews-timeline-scheduler .dhx_cal_data {
+    overflow: hidden;
+    border: none;
+}
+
+#ews-timeline-scheduler .dhx_cal_header {
+    border: none;
+}
+
+#ews-timeline-scheduler .dhx_matrix_cell, #ews-timeline-scheduler .dhx_matrix_scell {
+    border: none;
+}
+
+#ews-timeline-scheduler .dhx_cal_header div div {
+    border: none;
+}

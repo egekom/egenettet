@@ -1,0 +1,159 @@
+<?php
+
+/**
+ * @file
+ * Roskilde menu install file.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function roskilde_menu_install() {
+  _roskilde_menu_set_menu_item();
+
+  if (module_exists('menu')) {
+    // Add News link into Navigation menu.
+    $item = array(
+      'link_path' => 'Nyheder',
+      'link_title' => 'search/news',
+      'menu_name' => 'navigation',
+      'weight' => -20,
+      'language' => LANGUAGE_NONE,
+      'plid' => 0,
+      'module' => 'menu',
+    );
+    menu_link_save($item);
+
+    // Add Events link into Navigation menu.
+    $item = array(
+      'link_path' => 'Begivenheder',
+      'link_title' => 'search/events',
+      'menu_name' => 'navigation',
+      'weight' => -10,
+      'language' => LANGUAGE_NONE,
+      'plid' => 0,
+      'module' => 'menu',
+    );
+    menu_link_save($item);
+  }
+}
+
+/**
+ * Add menu item.
+ */
+function roskilde_menu_update_7100(&$sandbox) {
+  _roskilde_menu_set_menu_item();
+}
+
+/**
+ * Add Footer menu.
+ */
+function roskilde_menu_update_7101(&$sandbox) {
+  if (module_exists('menu')) {
+    $t = get_t();
+
+    $menu = array(
+      'menu_name' => 'footer-menu',
+      'title' => $t('Footer menu'),
+      'description' => $t('The <em>Footer</em> menu contains links placed in footer region.'),
+    );
+    menu_save($menu);
+  }
+}
+
+/**
+ * Add 'Help' icon menu for header section.
+ */
+function roskilde_menu_update_7102(&$sandbox) {
+  _roskilde_menu_set_menu_item();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function roskilde_menu_uninstall() {
+  if (module_exists('menu')) {
+    $system_menus = _roskilde_get_system_menu();
+    foreach ($system_menus as $menu_name => $menu_data) {
+      menu_delete(array('menu_name' => $menu_name));
+    }
+  }
+}
+
+/**
+ * Helper function: Add 'Search page' menu item.
+ */
+function _roskilde_menu_set_menu_item() {
+  if (module_exists('menu')) {
+    $t = get_t();
+    // Set menu and link configurations.
+    $system_menus = _roskilde_get_system_menu();
+
+    foreach ($system_menus as $menu_name => $menu_data) {
+      $menu = array(
+        'menu_name' => $menu_name,
+        'title' => $t($menu_data['menu_name']),
+        'description' => $t($menu_data['description']),
+      );
+      menu_save($menu);
+
+      // Insert menu links.
+      if (isset($menu_data['menu_links'])) {
+        foreach ($menu_data['menu_links'] as $weight => $link_item) {
+          $item = array(
+            'link_path' => $link_item['link_path'],
+            'link_title' => $link_item['link_title'],
+            'menu_name' => $menu_name,
+            'weight' => $weight,
+            'language' => LANGUAGE_NONE,
+            'plid' => 0,
+            'module' => 'menu',
+          );
+          menu_link_save($item);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Helper function: Get menu configurations.
+ */
+function _roskilde_get_system_menu() {
+  return array(
+    'menu-search-pages' => array(
+      'menu_name' => 'Search pages',
+      'description' => 'The <em>Search pages</em> menu contains search pages links.',
+    ),
+    'menu-footer' => array(
+      'menu_name' => 'Footer menu',
+      'description' => 'The <em>Footer</em> menu contains links placed in footer region.',
+    ),
+    'menu-help' => array(
+      'menu_name' => 'Help',
+      'description' => 'Help icon in header.',
+      'menu_links' => array(
+        0 => array(
+          'link_path' => '<front>',
+          'link_title' => '?',
+        ),
+      ),
+    ),
+    'news-events' => array(
+      'menu_name' => 'News/Events',
+      'description' => 'The <em>News/Events</em> menu contains search pages links.',
+      'menu_links' => array(
+        0 => array(
+          'link_path' => 'search/news?solrsort=ds_created desc',
+          'link_title' => 'Nyheder',
+          'weight' => 0,
+        ),
+        1 => array(
+          'link_path' => 'search/events',
+          'link_title' => 'Begivenheder',
+          'weight' => 1,
+        ),
+      ),
+    ),
+  );
+}

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the User fields feature.
+ */
+
+include_once 'features_user_fields.features.inc';

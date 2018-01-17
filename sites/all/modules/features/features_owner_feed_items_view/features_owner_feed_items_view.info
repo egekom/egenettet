@@ -1,0 +1,10 @@
+name = Owner Feed Items view
+core = 7.x
+package = Views
+version = 7.x-1.0
+project = features_owner_feed_items_view
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = owner_feed_items
+features_exclude[dependencies][ctools] = ctools

@@ -1,0 +1,72 @@
+
+.panel-4col-25-left-stack-topic {
+  /*overflow: hidden;*/
+  margin-top: 0;
+  padding-top: 0;
+}
+.panel-4col-25-left-stack-topic .panel-col-top,
+.panel-4col-25-left-stack-topic .panel-col-content-wrapper,
+.panel-4col-25-left-stack-topic .panel-col-bottom {
+  width: 100%;
+  clear: both;
+}
+.panel-4col-25-left-stack-topic .panel-col-top {
+  margin-bottom: 0.75%;
+}
+
+.panel-4col-25-left-stack-topic .panel-col-middle,
+.panel-4col-25-left-stack-topic .panel-col-last {
+  float: left;
+  width: 24.625%;
+  margin-bottom: 0.75%;
+}
+.panel-4col-25-left-stack-topic .panel-col-middle {
+  margin-right: 0.375%;
+}
+.panel-4col-25-left-stack-topic .panel-col-last {
+  margin-left: 0.375%;
+}
+
+.panel-4col-25-left-stack-topic .panel-col-first {
+  float: left;
+  width: 49.25%;
+  margin-right: 0.75%;
+  margin-left: 0;
+}
+
+.panel-4col-25-left-stack-topic .panel-col-first.nested,
+.panel-4col-25-left-stack-topic .panel-col-last.nested {
+  float: left;
+  width: 49.25%;
+  margin-bottom: 1.5%;
+}
+.panel-4col-25-left-stack-topic .panel-col-first.nested {
+  margin-right: 0.75%;
+}
+.panel-4col-25-left-stack-topic .panel-col-last.nested {
+  margin-left: 0.75%;
+}
+
+.panel-4col-25-left-stack-topic .panel-col-middle.nested {
+  float: none;
+  width: 100%;
+  clear: both;
+  margin: 0;
+  margin-bottom: 1.5%;
+}
+
+.panel-4col-25-left-stack-topic .panel-col-top-left,
+.panel-4col-25-left-stack-topic .panel-col-top-right {
+  float: left;
+  margin-bottom: 0.75%;
+}
+
+.panel-4col-25-left-stack-topic .panel-col-top-left {
+  width: 74.625%;
+  margin-right: 0.375%;
+}
+
+.panel-4col-25-left-stack-topic .panel-col-top-right {
+  width: 24.625%;
+  margin-left: 0.375%;
+}

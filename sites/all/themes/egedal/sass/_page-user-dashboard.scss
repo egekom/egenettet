@@ -1,0 +1,423 @@
+/**
+ * Page User Dashboard.
+ */
+
+.page-user-user-dashboard {
+
+  .view-flag-bookmarks,
+  .view-flag-bookmarks-custom {
+    padding: 0;
+  }
+
+  .view-latest-news,
+  .view-short-news-list,
+  .view-editorial-news-list {
+    .view-footer p {
+      margin: 0;
+    }
+  }
+
+  .view-latest-news .views-row,
+  .view-short-news-list .views-row,
+  .view-editorial-news-list .views-row {
+    padding-bottom: $space;
+  }
+
+
+  #homebox {
+    .homebox-column {
+      height: auto !important;
+      margin: 0;
+      padding: 0;
+    }
+
+    .homebox-portlet {
+      border: none;
+      margin: 0;
+      position: relative;
+
+      .homebox-portlet-inner {
+        border: none;
+      }
+
+      &.edit-mode {
+        .portlet-content-wrapper {
+          display: none !important;
+        }
+      }
+
+      /* EG-148 */
+      .form-type-checkbox label {
+        bottom: 2px;
+      }
+      .multiple .chosen-drop {
+        top: calc(100% + 4px);
+        border-radius: 3px;
+      }
+
+      .multiple .chosen-drop .chosen-results {
+        background-color: $white;
+      }
+      .chosen-container-multi .chosen-choices li.search-field {
+        margin: 0;
+        padding: 0;
+        white-space: nowrap;
+        background-color: $white;
+        width: 100%;
+        border-radius: 3px;
+        cursor: pointer;
+        border: 1px solid $border-color;
+        padding: 4px;
+        position: relative;
+      }
+      .chosen-container-multi .chosen-choices li.search-field:before {
+        @extend %font-icon ;
+        content: '\e800';
+        position: absolute;
+        top: 6px;
+        color: $body-bg;
+        right: 6px;
+      }
+      /* EG-148 */
+    }
+    .portlet-content {
+      padding: 0;
+    }
+  }
+
+  .view-my-profile-view {
+    background-color: $pink-link-hover;
+    color: white;
+    font-size: $text-s;
+    padding: 0 $space*1.875 $space*1.875;
+
+    a {
+      color: $white;
+      display: block;
+      &:hover {
+        color: $body-bg;
+      }
+    }
+
+    .field-name-field-phonebook-image {
+      margin-top: 0;
+      margin-left: -$space*1.875;
+      margin-right: -$space*1.875;
+      img {
+        display: block;
+        width: 100%;
+      }
+    }
+    .field-name-field-position {
+      font-size: $text-m;
+    }
+
+    //.field-name-field-department,
+    .field-name-field-unit {
+      margin-bottom: $space/2
+    }
+
+    .my-page-links,
+    .my-page-info-signature-wrapper {
+      display: none;
+    }
+
+    .group-phonebook-name {
+      font-size: $title-s;
+      font-family: $bold;
+      //margin: 35px 0 5px;
+      margin-top: 35px;
+      display: inline-block;
+      width: 100%;
+      & > div {
+        display: inline-block;
+      }
+    }
+
+    .field-name-field-mobile-number,
+    .field-name-field-phone-number,
+    .field-name-field-email,
+    .field-name-field-work-place,
+    .field-name-field-address-work {
+      margin-bottom: 5px;
+
+      & > div {
+        display: inline-block;
+      }
+
+      &:before {
+        @extend %font-icon;
+        display: inline-block;
+        margin-right: 5px;
+      }
+    }
+
+    .field-name-field-phone-number:before {
+      content: '\e81f';
+    }
+
+    .field-name-field-mobile-number:before {
+      content: '\e81e';
+    }
+
+    .field-name-field-email:before {
+      content: '\e81d';
+    }
+    .field-name-field-work-place,
+    .field-name-field-address-work {
+      margin-top: 10px;
+      padding-left: 25px;
+      position: relative;
+
+      &:before {
+        content: '\e822';
+        position: absolute;
+        left: 0;
+        top: 4px;
+      }
+    }
+
+  }
+
+  .view-flag-bookmarks-custom {
+    width: auto;
+  }
+
+  #homebox .user-dashboard-custom {
+    background-color: black;
+    color: $white;
+
+    textarea {
+      height: 300px;
+      max-height: 300px;
+    }
+
+    .portlet-content {
+      background-color: $white;
+      color: $black;
+      padding: 5px;
+      max-height: 18.75rem;
+
+      .mCSB_container {
+        padding: 5px 10px;
+      }
+
+      .mCSB_dragger .mCSB_dragger_bar {
+        background-color: gray;
+      }
+    }
+
+    .portlet-settings.icon-pen {
+      display: inline-block;
+      cursor: pointer;
+      position: absolute;
+      top: 40px;
+      right: 15px;
+
+      &:before {
+        color: $white;
+        font-size: 20px;
+      }
+    }
+
+    .portlet-title {
+      color: $white;
+    }
+  }
+
+   /* HomeBox confirmation popup */
+  .confirmation-box {
+    position: absolute;
+    bottom: 65px;
+    right: 0;
+    z-index: 1;
+    display: none;
+    @extend %box-shadow-default;
+    @extend %box-radius-border;
+
+    span {
+      display: inline-block;
+      @extend %normal;
+      @extend %button;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .confirm {
+      margin-left: $space / 3.2;
+    }
+
+    .refuse {
+      background-color: $red;
+
+      &:hover {
+        background-color: $red-dark;
+      }
+    }
+  }
+}
+
+    .portlet-content-wrapper,
+    .portlet-config {
+      padding: $space * 0.625 $space * 0.9375;
+
+      label {
+        //padding-bottom: $space / 2;
+      }
+    }
+
+.page-user-bookmarks,
+.page-user-favorite-colleagues {
+
+  .view-user-bookmarks,
+  .view-flag-colleagues-tab {
+    padding: $space*1.875;
+  }
+
+  .views-field-ops,
+  .views-field-field-phone-number {
+    & > div {
+      margin-bottom: $space * 2;
+      white-space: nowrap;
+    }
+  }
+.views-field-ops span,
+.views-field-ops a {
+  white-space: nowrap;
+}
+
+  thead {
+    a {
+      color: $black;
+    }
+  }
+}
+
+table.sticky-header {
+  z-index: 1;
+}
+
+
+/* favorite colleagues */
+.page-user-favorite-colleagues .views-field-field-phone-number > div:last-child {
+  margin-bottom: 0;
+}
+
+.favorite-colleague-image {
+  img {
+    border-radius: 43px;
+    display: block;
+    float: left;
+    margin-right: $space;
+  }
+}
+
+/* portlet header */
+#homebox .homebox-portlet .portlet-header {
+  border: none;
+  background-color: $white;
+}
+
+/* portlet wrapper */
+#homebox .homebox-portlet .portlet-content-wrapper {
+  padding: $space*1.875;
+}
+
+/* news and favorites fixes */
+.user-dashboard-flag_bookmarks_custom-block_1 {
+  .portlet-content-wrapper {
+    background-color: $blue-bg-hover;
+    //padding: $space*1.875;
+  }
+
+  .pane-title {
+    margin-bottom: $space;
+  }
+}
+.user-dashboard-editorial_news_list-block_1 {
+  .portlet-content-wrapper {
+    background-color: $white;
+    padding: $space*1.875;
+  }
+
+  .pane-title {
+    margin-bottom: $space;
+  }
+}
+//#homebox-block-views_my_profile_view-block
+#homebox .user-dashboard-my_profile_view-block {
+  .pane-title {
+    display: none;
+  }
+
+  .portlet-content-wrapper {
+    padding: 0;
+  }
+}
+
+.region-sidebar-first .block-roskilde-menu h2 {
+  padding-bottom: $space / 1.5;
+}
+
+/* Subscription block */
+.user-dashboard-roskilde_my_subscriptions {
+  .view-content h3 {
+    padding-top: $space / 2;
+  }
+}
+
+  .portlet-config {
+    padding: $space * 0.625 $space * 0.9375;
+
+    .form-checkboxes {
+      padding-left: $space * 1.5625;
+
+      .option {
+        top: -2px;
+      }
+    }
+  }
+
+/* responsive */
+@include breakpoint(small-and-medium) {
+  #homebox {
+    .homebox-column-wrapper-1,
+    .homebox-column-wrapper-2,
+    .homebox-column-wrapper-3,
+    .homebox-column-wrapper-4 {
+      width: 50% !important;
+    }
+
+    .homebox-column-wrapper-3 {
+      clear: right;
+    }
+  }
+}
+
+@include breakpoint(small-only) {
+  #homebox {
+    .homebox-column-wrapper-1,
+    .homebox-column-wrapper-2,
+    .homebox-column-wrapper-3,
+    .homebox-column-wrapper-4 {
+      width: 100% !important;
+      clear: both;
+    }
+  }
+}
+
+.view-my-profile-view {
+  fieldset {
+    padding: 0;
+    border: none;
+    margin: 0;
+  }
+  fieldset legend {
+    display: none;
+  }
+  .field-name-field-last-name,
+  .field-name-field-first-name {
+    float: left;
+    margin-right: 2%;
+  }
+}

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Search agreements page feature.
+ */
+
+include_once 'features_search_agreements_page.features.inc';

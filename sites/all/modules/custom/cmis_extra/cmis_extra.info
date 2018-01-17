@@ -1,0 +1,12 @@
+name = CMIS Extra
+description = Additional features to CMIS module
+core = 7.x
+
+files[] = cmis_extra.theme.inc
+files[] = includes/SlingshotQuery.php
+
+dependencies[] = cmis
+dependencies[] = cmis_browser
+dependencies[] = cmis_common
+dependencies[] = cmis_search
+dependencies[] = cmis_views

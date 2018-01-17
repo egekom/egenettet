@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Flag favorite colleagures feature.
+ */
+
+include_once 'features_favorite_colleagures.features.inc';

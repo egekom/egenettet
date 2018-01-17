@@ -1,0 +1,253 @@
+<?php
+
+function cmis_field_menu() {
+
+  // Entry Level Browser (when clicking the Button beneath a CMIS-Field)
+  $items['admin/settings/cmis/field/ajax'] = array(
+    'title' => 'cmis browse',
+    'page callback' => 'cmis_field_admin_ajax_browse',
+    'page arguments' => array(),
+    'delivery callback' => 'ajax_deliver',
+    'access arguments' => array('access cmis'),
+    'file' => 'cmis_field.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  // Successive calls to subfolders go here (notice the wildcard)
+  $items['admin/settings/cmis/field/ajax/%/%'] = array(
+    'title' => 'cmis browse',
+    'page callback' => 'cmis_field_admin_ajax_browse',
+    'page arguments' => array(5,6),
+    'delivery callback' => 'ajax_deliver',
+    'access arguments' => array('access cmis'),
+    'file' => 'cmis_field.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+
+  return $items;
+}
+
+/**
+ * Allow CMIS fields to be themed via Drupal Theming
+ *
+ * @implements hook_theme()
+ */
+function cmis_field_theme() {
+  $items['cmis_field_browser'] = array(
+    'file' => 'cmis_field.theme.inc',
+  );
+
+  $items['cmis_field_browse_children'] = array(
+    'file' => 'cmis_field.theme.inc',
+  );
+
+  $items['cmis_field_browse_breadcrumbs'] = array(
+    'file' => 'cmis_field.theme.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_field_info()
+ *
+ * @return array - field definition
+ */
+function cmis_field_field_info() {
+  return array(
+    'cmis_field_path' => array(
+      'label' => t('CMIS Field'),
+      'description' => t('Attach a CMIS object to a Drupal entity'),
+      'default_widget' => 'cmis_field_widget',
+      'default_formatter' => 'cmis_field_link',
+      'instance settings' => array('cmis_field_rootFolderPath' => ''),
+    )
+  );
+}
+
+/**
+ * Implements hook_field_validate().
+ *
+ * For now, just validates that the field isn't empty.
+ */
+function cmis_field_field_validate($entity_type, $entity, $field, $instance, $langcode, $items, &$errors) {
+  foreach ($items as $delta => $item) {
+    if (!empty($item['cmis_field_path'])) {
+      if (1 == 0) {
+        $errors[$field['cmis_field']][$langcode][$delta][] = array(
+          'error' => 'cmis_field_invalid',
+          'message' => t('You are in the anti-universe, where 1 == 0.'),
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Implementation of hook_is_empty()
+ *
+ * @param $item - field value(s)
+ * @param $field - field settings
+ * @return boolean - TRUE/FALSE
+ */
+function cmis_field_field_is_empty($item, $field) {
+  return empty($item['path']);
+}
+
+/**
+ * Implementation of hook_instance_settings_form()
+ *
+ * @param $op - operation
+ * @param $field - field beign operated on
+ * @return - form or settings array dependent on operation
+ */
+function cmis_field_field_instance_settings_form($field, $instance) {
+  $settings = $instance['settings'];
+
+  $form['cmis_field_rootFolderPath'] = array(
+    '#title' => t('Root Directory'),
+    '#description' => t('Root folder for CMIS nodes'),
+    '#type' => 'textfield',
+    '#default_value' => isset($settings['cmis_field_rootFolderPath']) ? $settings['cmis_field_rootFolderPath'] : '',
+  );
+
+  return $form;
+}
+
+/**
+ * Implementation of hook_field_widget_info
+ *
+ * @return array defining the widget
+ */
+function cmis_field_field_widget_info() {
+  return array(
+    'cmis_field_browser' => array(
+      'label' => t('CMIS link'),
+      'field types' => array('cmis_field_path'),
+      'settings' => array('cmis_field_rootFolderPath' => array()),
+    )
+  );
+}
+
+
+/**
+ * Implementation of hook_field_widget_form()
+ *
+ * @param $element - the form element array
+ * @param $edit -
+ * @param $form_state - form state array
+ * @param $form - form array
+ * @return array - form element
+ */
+function cmis_field_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  drupal_add_library('system', 'ui.dialog');
+  $title = isset($items[$delta]['title']) ? $items[$delta]['title'] : '';
+  $path = isset($items[$delta]['path']) ? $items[$delta]['path'] : '';
+  $element += array(
+    '#delta' => $delta,
+  );
+  $element['path'] = array();
+  $element['title'] = array();
+
+  $widget_id = 'edit-cmis-field-' . preg_replace("/_/", "-", $instance['field_name']) . '-' . $delta;
+
+  $element['title'] += array(
+    '#type' => 'textfield',
+    '#default_value' => $title,
+    '#attributes' => array('class' => array('edit-field-cmis-field'), 'id' => $widget_id . '-title'),
+    '#title_display' => 'before',
+    '#title' => check_plain($instance['label']),
+  );
+
+  $element['path'] += array(
+    '#type' => 'hidden',
+    '#attributes' => array('class' => array('edit-field-cmis-path', 'search-form'), 'id' => $widget_id . '-path'),
+    '#default_value' => $path,
+  );
+
+  $root_folder_path = $instance['settings']['cmis_field_rootFolderPath'];
+  $ajax_path = 'admin/settings/cmis/field/ajax/' . $widget_id . '/';
+
+  if ($root_folder_path != '') {
+    module_load_include('api.inc', 'cmis');
+    module_load_include('utils.inc', 'cmis_browser');
+
+    // Invoke CMIS service
+    try{
+       $repository = cmis_get_repository();
+       $object = cmisapi_getObjectByPath($repository->repositoryId, $root_folder_path);
+       $ajax_path .= base64_encode($object->properties['cmis:objectId']);
+    }
+    catch(Exception $e) {
+      watchdog_exception("CMIS field", $e);
+    }
+  }
+
+  $button = array(
+    '#type' => 'button',
+    '#value' => t('Browse CMIS repository'),
+    '#submit' => array(),
+    '#ajax' => array(
+      'path' => $ajax_path,
+    ),
+    '#limit_validation_errors' => array(),
+  );
+
+  $element['browse'] = $button;
+  $element['#type'] = "markup";
+  $element['#theme_wrappers'] = array('container');
+  $element['#attributes'] = array('id' => $widget_id);
+
+  return $element;
+}
+
+/**
+ * Implementation of hook_field_formatter_info()
+ *
+ * @return array
+ */
+function cmis_field_field_formatter_info() {
+  return array(
+    'cmis_field_link' => array(
+       'label' => t('CMIS browser'),
+       'field types' => array('cmis_field_path')
+    )
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ *
+ */
+
+function cmis_field_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  switch ($display['type']) {
+    case 'cmis_field_link':
+      module_load_include('api.inc', 'cmis');
+      module_load_include('utils.inc', 'cmis_views');
+
+      try{
+        $repo = cmis_get_repository();
+        $rows = array();
+        foreach ($items as $delta => $item) {
+          //$element[$delta]['#markup'] = l($item['title'], 'cmis/browser', array('query' => array('id'=> $item['path'])));
+          $rows[] = cmisapi_getProperties($repo->repositoryId, $item['path']);
+        }
+
+        $element[0] = array(
+          '#type' => 'html_tag',
+          '#tag' => 'div',
+          '#value' => theme('cmis_views_detail', array('rows' => $rows, 'repoId' => $repo->repositoryId))
+        );
+      }
+      catch(Exception $e) {
+        watchdog_exception('CMIS Field', $e);
+      }
+
+
+      break;
+  }
+  return $element;
+}

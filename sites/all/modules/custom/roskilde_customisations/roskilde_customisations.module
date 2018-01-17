@@ -1,0 +1,1590 @@
+<?php
+
+/**
+ * @file
+ * Module file for the roskilde_customisations module.
+ */
+
+if (!defined('NEWS_VIEW_TABLE_ALIAS_CENTER')) {
+  define('NEWS_VIEW_TABLE_ALIAS_CENTER', 'fd_field_unit');
+}
+
+/**
+ * Implements hook_init().
+ */
+function roskilde_customisations_init() {
+  // Send X-UA-Compatible HTTP header to force IE to use the most recent
+  // rendering engine or use Chrome's frame rendering engine if available. It is
+  // not possible to use drupal_add_http_header() as Drupal 7 does not store
+  // HTTP headers in the page cache.
+  $element = array(
+    '#tag' => 'meta',
+    '#attributes' => array(
+      'http-equiv' => 'X-UA-Compatible',
+      'content' => 'IE=edge,chrome=1',
+    ),
+  );
+  drupal_add_html_head($element, 'x_ua_compatible');
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function roskilde_customisations_menu_alter(&$items) {
+  if (isset($items['ctools/autocomplete/%'])) {
+    $items['ctools/autocomplete/%']['page callback'] = 'roskilde_customisations_ctools_content_autocomplete_entity';
+  }
+
+  if (module_exists('workbench_moderation')) {
+    $items['admin/config/workbench/moderation/approval-settings'] = array(
+      'title' => 'Approval settings',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('_workbench_approval_settings_form'),
+      'access arguments' => array('administer site configuration'),
+      'file' => 'roskilde_customisations.admin.inc',
+      'file path' => drupal_get_path('module', 'roskilde_customisations'),
+      'weight' => 100,
+      'type' => MENU_LOCAL_TASK,
+    );
+  }
+}
+
+/**
+ * Helper function for autocompletion of entity titles (overridden).
+ *
+ * @see ctools_content_autocomplete_entity()
+ */
+function roskilde_customisations_ctools_content_autocomplete_entity($type, $string = '') {
+  if ($string != '') {
+    global $user;
+    $entity_info = entity_get_info($type);
+    if ($type == 'node') {
+      $entity_info['entity keys']['bundle field'] = 'type';
+    }
+
+    // We must query all ids, because if every one of the 10 don't have access
+    // the user may never be able to autocomplete a node title.
+    $preg_matches = array();
+    $matches = array();
+    $match = preg_match('/\[id: (\d+)\]/', $string, $preg_matches);
+    if (!$match) {
+      $match = preg_match('/^id: (\d+)/', $string, $preg_matches);
+    }
+    // If an ID match was found, use that ID rather than the whole string.
+    if ($match) {
+      $entity_id = $preg_matches[1];
+      $entity = entity_load($type, array($entity_id));
+
+      // Format results in an array so later we could add attributes to the
+      // autocomplete text that is returned.
+      $results = array($entity_id => array(
+        'label' => $entity[$entity_id]->$entity_info['entity keys']['label'],
+      ));
+    }
+    else {
+      $results = _roskilde_customisations_ctools_getReferencableEntities($type, $entity_info, $string, 'LIKE', 10);
+    }
+    foreach($results as $entity_id => $result) {
+      if (!$entity_info['entity keys']['label']) {
+         $matches["[id: $entity_id]"] = '<span class="autocomplete_title">' . $entity_id . '</span>';
+      }
+      else {
+        $matches[$result['label'] . " [id: $entity_id]"] = '<span class="autocomplete_title">' . check_plain($result['label']) . '</span>';
+        $matches[$result['label'] . " [id: $entity_id]"] .= isset($result['title_field']) ? ' <span class="autocomplete_title_field">(' . $result['title_field'] . ')</span>' : '';
+        $matches[$result['label'] . " [id: $entity_id]"] .= isset($result['bundle field']) ? ' <span class="autocomplete_bundle">(' . check_plain($result['bundle field']) . ')</span>' : '';
+      }
+    }
+
+    drupal_json_output($matches);
+  }
+}
+
+/**
+ * Private function to get referencable entities (overridden).
+ *
+ * @see _ctools_getReferencableEntities()
+ */
+function _roskilde_customisations_ctools_getReferencableEntities($entity_type, $entity_info, $match = NULL, $match_operator = 'LIKE', $limit = 0) {
+  $options = array();
+
+  $query = _ctools_buildQuery($entity_type, $entity_info, $match, $match_operator);
+  if ($limit > 0) {
+    $query->range(0, $limit);
+  }
+
+  // We need to show the title field attached to the subpage content type.
+  $query->leftJoin('field_data_field_title', 'fdft', 'node.nid = fdft.entity_id');
+  $query->addField('fdft', 'field_title_value');
+
+  $results = $query->execute();
+
+  if (!empty($results)) {
+    foreach ($results as $record) {
+      $options[$record->{$entity_info['entity keys']['id']}] = array(
+        'label' => isset($entity_info['entity keys']['label']) ? check_plain($record->{$entity_info['entity keys']['label']}) : $record->{$entity_info['entity keys']['id']},
+        'bundle field' => isset($entity_info['entity keys']['bundle field']) ? check_plain($record->{$entity_info['entity keys']['bundle field']}) : '',
+      );
+      // Add title field to the options.
+      if (isset($record->field_title_value)) {
+        $options[$record->{$entity_info['entity keys']['id']}]['title_field'] = check_plain($record->field_title_value);
+      }
+    }
+  }
+
+  return $options;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function roskilde_customisations_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'roskilde_customisations') . '/views',
+  );
+}
+
+/**
+ * Implements hook_date_formats().
+ */
+function roskilde_customisations_date_formats() {
+  return array(
+    array(
+      'type' => 'long',
+      'format' => 'l \t\h\e d F Y',
+      'locales' => array(),
+    ),
+    array(
+      'type' => 'medium',
+      'format' => 'j. F Y',
+      'locales' => array(),
+    ),
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function roskilde_customisations_form_panels_ipe_edit_control_form_alter(&$form, &$form_state) {
+  $user = $GLOBALS['user'];
+  // Only the 'adminstrator' role can use 'Revert to default' button.
+  if (isset($form['buttons']) && 1 != $user->uid && !in_array('administrator', $user->roles)) {
+    $form['buttons']['#process'][] = '_roskilde_customisations_remove_ipe_revert_button';
+  }
+  // Remove 'Create new revision ' checkbox from content types
+  // with not allowed revision control.
+  if (!empty($form['#display']->context['panelizer']->data->type)) {
+    $bundle = $form['#display']->context['panelizer']->data->type;
+    $node_options = variable_get('node_options_' . $bundle, array());
+    if (!in_array('revision', $node_options) && 1 != $user->uid) {
+      $form['#process'][] = '_roskilde_customisations_remove_ipe_new_revision';
+    }
+  }
+}
+
+/**
+ * Process callback: Remove 'Revert to default' button from IPE form.
+ */
+function _roskilde_customisations_remove_ipe_revert_button($element, $form_state, $complete_form) {
+  if (isset($element['revert_default'])) {
+    unset($element['revert_default']);
+  }
+
+  return $element;
+}
+
+/**
+ * Process callback: Remove 'Create new revision ' checkbox from IPE form.
+ */
+function _roskilde_customisations_remove_ipe_new_revision($element, $form_state, $complete_form) {
+  if (isset($element['revision_information'])) {
+    $element['revision_information']['#printed'] = TRUE;
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_panelizer_overview_links_alter().
+ */
+function roskilde_customisations_panelizer_overview_links_alter(&$links_array, $entity_type, $context) {
+  $user = $GLOBALS['user'];
+  // Only the 'adminstrator' role can use panelizer reset link.
+  if (isset($links_array['reset']) && 1 != $user->uid && !in_array('administrator', $user->roles)) {
+    unset($links_array['reset']);
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function roskilde_customisations_element_info_alter(&$type) {
+  // Add a process callback.
+  if (isset($type['link_field'])) {
+    $type['link_field']['#process'][] = 'roskilde_customisations_link_field_process';
+  }
+  // Used when using ckeditor module.
+  if (isset($type['text_format']['#pre_render']) && is_array($type['text_format']['#pre_render'])) {
+    if (FALSE !== $key = array_search('ckeditor_pre_render_text_format', $type['text_format']['#pre_render'])) {
+      $type['text_format']['#pre_render'][] = 'roskilde_customisations_ckeditor_js_amends';
+    }
+  }
+}
+
+/**
+ * Implements hook_filter_info_alter().
+ */
+function roskilde_customisations_filter_info_alter(&$filters) {
+  if (isset($filters['filter_html'])) {
+    $filters['filter_html']['process callback'] = "_roskilde_customisations_filter_html";
+  }
+}
+
+/**
+ * Override callback_filter_process().
+ *
+ * Provides filtering of input into accepted HTML.
+ *
+ * @see _filter_html
+ */
+function _roskilde_customisations_filter_html($text, $filter) {
+  $allowed_tags = preg_split('/\s+|<|>/', $filter->settings['allowed_html'], -1, PREG_SPLIT_NO_EMPTY);
+  // Add tag 'p' to allowed html tags.
+  $allowed_tags[] = 'p';
+  $text = filter_xss($text, $allowed_tags);
+
+  if ($filter->settings['filter_html_nofollow']) {
+    $html_dom = filter_dom_load($text);
+    $links = $html_dom->getElementsByTagName('a');
+    foreach ($links as $link) {
+      $link->setAttribute('rel', 'nofollow');
+    }
+    $text = filter_dom_serialize($html_dom);
+  }
+
+  return trim($text);
+}
+
+/**
+ * Pre-render callback for 'text_format' elements.
+ *
+ * Attach javascript file with overridden functions for CKEditor module.
+ */
+function roskilde_customisations_ckeditor_js_amends($element) {
+  drupal_add_js(drupal_get_path('module', 'roskilde_customisations') . '/js/roskilde_customisations_ckeditor.utils.js', array('type' => 'file', 'scope' => 'footer'));
+  return $element;
+}
+
+/**
+ * Process callback for link_field elements.
+ */
+function roskilde_customisations_link_field_process($element, $form_state, $complete_form) {
+  static $required_settings;
+  if (0 == $element['#delta']) {
+    // Get 'required' settings for url and title fields from main element.
+    $required_settings = array(
+      'url' => $element['url']['#required'],
+    );
+    if (isset($element['title'])) {
+      $required_settings['title'] = $element['title']['#required'];
+    }
+  }
+
+  if (isset($required_settings) && 0 != $element['#delta']) {
+    // Set 'required' settings for url and title fields from main element.
+    $element['url']['#required'] = $required_settings['url'];
+    if (isset($element['title'], $required_settings['title'])) {
+      $element['title']['#required'] = $required_settings['title'];
+    }
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @see flag_form_user_admin_permissions_alter()
+ */
+function roskilde_customisations_form_user_admin_permissions_alter(&$form, &$form_state, $form_id) {
+  if (
+    isset($form['checkboxes'][DRUPAL_ANONYMOUS_RID]) &&
+    !array_key_exists(DRUPAL_ANONYMOUS_RID, $form['role_names'])
+  ) {
+    unset($form['checkboxes'][DRUPAL_ANONYMOUS_RID]);
+  }
+}
+
+/**
+ * Implements hook_preprocess_homebox().
+ *
+ * Override variables for home-box.tpl.php template.
+ * We need to remove the link for adding 'my_profile_view' block.
+ *
+ * @see homebox_build
+ */
+function roskilde_customisations_preprocess_homebox(&$variables) {
+  global $user;
+  $page = $variables['page'];
+
+  // Extract blocks from the page.
+  $blocks = $page->settings['blocks'];
+  $allowed_blocks = array();
+  $info = array();
+  foreach ($blocks as $block) {
+    if (_homebox_can_view_block((object) $block)) {
+      if (!isset($info[$block['module']])) {
+        $info[$block['module']] = module_invoke($block['module'], 'block_info');
+      }
+      if (isset($info[$block['module']][$block['delta']])) {
+        $allowed_blocks[$block['module']][$block['delta']] = $info[$block['module']][$block['delta']];
+        if (!empty($block['title'])) {
+          $allowed_blocks[$block['module']][$block['delta']]['info'] = $block['title'];
+        }
+      }
+    }
+  }
+
+  // Get user settings, so custom blocks are placed in regions.
+  $user_blocks = _homebox_get_user_settings($page);
+
+  if ($user_blocks !== FALSE) {
+    // Add custom blocks.
+    foreach ($user_blocks as $key => $block) {
+      if (isset($allowed_blocks[$block['module']][$block['delta']])) {
+        $blocks[$key] = $user_blocks[$key];
+      }
+    }
+  }
+
+  // Preparing blocks object for theming.
+  foreach ($blocks as $key => $block_settings) {
+    // Adds block to its regions.
+    if ($block_settings['status']) {
+      $block = homebox_prepare_block($key, $page);
+      if (!is_null($block)) {
+        // If user defined region is greater than real column count put block in
+        // the last column/region.
+        $allowed_blocks[$block->module][$block->delta]['used'] = TRUE;
+      }
+    }
+  }
+
+  if (isset($allowed_blocks['views']['my_profile_view-block'])) {
+    unset($allowed_blocks['views']['my_profile_view-block']);
+
+    // Add block links.
+    if ($user->uid) {
+      $add_links = array();
+      foreach ($allowed_blocks as $module => $blocks) {
+        foreach ($blocks as $delta => $info) {
+          $options = array();
+          if (isset($info['used'])) {
+            $options['attributes'] = array('class' => 'used');
+          }
+          $add_links[] = homebox_add_link($info['info'], $page, $module, $delta, $options);
+        }
+      }
+      $add_links['restore'] = l(t('Restore to defaults'), 'homebox/' . $page->name . '/restore', array('attributes' => array('class' => 'restore')));
+      $variables['add_links'] = theme('item_list', array(
+        'items' => $add_links,
+        'title' => NULL,
+        'type' => 'ul',
+        'attributes' => array('class' => 'clearfix'),
+      ));
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_node().
+ *
+ * Override variables for home-box.tpl.php template.
+ * We need to add a 'see more' link to the 'my_profile_view' block.
+ */
+function roskilde_customisations_preprocess_node(&$variables) {
+  // Phonebook content type.
+  if ("phonebook" == $variables['type'] && "my_page" == $variables['view_mode']) {
+    if ($link = _roskilde_customisations_get_user_phonebook_link(user_load($GLOBALS['user']->uid))) {
+      $variables['user_see_more_link'] = $link;
+    }
+  }
+
+  // FAQ content type.
+  if ("faq_qa" == $variables['type'] && "teaser" == $variables['view_mode']) {
+    // Removed linked node title.
+    $variables['title'] = NULL;
+  }
+
+  // Add banner_element_img_pane template suggestion.
+  if (!empty($variables['elements']['#is_banner_img'])) {
+    $variables['theme_hook_suggestion'] = 'node__banner_element_img';
+  }
+}
+
+/**
+ * Helper function: Get link to the current user's phonebook.
+ */
+function _roskilde_customisations_get_user_phonebook_link($user) {
+  if (isset($user->field_phonebook) && !empty($user->field_phonebook)) {
+    $nid = $user->field_phonebook[LANGUAGE_NONE][0]['target_id'];
+    $options = array(
+      'attributes' => array(
+        'class' => array('my-page-see-more-link'),
+      ),
+    );
+    return l(t('see more'), 'node/' . $nid, $options);
+  }
+
+  return FALSE;
+}
+
+/**
+ * Implements hook_homebox_block_keys().
+ */
+function roskilde_customisations_homebox_block_keys($block) {
+  return _roskilde_customisations_get_form_fields($block->delta);
+}
+
+/**
+ * Helper function: Returns settings fields for a block.
+ */
+function _roskilde_customisations_get_form_fields($delta) {
+  switch ($delta) {
+    case 'roskilde_personal_note':
+      return array('result_count', 'result_offset');
+
+    case 'roskilde_favorite_colleagues':
+      return array('result_count');
+
+    case 'roskilde_my_contents':
+      return array('result_count', 'content_types', 'empty_flag');
+
+    case 'roskilde_my_subscriptions':
+      return array('result_count', 'content_types', 'field_unit_tid');
+
+    case 'roskilde_my_units':
+      return array('unit_tids');
+  }
+}
+
+/**
+ * Implements hook_homebox_block_edit_form().
+ */
+function roskilde_customisations_homebox_block_edit_form($block, $form_state = NULL, $delta = NULL) {
+  if (isset($block->delta)) {
+    $delta = $block->delta;
+  }
+  elseif (empty($delta)) {
+    return;
+  }
+
+  switch ($delta) {
+    case 'roskilde_personal_note':
+      return array(
+        'result_count' => array(
+          '#type' => 'textfield',
+          '#title' => t('Result count'),
+          '#size' => 2,
+          '#description' => t('The number of items to display. Enter 0 for no limit.'),
+          '#default_value' => isset($block->result_count) ? $block->result_count : 5,
+          '#required' => TRUE,
+        ),
+        'result_offset' => array(
+          '#type' => 'textfield',
+          '#title' => t('Result offset'),
+          '#size' => 2,
+          '#default_value' => isset($block->result_offset) ? $block->result_offset : 0,
+          '#required' => TRUE,
+        ),
+        '#validate' => array('roskilde_customisations_homebox_block_edit_form_validate'),
+      );
+
+    case 'roskilde_favorite_colleagues':
+      return array(
+        'result_count' => array(
+          '#type' => 'textfield',
+          '#title' => t('Result count'),
+          '#size' => 2,
+          '#description' => t('The number of items to display. Enter 0 for no limit.'),
+          '#default_value' => isset($block->result_count) ? $block->result_count : 5,
+          '#required' => TRUE,
+        ),
+        '#validate' => array('roskilde_customisations_homebox_block_edit_form_validate'),
+      );
+
+    case 'roskilde_my_contents':
+      // Create a view object.
+      $view = views_get_view('my_contents');
+      $display_id = 'embed_1';
+      $view->set_display($display_id);
+      $view->init_handlers();
+      $form_state = array(
+        'view' => $view,
+        'display' => $view->display_handler->display,
+        'exposed_form_plugin' => $view->display_handler->get_plugin('exposed_form'),
+      );
+
+      // Create the filter form.
+      $form = drupal_build_form('views_exposed_form', $form_state);
+      list($options, $empty_flag) = _roskilde_customisations_get_content_types($form['type']['#options']);
+      $types = array_keys($options);
+      return array(
+        'result_count' => array(
+          '#type' => 'textfield',
+          '#title' => t('Result count'),
+          '#size' => 2,
+          '#description' => t('The number of items to display. Enter 0 for no limit.'),
+          '#default_value' => isset($block->result_count) ? $block->result_count : 5,
+          '#required' => TRUE,
+        ),
+        'content_types' => array(
+          '#type' => 'checkboxes',
+          '#options' => $options,
+          '#default_value' => isset($block->content_types) ? $block->content_types : array_combine($types, $types),
+          '#title' => t('Type'),
+        ),
+        'empty_flag' => array(
+          '#type' => 'hidden',
+          '#value' => $empty_flag,
+        ),
+        '#validate' => array('roskilde_customisations_homebox_block_edit_form_validate'),
+      );
+
+    case 'roskilde_my_subscriptions':
+      // Create a view object.
+      $view = views_get_view('my_contents');
+      $display_id = 'embed_2';
+      $view->set_display($display_id);
+      $view->init_handlers();
+      $form_state = array(
+        'view' => $view,
+        'display' => $view->display_handler->display,
+        'exposed_form_plugin' => $view->display_handler->get_plugin('exposed_form'),
+      );
+
+      // Create the filter form.
+      $form = drupal_build_form('views_exposed_form', $form_state);
+      $default_types = array(
+        'editorial_news' => 'editorial_news',
+      );
+      return array(
+        'result_count' => array(
+          '#type' => 'textfield',
+          '#title' => t('Result count'),
+          '#size' => 2,
+          '#description' => t('The number of items to display. Enter 0 for no limit.'),
+          '#default_value' => isset($block->result_count) ? $block->result_count : 5,
+          '#required' => TRUE,
+        ),
+        'content_types' => array(
+          '#type' => 'checkboxes',
+          '#options' => $form['type']['#options'],
+          '#default_value' => isset($block->content_types) ? $block->content_types : $default_types,
+          '#title' => t('Type'),
+        ),
+        'field_unit_tid' => array(
+          '#type' => 'select',
+          '#multiple' => TRUE,
+          '#size' => 10,
+          '#options' => $form['field_unit_tid']['#options'],
+          '#default_value' => isset($block->field_unit_tid) ? $block->field_unit_tid : array(),
+          '#title' => t('Center'),
+        ),
+        '#validate' => array('roskilde_customisations_homebox_block_edit_form_validate'),
+      );
+
+    case 'roskilde_my_units':
+      static $default = array();
+      if (!$default) {
+        $vid = variable_get('roskilde_customisations_organisational_unit_vid', 19);
+        foreach (taxonomy_get_tree($vid) as $term) {
+          $default[$term->tid] = $term->name;
+        }
+
+        // Now should exclude terms from 'Unit' field.
+        $phonebook = roskilde_phonebook_get_by_userid();
+        if (!empty($phonebook->field_unit[LANGUAGE_NONE])) {
+          $keys = array_map(function($v){return (int) $v['tid'];}, $phonebook->field_unit[LANGUAGE_NONE]);
+          $default = array_diff_key($default, array_flip($keys));
+        }
+      }
+      return array(
+        'unit_tids' => array(
+          '#type' => 'checkboxes',
+          '#options' => $default,
+          '#default_value' => isset($block->unit_tids) ? $block->unit_tids : '',
+          '#title' => t('Units:'),
+        ),
+      );
+  }
+}
+
+/**
+ * Helper function: Get content type options.
+ *
+ * Determin which content type the user has access to.
+ */
+function _roskilde_customisations_get_content_types($form_options, $return_flag = FALSE) {
+  $empty_flag = TRUE;
+  $allowed_types = array();
+
+  // Build allowed type array.
+  foreach ($form_options as $type => $name) {
+    if (!user_access("create $type content")) {
+      continue;
+    }
+    // Collect data.
+    $empty_flag = FALSE;
+    $allowed_types[$type] = $name;
+    if ($return_flag) {
+      return TRUE;
+    }
+  }
+
+  if ($return_flag) {
+    return !empty($allowed_types);
+  }
+
+  return array($allowed_types, $empty_flag);
+}
+
+/**
+ * Form validate handler.
+ */
+function roskilde_customisations_homebox_block_edit_form_validate($form, $form_state) {
+  if (!is_numeric($form_state['values']['result_count']) || $form_state['values']['result_count'] < 0) {
+    form_set_error('result_count', t('Number of result range must be a positive integer.'));
+  }
+  if (isset($form_state['values']['result_offset'])) {
+    if (!is_numeric($form_state['values']['result_offset']) || $form_state['values']['result_offset'] < 0) {
+      form_set_error('result_offset', t('Number of result offset must be a positive integer.'));
+    }
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function roskilde_customisations_block_info() {
+  $blocks['roskilde_personal_note'] = array(
+    'info' => t('My personal notes'),
+    'weight' => -99,
+    'status' => 0,
+    'region' => -1,
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['roskilde_favorite_colleagues'] = array(
+    'info' => t('My favorite colleagues'),
+    'weight' => -98,
+    'status' => 0,
+    'region' => -1,
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['roskilde_my_contents'] = array(
+    'info' => t('My all contents'),
+    'weight' => -97,
+    'status' => 0,
+    'region' => -1,
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['roskilde_my_subscriptions'] = array(
+    'info' => t('My subscriptions block'),
+    'weight' => -96,
+    'status' => 0,
+    'region' => -1,
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['roskilde_my_units'] = array(
+    'info' => t('My unit setting'),
+    'weight' => -95,
+    'status' => 0,
+    'region' => -1,
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function roskilde_customisations_block_view($delta = '', $block_settings = NULL) {
+  $block = array(
+    'subject' => '',
+    'content' => array(),
+  );
+  $output = '';
+
+  switch ($delta) {
+    case 'roskilde_personal_note':
+    case 'roskilde_favorite_colleagues':
+      $output = _roskilde_customisations_get_content($block_settings, $delta);
+      break;
+
+    case 'roskilde_my_contents':
+    case 'roskilde_my_subscriptions':
+      $output = _roskilde_customisations_my_contents($block_settings, $delta);
+      break;
+
+    case 'roskilde_my_units':
+      $output = _roskilde_customisations_my_units($block_settings, $delta);
+      break;
+  }
+
+  $block['content'] = !empty($output) ? array('#markup' => $output) : NULL;
+
+  return $block;
+}
+
+/**
+ * Helper function: Get content for 'My unit setting' block.
+ */
+function _roskilde_customisations_my_units($settings, $delta) {
+  $results = &drupal_static(__FUNCTION__);
+  if (!isset($results[$delta])) {
+    $term_list = t('none');
+    $terms = array();
+    if (!empty($settings->unit_tids)) {
+      $terms = array_filter($settings->unit_tids);
+    }
+    if ($terms) {
+      $delimiter = '; ';
+      $term_list = '';
+      $curr_terms = taxonomy_term_load_multiple($terms);
+      foreach ($curr_terms as $term) {
+        $term_list .= $term->name . $delimiter;
+      }
+      $term_list = rtrim($term_list, $delimiter);
+    }
+    $results[$delta] = t('Marked centers: :list', array(':list' => $term_list));
+  }
+
+  return $results[$delta];
+}
+
+/**
+ * Helper function: Get content for 'My all contents' block.
+ */
+function _roskilde_customisations_my_contents($settings, $delta) {
+  $results = &drupal_static(__FUNCTION__);
+  if (isset($results[$delta])) {
+    return $results[$delta];
+  }
+
+  $output = '';
+  // Load the view.
+  $view = views_get_view('my_contents');
+  if (empty($view)) {
+    watchdog('my_page', 'The view "my_contents" not exists.', array(), WATCHDOG_ERROR);
+    return NULL;
+  }
+  // Set the display.
+  if ("roskilde_my_contents" == $delta) {
+    $view->set_display('embed_1');
+  }
+  else {
+    $view->set_display('embed_2');
+  }
+
+  // Get view settings.
+  $view_settings = _roskilde_customisations_get_settings($settings, $delta);
+  if (!empty($view_settings)) {
+    $count = array_shift($view_settings);
+    $content_types = array_shift($view_settings);
+    if (!array_filter($content_types)) {
+      return t('No any option selected');
+    }
+    if ("roskilde_my_contents" == $delta) {
+      if (!empty($view_settings) && $empty_flag = array_shift($view_settings)) {
+        // Current user has not access to any content.
+        return NULL;
+      }
+    }
+    if ($count) {
+      // Set results limit.
+      $view->set_items_per_page($count);
+    }
+  }
+  // Set values for the exposed filter.
+  if ($content_types) {
+    foreach (array_filter($content_types) as $type) {
+      $view->exposed_input['type'][] = $type;
+    }
+    $units = array_shift($view_settings);
+  }
+  if (isset($units)) {
+    $view->exposed_input['field_unit_tid'] = $units;
+  }
+
+  $view->pre_execute();
+  $view->execute();
+  $output = $view->render();
+
+  $view->destroy();
+  $results[$delta] = $output;
+
+  return $output;
+}
+
+/**
+ * Helper function: Get content for blocks.
+ *
+ * Get content for 'My personal notes' and 'My favorite colleagues' blocks.
+ */
+function _roskilde_customisations_get_content($settings, $delta) {
+  switch ($delta) {
+    case 'roskilde_personal_note':
+      $view_name = 'personal_note_list';
+      $view_display = 'block_2';
+      break;
+    case 'roskilde_favorite_colleagues':
+      $view_name = 'flag_colleagues_tab';
+      $view_display = 'block_1';
+      break;
+  }
+
+  $results = &drupal_static(__FUNCTION__);
+  if (isset($results[$delta])) {
+    return $results[$delta];
+  }
+
+  $output = '';
+  // Load the view.
+  $view = views_get_view($view_name);
+  if (empty($view)) {
+    watchdog('my_page', "The view $view_name not exists.", array(), WATCHDOG_ERROR);
+    return NULL;
+  }
+  // Set the display.
+  $view->set_display($view_display);
+
+  // Get view settings.
+  $view_settings = _roskilde_customisations_get_settings($settings, $delta);
+  if (!empty($view_settings) && $count = array_shift($view_settings)) {
+    $view->set_items_per_page($count);
+  }
+  if (!empty($view_settings) && $offset = array_shift($view_settings)) {
+    $view->set_offset($offset);
+  }
+
+  $view->pre_execute();
+  $view->execute();
+  $output = $view->render();
+
+  $view->destroy();
+  $results[$delta] = $output;
+
+  return $output;
+}
+
+/**
+ * Helper function: Get block settings.
+ */
+function _roskilde_customisations_get_settings($settings, $delta) {
+  $form_fields = _roskilde_customisations_get_form_fields($delta);
+  $view_settings = array();
+  if (isset($settings->{$form_fields[0]})) {
+    foreach ($form_fields as $key) {
+      $view_settings[] = $settings->{$key};
+    }
+  }
+  else {
+    $form = drupal_get_form('roskilde_customisations_homebox_block_edit_form', $delta);
+    foreach ($form_fields as $key) {
+      $property = _roskilde_customisations_get_property($delta, $key);
+      if (isset($form[$key][$property])) {
+        $view_settings[] = $form[$key][$property];
+      }
+    }
+  }
+
+  return $view_settings;
+}
+
+/**
+ * Helper function: Get field property by block name and field name.
+ */
+function _roskilde_customisations_get_property($delta, $field) {
+  switch ($delta) {
+    case 'roskilde_personal_note':
+    case 'roskilde_favorite_colleagues':
+      switch ($field) {
+        case 'result_count':
+        default:
+          return '#default_value';
+      }
+
+    case 'roskilde_my_contents':
+    case 'roskilde_my_subscriptions':
+      switch ($field) {
+        case 'result_count':
+        case 'empty_flag':
+          return '#value';
+        default:
+          return '#default_value';
+      }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function roskilde_customisations_form_views_exposed_form_alter(&$form, &$form_state) {
+  $menu_item = menu_get_item();
+  if (FALSE !== strpos($menu_item['path'], 'admin/structure/views')) {
+    return;
+  }
+  $view = $form_state['view'];
+
+  // Hide exposed form on 'My contents' view.
+  if ("my_contents" == $view->name) {
+    $form['#printed'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_form_homebox_block_edit_MODULE_BLOCK_form_alter().
+ */
+function roskilde_customisations_form_homebox_block_edit_homebox_custom_form_alter(&$form, &$form_state) {
+  $form['title_custom']['#required'] = FALSE;
+  $form['title_custom']['#printed'] = TRUE;
+}
+
+/**
+ * Implements hook_preprocess_panels_pane().
+ *
+ * Used to add the contextual "Add content" links to a pre-defined list of
+ * view-panes on the site.
+ *
+ * @see roskilde_search_views_pre_build
+ */
+function roskilde_customisations_preprocess_panels_pane(&$vars) {
+  // Validate the view is not empty and there is pane config available.
+  if (!isset($vars['content']) || !is_array($vars['content']) || !array_key_exists('#markup', $vars['content'])) {
+    return;
+  }
+
+  // Validate that there is pane configuration and it is not empty.
+  if (!isset($vars['pane']) || empty($vars['pane']->configuration['exposed'])) {
+    return;
+  }
+
+  // Init access utilities.
+  $pane_config = $vars['pane']->configuration['exposed'];
+  $config_type = !empty($pane_config['type']) ? $pane_config['type'] : array();
+
+  switch ($vars['pane']->subtype) {
+    // News-related add link generation.
+    case 'related_short_news_list-panel_pane_1':
+    case 'related_editorial_news-panel_pane_1':
+    case 'editorial_news_list-panel_pane_1':
+    case 'editorial_news_list-panel_pane_2':
+    case 'latest_news-panel_pane_1':
+      $type_name = empty($config_type) || isset($config_type['short_news']) ? 'short_news' : 'editorial_news';
+      break;
+
+    case 'short_news_list-panel_pane_1':
+      $type_name = 'short_news';
+      break;
+
+    // Events-related add content generation.
+    case 'latest_events-panel_pane_1':
+    case 'latest_events-panel_pane_2':
+      $type_name = empty($config_type) || isset($config_type['short_event']) ? 'short_event' : 'event';
+      break;
+
+    default:
+      $type_name = FALSE;
+      break;
+  }
+
+  // Check the user rights to add content.
+  $type = $type_name ? array($type_name => $type_name) : array();
+  if (!empty($type) && _roskilde_customisations_get_content_types($type, TRUE)) {
+    $path = 'node/add/' . str_replace('_', '-', reset($type));
+    $options = array();
+    if (
+      'related_short_news_list-panel_pane_1' != $vars['pane']->subtype &&
+      'related_editorial_news-panel_pane_1' != $vars['pane']->subtype &&
+      'editorial_news_list-panel_pane_1' != $vars['pane']->subtype &&
+      'editorial_news_list-panel_pane_2' != $vars['pane']->subtype &&
+      'latest_events-panel_pane_2' != $vars['pane']->subtype
+    ) {
+      $vars['content']['#markup'] .= '<div class="add-news-content-link">'
+        . l(t('Add content'), $path, $options)
+        . '</div>';
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function roskilde_customisations_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'file_entity_add_upload':
+      if (isset($form['#step']) && 4 == $form['#step']) {
+        $form['field_file_image_alt_text'][LANGUAGE_NONE][0]['value']['#required'] = TRUE;
+        $form['field_file_image_title_text'][LANGUAGE_NONE][0]['value']['#required'] = TRUE;
+      }
+      break;
+
+    case 'views_form_user_bookmarks_page':
+    case 'views_form_flag_colleagues_tab_page':
+      $form['#attached']['js'] = array(
+        drupal_get_path('module', 'roskilde_customisations') . '/js/remove_row_weight.js',
+      );
+      break;
+
+    case 'banner_element_node_form':
+    case 'link_list_node_form':
+      if (isset($form['field_color']) && $form['field_color'][LANGUAGE_NONE]['#required']) {
+        $css = '.transparentBox { display: none !important; }';
+        $form['field_color'][LANGUAGE_NONE]['#attached']['css'][$css] = array('type' => 'inline');
+      }
+      break;
+
+    case 'comment_node_editorial_news_form':
+    case 'comment_node_short_news_form':
+    case 'comment_node_short_event_form':
+      $phonebook = '';
+      if (function_exists('roskilde_phonebook_get_by_username')) {
+        $phonebook = roskilde_phonebook_get_by_username($form['author']['name']['#value']);
+      }
+      else {
+        $user = user_load_by_name($GLOBALS['user']->name);
+        if (!empty($user->field_phonebook[LANGUAGE_NONE][0]['target_id'])) {
+          $phonebook = node_load($user->field_phonebook[LANGUAGE_NONE][0]['target_id']);
+        }
+      }
+      if (!empty($phonebook->field_full_name[LANGUAGE_NONE][0]['value'])) {
+        $account = $GLOBALS['user'];
+        $account->name = $phonebook->field_full_name[LANGUAGE_NONE][0]['value'];
+        $form['author']['_author']['#markup'] = theme('username', array('account' => $account));
+      }
+      break;
+
+    case 'views_content_views_panes_content_type_edit_form':
+      if (isset($form_state['view']) && is_object($form_state['view'])) {
+        switch ($form_state['view']->name) {
+          case 'editorial_news_list':
+          case 'short_news_list':
+            $form['exposed']['in_center'] = array(
+              '#type' => 'checkbox',
+              '#title' => t('In Center'),
+              '#default_value' => !empty($form_state['view']->exposed_input['in_center']),
+            );
+            $form['exposed']['in_views'] = array(
+              '#type' => 'checkbox',
+              '#title' => t('In All Views'),
+              '#default_value' => !empty($form_state['view']->exposed_input['in_views']),
+            );
+            break;
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function roskilde_customisations_preprocess_field(&$variables) {
+  if (array_key_exists('#field_name', $variables['element'])) {
+    // Field 'QA'.
+    if ("field_qa" == $variables['element']['#field_name']) {
+      foreach ($variables['items'] as &$item) {
+        $item['#attached'] = array(
+          'js' => array(
+            drupal_get_path('module', 'roskilde_customisations') . '/js/faq_expand_all.js',
+          ),
+        );
+        $item['expand_all'] = array(
+          '#type' => 'markup',
+          '#markup' => l('', current_path(), array(
+            'attributes' => array(
+              'data-expanded-label' => t('Expand all'),
+              'data-collapsed-label' => t('Collapse all'),
+              'data-state' => 'collapsed',
+              'class' => array('faq-toggle-all'),
+            ),
+          )),
+        );
+      }
+    }
+
+    // Fields 'To website', 'image to website' and 'From Active Directory'.
+    $apply_pre_process = in_array($variables['element']['#field_name'], array(
+      "field_to_website",
+      "field_from_active_directory",
+      'field_image_to_website',
+    ));
+    if ($apply_pre_process) {
+      $class = ($variables['element']['#items'][0]['value']) ? 'phonebook-boolean-yes' : 'phonebook-boolean-no';
+      $variables['items'][0]['#markup'] = '<div class="' . $class . '"></div>';
+    }
+  }
+
+  if (!empty($variables['element']['#field_name']) && "field_banner_element_img_ref" == $variables['element']['#field_name']) {
+    if (!empty($variables['items'][0]['node'])) {
+      foreach ($variables['items'][0]['node'] as $key => $n) {
+        if (is_int($key) && is_array($variables['items'][0]['node'][$key])) {
+          $variables['items'][0]['node'][$key]['#is_banner_img'] = TRUE;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function roskilde_customisations_form_node_form_alter(&$form, $form_state, $form_id) {
+  if (module_exists('multiple_fields_remove_button')) {
+    foreach (element_children($form) as $key) {
+      if ('field_' != substr($key, 0, 6)) {
+        continue;
+      }
+      $language = $form[$key]['#language'];
+      foreach (element_children($form[$key][$language]) as $delta) {
+        if (array_key_exists('remove_button', $form[$key][$language][$delta])) {
+          // Set unique button name.
+          $form[$key][LANGUAGE_NONE][$delta]['remove_button']['#name'] = "{$key}_{$language}_{$delta}_remove_button";
+        }
+      }
+    }
+  }
+
+  if ("editorial_news" == $form['type']['#value']) {
+    $form['#validate'][] = "roskilde_customisations_editorial_news_form_validate";
+  }
+}
+
+/**
+ * Validate handler for 'News' form submit.
+ */
+function roskilde_customisations_editorial_news_form_validate(&$form, &$form_state) {
+  $skip_approve = $GLOBALS['user']->uid == 1;
+  if (!$skip_approve) {
+    foreach (variable_get('workbench_skip_roles', array()) as $rid) {
+      if (isset($GLOBALS['user']->roles[$rid])) {
+        $skip_approve = TRUE;
+        break;
+      }
+    }
+  }
+
+  if (!$form_state['values']['field_for_approve'][LANGUAGE_NONE][0]['value'] || $skip_approve) {
+    $form_state['values']['workbench_moderation_state_new'] = workbench_moderation_state_published();
+  }
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function roskilde_customisations_node_update($node) {
+  roskilde_customisations_node_insert($node);
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function roskilde_customisations_node_insert($node) {
+  if (
+    "editorial_news" == $node->type &&
+    "needs_review" == $node->workbench_moderation_state_new &&
+    !empty($node->field_for_approve[LANGUAGE_NONE][0]['value']) &&
+    !isset($node->scheduler_action)
+  ) {
+    _roskilde_customisations_send_notification($node);
+  }
+}
+
+/**
+ * Handler function: Send email.
+ */
+function _roskilde_customisations_send_notification($node) {
+  $config = variable_get('workbench_approval_notification', array());
+  $mail_params['subject'] = !empty($config['subject']) ? $config['subject'] : t('Content approval');
+  $body = !empty($config['body']) ? $config['body'] : t('There is a new content for approval: :token', array(':token' => '[node:url]'));
+  // We do not sanitize the token replacement, since the output of this
+  // replacement is intended for an e-mail message, not a web browser.
+  $mail_params['body'][0] = token_replace($body, array('user' => $GLOBALS['user'], 'node' => $node));
+
+  if (!empty($config['email'])) {
+    // Generate the list of addresses that this e-mail will be sent to.
+    $addresses = array_filter(explode(',', $config['email']));
+  }
+  else {
+    $addresses = array('presse&kommunikation@egekom.dk');
+  }
+  foreach ($addresses as $address) {
+    _roskilde_customisations_send_mail($address, $mail_params);
+  }
+}
+
+/**
+ * Implements hook_workbench_moderation_transition().
+ */
+function roskilde_customisations_workbench_moderation_transition($node, $old_state, $state) {
+  if ("editorial_news" == $node->type && !isset($node->scheduler_action)) {
+    if ("needs_review" == $old_state && "draft" == $state && !empty($node->uid)) {
+      $config = variable_get('workbench_rejected_notification', array());
+      $body = !empty($config['body']) ? $config['body'] : t('The following content did not pass administrator review: :token', array(':token' => '[node:url]'));
+      $user = user_load($node->uid);
+      $mail_params['subject'] = !empty($config['subject']) ? $config['subject'] : t('Content rejected');
+      $mail_params['body'][0] = token_replace($body, array('user' => $user, 'node' => $node));
+      _roskilde_customisations_send_mail(trim($user->mail), $mail_params);
+    }
+  }
+}
+
+/**
+ * Helper function: Send mail.
+ *
+ * @param string $address
+ *   Email 'To'.
+ *
+ * @param array $mail_params
+ *   An array with email's body, subject, etc.
+ */
+function _roskilde_customisations_send_mail($address, $mail_params) {
+  // Mail the submission.
+  $message = drupal_mail('smtp', 'smtp-test', trim($address),
+                          language_default(), $mail_params);
+  if ($message['result']) {
+    drupal_set_message(t('Email notifications sent.'), 'status', FALSE);
+  }
+  else {
+    drupal_set_message(t('There was a problem sending the
+                       email notifications. No messages were
+                       sent.'), 'error', FALSE);
+    watchdog('workbench_email',
+      'There was a problem sending the email notifications.
+      No messages were sent.
+      To: !to', array('!to' => $address));
+  }
+}
+
+/**
+ * Implements hook_date_formatter_dates_alter().
+ */
+function roskilde_customisations_date_formatter_dates_alter(&$dates, $context) {
+  if (
+    isset($context['field']) &&
+    (
+      "field_date" == $context['field']['field_name'] ||
+      "field_datetime" == $context['field']['field_name']
+    )
+  ) {
+    $settings = $context['display']['settings'];
+    if (isset($settings['format_type']) && "medium" == $settings['format_type']) {
+      $dates['value']['#danish_date'] = TRUE;
+      switch (TRUE) {
+        case (property_exists($context['entity'], '_field_view_prepared') && "editorial_news" == $context['entity']->type):
+        case (array_key_exists('views_view', $context['display']) && "editorial_news_list" == $context['display']['views_view']->name):
+        case (array_key_exists('views_view', $context['display']) && "related_editorial_news" == $context['display']['views_view']->name):
+          $dates['value']['#time_exclude'] = TRUE;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_comment_view_alter().
+ */
+function roskilde_customisations_comment_view_alter(&$build) {
+  $user = user_load($build['#comment']->uid);
+  if (!empty($user->field_phonebook)) {
+    $user_phonebook = node_load($user->field_phonebook[LANGUAGE_NONE][0]['target_id']);
+    if (!empty($user_phonebook->field_phonebook_image[LANGUAGE_NONE])) {
+      $build['#comment']->picture = $user_phonebook->field_phonebook_image[LANGUAGE_NONE][0]['fid'];
+    }
+  }
+}
+
+/**
+ * Implements hook_js_alter().
+ */
+function roskilde_customisations_js_alter(&$javascript) {
+  $fb_key = 'sites/all/modules/contrib/fb_likebox/fb_likebox.js';
+  if (isset($javascript[$fb_key])) {
+    $javascript[$fb_key]['data'] = drupal_get_path('module', 'roskilde_customisations') . '/js/fb_likebox.override.js';
+  }
+}
+
+/**
+ * Implements hook_views_data()
+ */
+function roskilde_customisations_views_data() {
+  $data['views']['filter_by_user_unit'] = array(
+   'title' => t('Phonebook Unit Field'),
+    'help' => t('Filtration by phonebook\'s unit field on the logged user.'),
+    'filter' => array(
+      'handler' => 'roskilde_customisations_handler_filter_by_user_unit',
+    ),
+  );
+  $data['views']['filter_by_user_workplace'] = array(
+   'title' => t('Phonebook Workplace Field'),
+    'help' => t('Filtration by phonebook\'s workplace field on the logged user.'),
+    'filter' => array(
+      'handler' => 'roskilde_customisations_handler_filter_by_user_workplace',
+    ),
+  );
+
+  return $data;
+}
+
+/**
+ * Implements hook_node_view_alter().
+ */
+function roskilde_customisations_node_view_alter(&$build) {
+  if ("link_list" == $build['#bundle'] && isset($build['field_link'])) {
+    $link_title = $build['field_link'][0];
+    $link_title['#element']['title'] = $build['field_title'][0]['#markup'];
+    $build['field_title'][0]['#markup'] = drupal_render($link_title);
+  }
+
+  if ("webform" == $build['#bundle'] && isset($build['webform'])) {
+    $form = &$build['webform']['#form'];
+    foreach (element_children($form['submitted']) as $key) {
+      if ("webform_time" == $form['submitted'][$key]['#type']) {
+        $form['submitted'][$key]['minute']['#pre_render'][] = 'roskilde_customisations_webform_time_minute_pre_render';
+      }
+    }
+  }
+}
+
+/**
+ * Render API callback: Remove colon (:) from minutes on webform time element.
+ */
+function roskilde_customisations_webform_time_minute_pre_render($element) {
+  $element['#prefix'] = trim($element['#prefix'], ':');
+
+  return $element;
+}
+
+/**
+ * Implements hook_homebox_block_settings_alter().
+ */
+function roskilde_customisations_homebox_block_settings_alter(&$block_settings, $user_settings) {
+  $key = $block_settings['key'];
+  if ('roskilde_customisations_roskilde_my_subscriptions' == $key) {
+    $field_unit = &$block_settings['field_unit_tid'];
+    $field_unit = array_intersect_key($field_unit, $user_settings[$key]['field_unit_tid']);
+  }
+}
+
+/**
+ * Implements hook_scheduler_api().
+ */
+function roskilde_customisations_scheduler_nid_list_alter(&$nids, $action) {
+  if ('publish' == $action && $nids) {
+    $select = db_select('workbench_moderation_node_history', 'wh')
+      ->fields('wh', array('nid'));
+    $select->leftJoin('node', 'n', 'n.nid = wh.nid');
+    $select->condition('wh.nid', $nids, 'IN');
+    $select->condition('wh.is_current', 1);
+    $select->condition('wh.state', 'approved', '!=');
+    $select->condition('wh.state', 'published', '!=');
+    $select->condition('n.type', 'editorial_news');
+    $approved_nids = $select->execute()->fetchCol();
+
+    $nids = array_diff($nids, $approved_nids);
+  }
+}
+
+/**
+ * Implements hook_scheduler_api().
+ */
+function roskilde_customisations_scheduler_api($node, $action) {
+  if ('editorial_news' == $node->type && 'publish' == $action) {
+    workbench_moderation_moderate($node, workbench_moderation_state_published());
+  }
+  if ('editorial_news' == $node->type && 'pre_unpublish' == $action) {
+    $node->scheduler_action = $action;
+  }
+  if ('editorial_news' == $node->type && 'unpublish' == $action) {
+    workbench_moderation_moderate($node, workbench_moderation_state_none());
+  }
+  $node->scheduler_flag_action = $action;
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function roskilde_customisations_node_presave($node) {
+  if (
+    'editorial_news' == $node->type &&
+    isset($node->workbench_moderation) &&
+    !isset($node->scheduler_action)
+  ) {
+    $node->status = 'published' == $node->workbench_moderation['current']->state ? NODE_PUBLISHED : NODE_NOT_PUBLISHED;
+  }
+}
+
+/**
+ * Implements hook_number_field_formatter_view_alter().
+ */
+function roskilde_customisations_number_field_formatter_view_alter(&$output, $field) {
+  switch ($field['field_name']) {
+    case 'field_phone_number':
+    case 'field_local_phone_number':
+    case 'field_mobile_number':
+    case 'field_phonebook_tax_phone_number':
+      $output = chunk_split(str_replace(array(' ', '.', ','), '', $output), 4, ' ');
+  }
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function roskilde_customisations_views_query_alter(&$view, &$query) {
+  if (
+    "editorial_news_list" == $view->name &&
+    ("panel_pane_1" == $view->current_display ||
+    "news_units" == $view->current_display)
+  ) {
+    $conditions = $query->where[1]['conditions'];
+    $query->where = array();
+    foreach ($conditions as $key => $condition) {
+      if (
+        is_string($condition['field']) &&
+        NEWS_VIEW_TABLE_ALIAS_CENTER . ".field_unit_tid" == $condition['field'] &&
+        isset($view->exposed_input['in_center']) &&
+        !$view->exposed_input['in_center']
+      ) {
+        // Remove filtration by 'Global: Phonebook Unit Field'.
+        unset($query->table_queue[NEWS_VIEW_TABLE_ALIAS_CENTER]);
+        continue;
+      }
+      elseif (
+        $condition['field'] instanceof DatabaseCondition &&
+        isset($view->exposed_input['in_views']) &&
+        !$view->exposed_input['in_views']
+      ) {
+        $field_condition = $condition['field']->conditions();
+        if (isset($field_condition[0]['field'])) {
+          $field_table = array_shift(explode('.', $field_condition[0]['field']));
+          if ("field_data_field_for_approve_value_0" == $field_table) {
+            // Remove filtration by
+            // 'Content: Published in News views (field_for_approve)'.
+            unset($query->table_queue[$field_table]);
+            continue;
+          }
+        }
+      }
+      $query->add_where(1, $condition['field'], $condition['value'], $condition['operator']);
+    }
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function roskilde_customisations_views_pre_render(&$view) {
+  if ("flag_colleagues_tab" == $view->name && "page" == $view->current_display) {
+    foreach ($view->result as $row) {
+      foreach (array('field_field_mobile_number', 'field_field_phone_number') as $field) {
+        if (!empty($row->{$field})) {
+          $markup = &$row->{$field}[0]['rendered']['#markup'];
+          $markup = chunk_split($markup, 4, ' ');
+        }
+      }
+    }
+  }
+
+  // Add wrapper around view title.
+  if (
+    ("panel_pane_1" == $view->current_display) &&
+    ("faq_list" == $view->name || "agreements_list" == $view->name)
+  ) {
+    $new_title = '<span class="pane-title-inner">';
+    $new_title .= $view->build_info['title'];
+    $new_title .= '</span>';
+    $view->build_info['title'] =  $new_title;
+  }
+}
+
+/**
+ * Implements hook_formater_taxonomy_term_reference_plain_alter().
+ *
+ * Added manualy into function taxonomy_field_formatter_view
+ * for case 'taxonomy_term_reference_plain'.
+ */
+function roskilde_customisations_formater_taxonomy_term_reference_plain_alter(&$value, $item) {
+  switch ($item['taxonomy_term']->vocabulary_machine_name) {
+    case 'organisational_unit':
+    case 'phonebook_department':
+    case 'phonebook_work_place':
+      $value['#markup'] = $item['taxonomy_term']->name;
+      break;
+  }
+}
+
+
+/**
+ * Implements hook_views_default_views_alter().
+ *
+ * Added with the purpose of disabling the default view of Workbench Moderation/Needs Review.
+ * so we'll use the page display, created in "Workbench Moderation: Content (new states)
+ */
+function roskilde_customisations_views_default_views_alter(&$views) {
+  if(isset($views['workbench_moderation'])) {
+    $view = $views['workbench_moderation'];
+    if(isset($view->display['needs_review_page'])) {
+      unset($view->display['needs_review_page']);
+    }
+  }
+}
+
+/**
+ * Implements hook_publication_date_alter().
+ */
+function roskilde_customisations_publication_date_alter(&$published_at, $node, $op) {
+  // Check if the node is being published on scheduler cron.
+  if ("editorial_news" == $node->type) {
+    if (isset($node->scheduler_flag_action) && "pre_publish" == $node->scheduler_flag_action) {
+      if (
+        isset($node->workbench_moderation_state_new) &&
+        workbench_moderation_state_published() == $node->workbench_moderation_state_new
+      ) {
+        $published_at = REQUEST_TIME;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_field_attach_view_alter().
+ */
+function roskilde_customisations_field_attach_view_alter(&$result, $context) {
+  if (!empty($context['display']['type']) && "taxonomy_term_reference_plain" == $context['display']['type']) {
+    if (!empty($context['display']['views_view']) && is_object($context['display']['views_view'])) {
+
+      // We need to show center's abbreviation instead the term title.
+      $view = $context['display']['views_view'];
+      if (!empty($view->name) && !empty($result['field_unit'])) {
+        switch ($view->name) {
+          case 'my_contents':
+          case 'editorial_news_list':
+            foreach (element_children($result['field_unit']) as $key) {
+              if (!empty($result['field_unit']['#items'][$key]['taxonomy_term'])) {
+                $term = $result['field_unit']['#items'][$key]['taxonomy_term'];
+                $field_center_id = field_get_items('taxonomy_term', $term, 'field_phonebook_tax_center_id');
+                if ($field_center_id) {
+                  $result['field_unit'][$key]['#markup'] = $field_center_id[0]['value'];
+                }
+              }
+            }
+            break;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,303 @@
+<?php
+
+/**
+ * @file
+ * Enables full text searching of configured CMIS repository.
+ * The basics of this are copied right out of the drupal 7 search box
+ */
+
+function cmis_search_menu() {
+
+  $items['cmissearch'] = array(
+    'title' => 'Search',
+    'description' => 'For example in Alfresco use this format: workspace://SpacesStore/d984d8c3-133c-4cb7-9e5c-aa1e876e2650',
+    'page callback' => 'cmis_search_view',
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+  );
+
+  $items['alfrescosearch'] = array(
+    'title' => 'Search',
+    'description' => 'For example in Alfresco use this format: workspace://SpacesStore/d984d8c3-133c-4cb7-9e5c-aa1e876e2650',
+    'page callback' => 'cmis_search_view',
+    // Need to put variables in here rather than hard coding - TODO
+    'page arguments' => array('keys' => 1, '0', '10'),
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+  );
+  $items['admin/config/cmis/search'] = array(
+    'title' => t('CMIS Search settings'),
+    'description' => t('Adjust cmis search options.'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cmis_search_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+	'type' => MENU_NORMAL_ITEM,
+    'file' => 'cmis_search.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Page callback.
+ */
+function cmis_search_view($keys = '', $offset, $num_per_page) {
+  module_load_include('api.inc', 'cmis');
+
+  $keys = trim($keys);
+  if (!$keys && !empty($_REQUEST['keys'])) {
+    $keys = trim($_REQUEST['keys']);
+  }
+//At some point i'll make this work with none Alfresco repo's as it once did
+//$cmisquery = "SELECT * FROM cmis:document WHERE (cmis:name LIKE '%".$keys."%' OR CONTAINS('".$keys."')) AND in_tree('workspace://SpacesStore/d984d8c3-133c-4cb7-9e5c-aa1e876e2650')";
+
+  if (variable_get('rootfolder')!=''){
+    $rootcmis = " AND in_tree(d, '".variable_get('rootfolder')."')";
+  }else{
+    $rootcmis = NULL;
+  }
+
+  if ($rootcmis){
+    $cmisquery = "select d.*, t.* from cmis:document as d join cm:titled as t on d.cmis:objectId = t.cmis:objectId WHERE (d.cmis:name like '%".$keys."%' OR t.cm:title LIKE '%".$keys."%' OR t.cm:description LIKE '%".$keys."%' OR CONTAINS(d,'".$keys."'))".$rootcmis;
+  }else{
+    $cmisquery = "SELECT d.*, t.* FROM cmis:document as d join cm:titled as t on d.cmis:objectId = t.cmis:objectId WHERE (d.cmis:name like '%".$keys."%' OR t.cm:title LIKE '%".$keys."%' OR t.cm:description LIKE '%".$keys."%' OR CONTAINS(d,'".$keys."'))";
+  }
+
+  if ($cmisquery && $keys) {
+    try {
+      $repository = cmis_get_repository();
+      $repoId = !empty($repository->repositoryId) ? $repository->repositoryId : 'default';
+
+      $query_result = cmisapi_query($repoId, $cmisquery);
+    }
+    catch (CMISException $e) {
+      cmis_error_handler('cmis_query', $e);
+      $contents = t('Error');
+    }
+  }
+  $contents = NULL;
+
+  if (isset($query_result)) {
+    $page = pager_find_page();
+    $offset = $num_per_page * $page;
+   // $num_per_page = variable_get('cmis_search_num_per_page', 10);
+
+    $chunkedresults = array_chunk($query_result->objectList, $num_per_page);
+    // Which chunk do we need? we can find out from offset and num_per_page
+    $chunkindex = $offset/$num_per_page;
+
+    $rows = isset($chunkedresults[$chunkindex]) ? $chunkedresults[$chunkindex] : 0;
+    $contents .= theme('cmis_search_results', array('rows' => $rows, 'keys' => $keys, 'total' => count($query_result->objectList)));
+  }
+  return $contents;
+}
+
+
+function cmis_search_theme($variables) {
+  return array(
+    'cmis_search_results' => array(
+    ),
+    'cmis_search_results_media' => array(
+    ),
+  );
+}
+
+
+function theme_cmis_search_results($variables) {
+  module_load_include('utils.inc', 'cmis_search');
+  drupal_add_css(drupal_get_path('module', 'cmis_search') . '/cmis_search.css', array('group' => CSS_THEME, 'weight' => 999));
+
+  $num_per_page = variable_get('cmis_search_num_per_page', 10);
+
+  // Now that we have the total number of results, initialize the pager.
+  pager_default_initialize($variables['total'], $num_per_page);
+
+  $output = '';
+  if ($variables['rows']!=NULL){
+    $output .= '<ul class="posts cmisposts">';
+    foreach ($variables['rows'] as $child) {
+      $filetypearray = (_cmis_search_tidyMime($child->properties["cmis:contentStreamMimeType"]));
+
+  	  $output .= '<li>';
+      $output .= '<article class="block-post">';
+      $output .= '<a id="'.$child->properties['cmis:name'].'" class="left cmislink" href="?q=cmis/browser&id='.$child->properties['cmis:objectId'].'">';
+      $output .= '<img width="64" height="64" alt="'.$child->properties['cmis:name'].'" src="/'.drupal_get_path('module', 'cmis_views').'/images/'.$filetypearray['image'].'" class="alignleft"></a>';
+      $title = '';
+
+      if (!empty($child->properties['cm:title'])){
+        $title = $child->properties['cm:title'];
+      }else{
+        $title = $child->properties['cmis:name'];
+      }
+      $output .= '<div class="cmisdetails">';
+      $output .= '<strong class="title"><a id="'.$child->properties['cmis:name'].'" class="cmislink" href="?q=cmis/browser&id='.$child->properties['cmis:objectId'].'">'.$title.'</a></strong>';
+
+      if(isset($child->properties['cm:description'])){
+        if($child->properties['cm:description'] != NULL){
+          $output .= '<p>'.$child->properties['cm:description'].'</p>';
+        }
+      }
+
+      $output .= '<div class="block-open">';
+      $output .= '<ul class="list">';
+   	  $output .= '<li>'.t('Last modified').': <strong>'.date("j/m/Y", strtotime($child->properties["cmis:lastModificationDate"])).'</strong></li>';
+	  //$output .= '<li>Filename: <strong>'.$child->properties['cmis:name'].'</strong></li>';
+	  $output .= '</ul>';
+	  $output .= '</div>'; //close block-open
+	  $output .= '</div>'; //close cmis details
+
+	  $output .= '</article>';
+      $output .= '</li>';
+    }
+    $output .= '</ul>';
+  }else{
+    $output = '<p>'.variable_get('noresultstext').'</p>';
+  }
+  $output .= theme('pager');
+  return $output;
+}
+
+function theme_cmis_search_results_media($variables) {
+
+  module_load_include('utils.inc', 'cmis_search');
+  $output = '';
+  if ($variables['rows']!=NULL){
+    foreach ($variables['rows'] as $child) {
+      $filetypearray = (_cmis_search_tidyMime($child->properties["cmis:contentStreamMimeType"]));
+
+  	  $output .= '<li>';
+  	  $output .= '<a data-for-media="'.$child->properties['cmis:objectId'].'">';
+  	  $output .= '<div class="media-item">';
+
+  	  $repoId = !empty($repository->repositoryId) ? $repository->repositoryId : 'default';
+  	  if (isset($child->renditions[0]['streamId'])){
+        $thumbbinary = cmisapi_getContentStream($repoId, $child->renditions[0]['streamId']);
+	    $child->properties["cmis:link-image"] = '<img width="64" alt="'.$child->properties['cmis:name'].'" src="data:image/gif;base64,'.base64_encode($thumbbinary).'" class="alignleft">';
+      }else{
+        $child->properties["cmis:link-image"] = '<img width="64" height="64" alt="'.$child->properties['cmis:name'].'" src="'.$child->properties["cmis:filetypeimg"].'" class="alignleft">';
+      }
+
+
+
+      //$output .= '<a id="'.$child->properties['cmis:name'].'" class="left cmislink" href="?q=cmis/browser&id='.$child->properties['cmis:objectId'].'">';
+      $output .= $child->properties["cmis:link-image"];
+      //$output .= '<img width="64" height="64" alt="'.$child->properties['cmis:name'].'" src="/'.drupal_get_path('module', 'cmis_views').'/images/'.$filetypearray['image'].'" class="alignleft">';
+      $title = '';
+
+      if (!empty($child->properties['cm:title'])){
+        $title = $child->properties['cm:title'];
+      }else{
+        $title = $child->properties['cmis:name'];
+      }
+      $output .= '<div class="cmisdetails">';
+      $output .= '<strong class="title">'.$title.'</strong>';
+      //<a id="'.$child->properties['cmis:name'].'" class="cmislink" href="?q=cmis/browser&id='.$child->properties['cmis:objectId'].'">'.
+      if(isset($child->properties['cm:description'])){
+        if($child->properties['cm:description'] != NULL){
+          $output .= $child->properties['cm:description'].'<br />';
+        }
+      }
+	  $output .= '</div>'; //close cmis details
+	  $output .= '</a>';
+	  $output .= '</div>';
+      $output .= '</li>';
+    }
+  }else{
+    $output = '<p>'.variable_get('noresultstext').'</p>';
+  }
+  return $output;
+}
+
+
+/**
+ * Implements hook_block_info().
+ */
+function cmis_search_block_info() {
+  module_load_include('api.inc', 'cmis');
+
+  $blocks['form']['info'] = t('CMIS Search form');
+  // Not worth caching.
+  $blocks['form']['cache'] = DRUPAL_NO_CACHE;
+  $blocks['form']['properties']['administrative'] = TRUE;
+  return $blocks;
+}
+
+/**
+ * Form builder; Output a search form for the search block's search box.
+ *
+ * @ingroup forms
+ * @see cmis_search_box_form_submit()
+ * @see search-block-form.tpl.php
+ */
+
+function cmis_search_box($form, &$form_state, $form_id) {
+  $form[$form_id] = array(
+    '#type' => 'textfield',
+    '#title' => t('CMIS Search'),
+    '#title_display' => 'invisible',
+    '#size' => 15,
+    '#default_value' => '',
+    '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
+  );
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('CMIS Search'));
+  $form['#submit'][] = 'cmis_search_box_form_submit';
+
+  return $form;
+}
+
+function cmis_search_media_box($form, &$form_state) {
+  $form['cmis_search_media'] = array(
+    '#type' => 'textfield',
+    '#title' => t('CMIS Search'),
+    //'#title_display' => 'invisible',
+    '#size' => 15,
+    '#default_value' => '',
+    '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
+  );
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('CMIS Search'));
+  $form['#submit'][] = 'cmis_search_box_form_submit';
+
+  return $form;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function cmis_search_block_view($delta = '') {
+  //if (user_access('search content')) {
+    $block['content'] = drupal_get_form('cmis_search_block_form');
+    return $block;
+  //}
+}
+
+function cmis_search_forms() {
+  $forms['cmis_search_block_form']= array(
+    'callback' => 'cmis_search_box',
+    'callback arguments' => array('cmis_search_block_form'),
+  );
+  return $forms;
+}
+
+/**
+ * Process a block search form submission.
+ */
+function cmis_search_box_form_submit($form, &$form_state) {
+  // The search form relies on control of the redirect destination for its
+  // functionality, so we override any static destination set in the request,
+  // for example by drupal_access_denied() or drupal_not_found()
+  // (see http://drupal.org/node/292565).
+  if (isset($_GET['destination'])) {
+    unset($_GET['destination']);
+  }
+
+  $form_id = $form['form_id']['#value'];
+  $info = search_get_default_module_info();
+  if ($info) {
+    $form_state['redirect'] = 'alfrescosearch/' . trim($form_state['values'][$form_id]);
+  }
+  else {
+    form_set_error(NULL, t('Search is currently disabled.'), 'error');
+  }
+}
+

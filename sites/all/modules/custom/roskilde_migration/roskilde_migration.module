@@ -1,0 +1,225 @@
+<?php
+/**
+ * @file
+ * Roskilde Migration customizations.
+ */
+
+/**
+ * Implements hook_feeds_plugins().
+ */
+function roskilde_migration_feeds_plugins() {
+  $info = array();
+  $info['PhoneBookProcessor'] = array(
+    'name' => 'Phone book node processor',
+    'description' => 'Process the Phonebook import.',
+    'handler' => array(
+      'parent' => 'FeedsNodeProcessor', // A plugin needs to derive either directly or indirectly from FeedsFetcher, FeedsParser or FeedsProcessor.
+      'class' => 'PhoneBookProcessor',
+      'file' => 'PhoneBookProcessor.inc',
+      'path' => drupal_get_path('module', 'roskilde_migration'),
+    ),
+  );
+  return $info;
+}
+
+/**
+ * Helper function to import hierarchical terms
+ * @param $term_path
+ * @param $vocab_name
+ * @return string
+ */
+function __feeds_import_hierarchical_taxonomy_term($term_path, $vocab_name)
+{
+    //If the term was empty, just return nothing.
+    if (empty($term_path))
+    {
+        return '';
+    }
+
+    //Explode the incoming path from the CSV file (This is where you can change the delimiter if you want)
+    $term_hierarchy = explode('>', $term_path);
+
+    //Trim up the data to remove excess whitespace  the preg_replace is for UTF8 whitespace is there a better way to handle that?
+    foreach ($term_hierarchy AS $key => $value)
+    {
+
+        $term_hierarchy[$key] = trim($value);
+        $term_hierarchy[$key] = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u','',$value);
+    }
+
+    //If the term is only 1 level, use the helper function and return the tid
+    if (count($term_hierarchy) < 2)
+    {
+        $tid = __feeds_import_taxonomy_term(trim($term_hierarchy[0]), $vocab_name);
+        return $tid;
+    }
+
+    //Get the vocab
+    $vocab = taxonomy_vocabulary_machine_name_load($vocab_name);
+
+    //First, make sure the 1st level even exists.  If not, create it.
+    $parent_tid = __feeds_import_taxonomy_term($term_hierarchy[0], $vocab_name);
+
+    //Loop through each level to see if that level exists and if not, create the new level
+    $level = 0;
+    foreach ($term_hierarchy AS $key => $term_name)
+    {
+
+        //Only process levels above the first level
+        if ($level > 0)
+        {
+            //Look for a term that has this term_name, this vid, and this parent_tid
+            $query = "SELECT ttd.*, th.parent FROM {taxonomy_term_data} AS ttd, {taxonomy_term_hierarchy} AS th WHERE ttd.name = '$term_name' AND ttd.tid = th.tid AND th.parent = '$parent_tid'";
+            $result = db_query($query);
+            $record = $result->fetchObject();
+
+            //If this level does not exists, then we create it
+            if (!$record->parent)
+            {
+                //This level does not yet exist so we have to create it and set it's parent.
+                //This creates a $term var that we can use
+                $term->name = $term_name;
+                $term->vid = $vocab->vid;
+                $term->parent = $parent_tid;
+
+                taxonomy_term_save($term);
+
+                //$record->tid = $term->tid;   // <---- Why does this not work?  It causes an infinite loop.
+
+                //For some reason PHP cannot USE $term->tid from the taxonomy_term_save() function (even though its populated).  It sits there and times out.  So we just get it manually instead.  If anyone can explain why I was not able to use $term->tid  I would greatly appreciate it.  Go ahead and try it, you'll see it does NOT work.  It should cause your apache to enter into an infinite loop for some reason,  it did for me.  So I simply re-fetch the term from DB and get the tid that way.  The taxonomy_term_save() function is "suppose" to set $term with the returned TID (which it does do),  but then when I go to actually use that term with $tid = $term->tid,  the code results in an infinite loop and I have no idea why.
+                $query = new EntityFieldQuery;
+                $result = $query
+                    ->entityCondition('entity_type', 'taxonomy_term')
+                    ->propertyCondition('name', $term_name)
+                    ->propertyCondition('vid', $vocab->vid)
+                    ->execute();
+
+                $tid = array_shift($result['taxonomy_term'])->tid;
+                $record->tid = $tid;
+            }
+
+            //Set this tid as the parent for the next child
+            $parent_tid = $record->tid;
+
+            //We also set $tid in case it is the last result which we will use as the return value
+            $tid = $record->tid;
+
+            //Just to be sure, we unset everything
+            unset($term);
+            unset($query);
+            unset($result);
+            unset($record);
+        }
+
+        $level++;
+    }
+
+    return $tid;
+}
+
+//This function is used in the feeds import for taxonomy term fields using the tamper module.  It uses the feeds_tamper_php type to call the function.
+//It returns the tid of the taxonomy if it exists, and the new tid of the taxonomy was imported/created
+function __feeds_import_taxonomy_term($term_name, $vocab_name)
+{
+    //Make sure the name is trimmed
+    $term_name = trim($term_name);
+
+    //Trim does not trim unicode whitespace so we do that here
+    $term_name = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u','',$term_name);
+
+    //If the term was empty, just return nothing.
+    if (empty($term_name))
+    {
+        return '';
+    }
+
+    //Get the vocab
+    $vocab = taxonomy_vocabulary_machine_name_load($vocab_name);
+
+    //Get the term if it exists
+    $query = "SELECT * FROM {taxonomy_term_data} WHERE vid = '{$vocab->vid}' AND name = '{$term_name}'";
+    $results = db_query($query);
+    $term = $results->fetchObject();
+
+    $tid = $term->tid;
+
+    //The term existed so we return it
+    if (!empty($tid))
+    {
+        return $tid;
+    }
+    //The term did not exist, so we create it.
+    else
+    {
+        //This creates a $term var that we can use
+        $term->name = $term_name;
+        $term->vid = $vocab->vid;
+        taxonomy_term_save($term);
+        return $term->tid;
+    }
+}
+
+/**
+ * Helper function for use into feeds tampers.
+ *
+ * This function is used in the feeds import for taxonomy term reference fields
+ * using the tamper module. It uses the feeds_tamper_php type to call
+ * the function. It returns the tid of the taxonomy if it exists.
+ */
+function __feeds_import_taxonomy_term_id_by_term_field($vocab_mname, $field_name, $value) {
+  if (!is_array($value)) {
+    $value = array($value);
+  }
+  $query = new EntityFieldQuery;
+  $result = $query->entityCondition('entity_type', 'taxonomy_term')
+    ->entityCondition('bundle', $vocab_mname)
+    ->fieldCondition($field_name, 'value', $value, 'IN')
+    ->execute();
+  return ($result['taxonomy_term']) ? array_keys($result['taxonomy_term']) : array();
+}
+
+/**
+ * Implements hook_node_insert
+ */
+
+function roskilde_migration_node_insert($node) {
+  if($node->type == 'phonebook') {
+    if(isset($node->field_user[LANGUAGE_NONE][0]['target_id'])) {
+       $account = user_load($node->field_user[LANGUAGE_NONE][0]['target_id']);
+        if ($account !== FALSE) {
+          if(!isset($account->field_phonebook['und'][0]['target_id'])) {
+              $edit = array('field_phonebook' => $node->nid);
+              user_save($account, $edit);
+          }else {
+              if($account->field_phonebook['und'][0]['target_id']!= $node->nid) {
+                // Huston we have a problem
+                watchdog('phonebook', 'User %uid points to wrong phonebook %nid', array('%uid'=> $account->uid,'%nid'=> $node->nid));
+              }
+          }
+        }
+    }
+  }
+}
+
+/**
+ * Implements hook_node_update
+ */
+
+function roskilde_migration_node_update($node) {
+    if($node->type == 'phonebook') {
+        if(isset($node->field_user[LANGUAGE_NONE][0]['target_id'])) {
+            $account = user_load($node->field_user[LANGUAGE_NONE][0]['target_id']);
+            if ($account !== FALSE) {
+                if(!isset($account->field_phonebook['und'][0]['target_id'])) {
+                    $edit = array('field_phonebook' => $node->nid);
+                    user_save($account, $edit);
+                }else {
+                    if($account->field_phonebook['und'][0]['target_id']!= $node->nid) {
+                        // Huston we have a problem
+                        watchdog('phonebook', 'User %uid points to wrong phonebook %nid', array('%uid'=> $account->uid,'%nid'=> $node->nid));
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+name = Views Hover Balloon
+description = Display views content inside a balloon when hovering a link.
+core = 7.x
+
+; PHP version requirement (optional)
+; php = 5.2
+
+; Package name (see http://drupal.org/node/542202 for a list of names)
+; package = example
+
+; Module style sheets and scripts
+; stylesheets[all][] = views_hover_balloon.css
+; scripts[] = views_hover_balloon.js
+
+; Loadable code files
+; files[] = views_hover_balloon.admin.inc
+; files[] = views_hover_balloon.test
+
+; Module dependencies
+; dependencies[] = module_name
+; dependencies[] = module_name (1.0)
+; dependencies[] = module_name (>=1.0)
+; dependencies[] = module_name (1.x)
+
+; Configuration page
+; configure = admin/config/content/views_hover_balloon
+
+; For further information about configuration options, see
+; - http://drupal.org/node/542202

@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * @file
+ * CMIS Browser2 is an ajax treeview pane for CMIS content.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function cmis_browser2_permission() {
+  $perms['access_cmis_browser2_ajax'] = array(
+    'title' => 'Access CMIS browser2 ajax',
+    'description' => 'Access data from the CMIS repository via browser2 ajax',
+  );
+
+  return $perms;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function cmis_browser2_menu() {
+  // Entry Level Browser (when clicking the Button beneath a CMIS-Field)
+  $items['admin/settings/cmis/browser2/ajax'] = array(
+    'title' => 'cmis browse2',
+    'page callback' => 'cmis_browser2_browse',
+    'page arguments' => array(),
+    'delivery callback' => 'drupal_json_output',
+    'access arguments' => array('access_cmis_browser2_ajax'),
+    'file' => 'cmis_browser2_render.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  // Successive calls to subfolders go here (notice the wildcard).
+  $items['admin/settings/cmis/browser2/ajax/%'] = $items['admin/settings/cmis/browser2/ajax'];
+  $items['admin/settings/cmis/browser2/ajax/%']['page arguments'] = array(5);
+
+  return $items;
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function cmis_browser2_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && $plugin_type == 'content_types') {
+    return 'plugins/content_types';
+  }
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function cmis_browser2_preprocess_cmis_views_detail(&$variables) {
+  $node = menu_get_object();
+  if (empty($node)) {
+    return;
+  }
+
+  $fields = variable_get('cmis_browser2_alfresco_fields', array('field_alfresco_document'));
+  foreach ($fields as $field) {
+    if (isset($node->{$field})) {
+      $flag = FALSE;
+      $defaults = array('add_treeview_classes', 'target');
+      $conf = array_combine($defaults, array_fill(0, 2, ''));
+
+      foreach ($variables['rows'] as $child) {
+        if (!empty($child->properties['cmis:baseTypeId']) && "cmis:folder" == $child->properties['cmis:baseTypeId']) {
+          $conf['init_folder'] = $child->properties['cmis:objectId'];
+
+          if (!$flag) {
+            $name = 'plugins/content_types/cmis_browser2_treeview';
+            module_load_include('inc', 'cmis_browser2', $name);
+          }
+          $res = cmis_browser2_treeview_render(NULL, $conf, NULL, NULL);
+
+          $child->folder_markup = drupal_render($res->content);
+          $flag = TRUE;
+        }
+      }
+
+      if ($flag) {
+        drupal_add_js(path_to_theme() . '/js/jquery.mCustomScrollbar.concat.min.js');
+        drupal_add_css(path_to_theme() . '/css/components/jquery.mCustomScrollbar.css');
+      }
+    }
+  }
+}

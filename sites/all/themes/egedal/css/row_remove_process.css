@@ -1,0 +1,11 @@
+
+.message-icon {
+  background-image: url("../images/icon-cross.png");
+  background-position: right top;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  float: right;
+  height: 17px;
+  width: 17px;
+  margin: 20px 15px 0 0;
+}

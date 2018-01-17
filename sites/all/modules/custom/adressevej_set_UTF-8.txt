@@ -1,0 +1,494 @@
+﻿Absalonsgade
+Algade
+Allehelgensgade
+Astersvej
+Asylgade
+Bakkesvinget
+Baldersvej
+Baunehøjvej
+Betonvej
+Bistrup Allé
+Bondetinget
+Borchsgade
+Boserupvej
+Bredgade
+Bymarken
+Darupvej
+Djalma Lunds Gård
+Domkirkepladsen
+Domkirkestræde
+Dommervænget
+Dronning Margrethes Vej
+Dronning Sofies Vej
+Ejboparken
+Elisagårdsvej
+Engblommevej
+Eriksvej
+Fondens Bro
+Frederiksborgvej
+Fynsvej
+Fælledvej
+Galpestykket
+Gammelgårdsvej
+Gartnervang
+Gammel Darupvej
+Gammel Vindingevej
+Græsengen
+Grønnegade
+Guldblommevej
+Gullandsstræde
+Gyvelvej
+H H Kochs Vej
+Haraldsborgvej
+Havnevej
+Havsteensvej
+Hedegårdsvej
+Helligkorsvej
+Henrik Nielsens Vej
+Herregårdsvej
+Hersegade
+Himmelev Bygade
+Holbækvej
+Hovedvejen
+Hyrdehøj
+Håndværkervej
+Ibsgården
+Industrivej
+Isafjordvej
+Jernbanegade
+Kamstrupvej
+Kirkegårdsvej
+Klokkervej
+Klosterengen
+Klostervang
+Kong Valdemars Vej
+Kongebakken
+Kornerups Vænge
+Kornvej
+Kristianslund
+Københavnsvej
+Køgevej
+Lammegade
+Lindevej
+Lyngbakken
+Lynghøjen
+Lynghøjvej
+Lysalléen
+Læderstræde
+Maglegårdsvej
+Maglehøjen
+Maglelunden
+Marbjergvej
+Margrethehåbsvej
+Munkebro
+Møllehusvej
+Mørbjergparken
+Navervej
+Ny Østergade
+Ollerupvej
+Parkvej
+Parkvænget
+Peblingevej
+Præstemarksvej
+Ravnsholt
+Ringparken
+Ringstedgade
+Ringstedvej
+Roskildevænge
+Rypevej
+Rønnebærparken
+Rørmosen
+Rådhusholmen
+Sankt Laurentii Vej
+Sankt Ols Gade
+Sankt Ols Stræde
+Sankt Peders Stræde
+Sankt Hans Gade
+Søndre Ringvej
+Skolevej
+Skomagergade
+Smedegade
+Sognevej
+Store Højbrøndsstræde
+Store Møllevej
+Store Valbyvej
+Strandgade
+Strandgårdsvej
+Stændertorvet
+Stærkendevej
+Støden
+Svaleøvej
+Svogerslev Hovedgade
+Søbredden
+Sønderlundsvej
+Søndre Mellemvej
+Terrasserne
+Tingvej
+Toldbodgade
+Trekroner Allé
+Troldehøj
+Trægården
+Tunevej
+Universitetsparken
+Universitetsvej
+Veddelev Bygade
+Vestergade
+Vibevej
+Vindeboder
+Vindingevej
+Vor Frue Hovedgade
+Wiemosen
+Æblehaven
+Østergade
+Landevejen
+Linkøpingvej
+Hørhusene
+Joensuuvej
+Vissenbjergvej
+Margrethekær
+Adelgade
+Agertoften
+Allegade
+Amager Landevej
+Anlægsgade
+Anlægsvej
+Avnbølvej
+Bakkevænget
+Bellisvej
+Bernstorffsvej
+Birkevang
+Axeltorv
+Borgergade
+Borgervænget
+Bugtrupvej
+Byagervej
+Bygaden
+Bystævnet
+Bytoften
+Byvej
+Bøge Allé
+Bådsgårdsvej
+Caspar Brands Plads
+Centerparken
+Danavej
+Danmarksgade
+Danstrupvej
+Doktorvejen
+Dronningensgade
+Dyrvigsvej
+Egevangen
+Egevangsvej
+Finderupsvej
+Fjordgade
+Flakhaven
+Flodvej
+Frederik IXs Plads
+Frederiksgade
+Frederiksværksgade
+Fruegade
+Fårupvej
+Gammel Skovvej
+Glesborg Bygade
+Gothersgade
+Grønningen
+Grønvej
+Graabjergvej
+Gråstenvej
+Gåskærgade
+Lindegade
+Harløsevej
+Herlev Bygade
+Himmerlandsgade
+Hjortholmvej
+Hobrovej
+Hold-An Vej
+Holmeagervej
+Holmegaardsvej
+Hovedgade
+Hovedgaden
+Hvidovrevej
+Hærvejen
+Højmarksvej
+Højrebygade
+Højvangen
+Idrætsvej
+Iglsøvej
+Indre Ringvej
+Ishøj Store Torv
+Jernbanevej
+Jorden Rundt
+Kalundborgvej
+Kirke Allé
+Kirkegade
+Kirkegårdsgade
+Kirkestien
+Kirkestræde
+Kirkevangen
+Kirkevej
+Klosterparkvej
+Knudsvej
+Kobbelvænget
+Kongensgade
+Kongevej
+Korsgade
+Kæpgårdsvej
+Laksetorvet
+Landemærket
+Langgade
+Lejrevej
+Lundbakvej
+Lundbergsvej
+Lyndby Gade
+Mads Clausens Vej
+Mellemgade
+Middelgade
+Møllebakken
+Møllebjergvej
+Møllevej
+Møllevænget
+Niels Espes Vej
+Niels Wongesvej
+Nordmarks Allé
+Næstvedvej
+Nylandsvej
+Nytorvgyde
+Nyvej
+Nørregade
+Park Allé
+Pederstrupvej
+Ramsherred
+Rantzausgade
+Ravnsgade
+Realskolevej
+Rudbjergvej
+Rødovre Parkvej
+Røgerupvej
+Rådhus Allé
+Rådhusbakken
+Rådhuscentret
+Rådhusgade
+Rådhusparken
+Rådhuspassagen
+Rådhuspladsen
+Rådhusstræde
+Rådhustorvet
+Rådhusvej
+Sct. Knuds Allé
+Sdr. Vråvej
+Skarridsøgade
+Skolegade
+Skovsholm
+Skørpingvej
+Slotsgade
+Smallegade
+Solbakken
+Stadionvej
+Stationsvej
+Statene
+Stengade
+Stiager
+Storegade
+Stovbyvej
+Svendborgvej
+Sømosevej
+Søndergade
+Søvej
+Teatergade
+Tinghusvej
+Tinghøj Allé
+Tjørnevej
+Toftelunden
+Toften
+Tofteskovvej
+Toftevej
+Torvegade
+Torvet
+Tybovej
+Udbyhøjvej
+Valdemarsgade
+Ved Fjorden
+Vemmeløsevej
+Vendelbogade
+Vesselbjergvej
+Vesterled
+Vesterlyngvej
+Vibygårdsvej
+Vågebjergvej
+Ærøvej
+Østerbro
+Østergårdstræde
+Østerågade
+Øverødvej
+Ådalsparkvej
+Ågade
+Aagade
+Aarestrupvej
+Vallensbæk Stationstorv
+Ny Rådhusplads
+Tinglev Midt
+Them-Centret
+Solrød Center
+Rådhuset
+Sct. Bendtsgade
+Giørtz Plads
+Bycentret
+Boulevarden
+Lyngby Torv
+Hans Schacksvej
+Jørgen Fibigersgade
+Hejrevej
+Holstebrovej
+H P Hanssens Gade
+Vedelsgade
+Slagelsevej
+St Sct Hans Gade
+Marselis Boulevard
+Brovejen
+Slotspladsen
+Roskildevej
+Stationsparken
+Lyseng Allé
+Kongens Vænge
+Ørbækvej
+Niels Bohrs Vej
+Sorsigvej
+Skelbækvej
+Damhaven
+Alléen
+Skottenborg
+Ved Stranden
+Slotsholmsgade
+Christiansborg Slotsplads
+Asiatisk Plads
+Frederiksholms Kanal
+Prins Jørgens Gård
+Nicolai Eigtveds Gade
+Holmens Kanal
+Holbergsgade
+Stormgade
+Højbro Plads
+Nybrogade
+Ottiliavej
+Njalsgade
+Wildersgade
+Ørnevej
+Brønshøjvej
+Nørre Voldgade
+Gamle Vasbygade
+Baldersgade
+Hans Knudsens Plads
+Spaniensgade
+Remisevej
+Linde Allé
+Matthæusgade
+Svendborggade
+Egevej
+Krumtappen
+Bjergbakkevej
+Strandvejen
+Borgediget
+Bernstorffsgade
+Gammeltorv
+Gladsaxe Ringvej
+Suderbovej
+Gyldenløvesgade
+Amager Boulevard
+Gymnasievej
+Doktor Neergaards Vej
+Herstedvang
+Vester Voldgade
+Gammel Køge Landevej
+Haraldsgade
+Lindegårdsparken
+Eget Bo
+Enghaven
+Havremarken
+Møllehusene
+Nordvej
+Søtoften
+Sct. Laurentii Vej
+Amaliegade
+Agerskellet
+Gundsølillevej
+Kirkebjergvej
+Neergårdsvej
+Ørstedvej
+Planetvej
+Vibesøvej
+Birthevej
+Kildemosevej
+Østtoften
+Sengeløsevej
+Finnjollevej
+Gøgevejs Tværvej
+Bogfinkevej
+Skovvej
+Lystbådevej
+Holmevej
+Ramsømaglevej
+Tofthøjvej
+Nordmarksvej
+Hyrdehøj Bygade
+Hejnstrupvej
+Kirstenvej
+Kirkebakken
+Meldager
+Hyldeholm
+Søster Svendstrup Byvej
+Skovbogade
+Bødkers Vænge
+Rådmandshaven
+Vinkelvej
+Østre Kirkevej
+Blågaardsstræde
+Liden Kirstens Vej
+Nyvang
+Sandhøjsvej
+Gulddyssevej
+Baunehøjparken
+Tranevej
+Margrethevej
+Engbækvej
+Rosentorvet
+Bakkefløjen
+Bueager
+Assendløsevej
+Grantoften
+Bodsbjerggårdsvej
+Hyldevænget
+Ågeruphøj
+Piledyssen
+Hvedstrupvej
+Skovbrynet
+Lindbjergvej
+Baunegårdsvej
+Dyssevej
+Ågerupvej
+Byskellet
+Lunden
+Fjordager
+Industrileddet
+Kastelsvej
+Stormandshøjen
+Bakkeager
+Kløverparken
+Højbakken
+Rabalderstræde
+Søparken
+Gormsvej
+Marievej
+Fabriksvænget
+Himmelev Sognevej
+Korvetvej
+Motelvej
+Bredengen
+Stistykket
+Tønsbergvej
+Rådhusbuen
+Pulsen
+Knud den stores vej
+Trekroner Centervej
+Lindelunden
+Munksøgård
+Østervang
+Mørbjergvænget

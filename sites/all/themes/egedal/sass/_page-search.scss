@@ -1,0 +1,525 @@
+/**
+ * Page Global Search
+ */
+
+
+/* search results */
+.page-search {
+
+  .pane-cmis-extra-search-orderby,
+  .pane-cmis-extra-search-results-pane,
+  .pane-apachesolr-search-sort,
+  .pane-apachesolr-result {
+    background-color: transparent;
+    padding: 0;
+  }
+  .pane-cmis-extra-search-orderby,
+  .pane-apachesolr-search-sort {
+    //padding: $space*2.5 0;
+    padding-bottom: $space*2.1875;
+    display: inline-block;
+    width: 100%;
+
+    .pane-title {
+      font-size: $text-m;
+      padding: 0;
+      margin: 0;
+      border: none;
+      float: left;
+      margin-right: $space;
+    }
+    .select-wrapper {
+      display: none;
+    }
+    ul {
+      margin: 0;
+    }
+    li {
+      list-style: none;
+      float: left;
+      line-height: 1;
+      margin-right: $space*2;
+      margin-bottom: 5px;
+      a:before {
+        @extend %font-icon;
+        color: $blue-link;
+        font-size: $small-title-m;
+        content: '\e825';
+        margin-right: 10px;
+      }
+      a:hover:before {
+        content: '\e826';
+      }
+      a.active:before {
+        content: '\e826';
+      }
+    }
+  }
+
+  .pane-cmis-extra-search-results-pane {
+    padding: $space*1.875;
+    padding-left: 0;
+
+    .cmisposts strong {
+      font-family: $bold;
+      font-size: $title-s;
+      line-height: 1.3;
+    }
+    .cmisposts .path {
+      line-height: 1.3;
+    }
+    .cmisposts li {
+      margin-bottom: $space*1.25;
+    }
+    .cmisposts li .block-post > .cmislink {
+      max-width: 22px;
+    }
+  }
+  .search-results {
+    td {
+      background-color: transparent;
+    }
+    li {
+      margin-bottom: $space;
+      padding: 0;
+    }
+    .search-date-info,
+    .search-info a,
+    .search-info {
+      color: lighten($body-font-color, 30%);
+      font-size: $text-s;
+    }
+    .search-date-info,
+    .search-info {
+      margin-bottom: $space/2;
+    }
+    .search-snippet-info {
+      padding-left: 0;
+    }
+    .search-info a {
+      &:hover{
+        color: $pink-link-hover;
+      }
+    }
+    .title a {
+      color: $blue-link;
+      font-family: $bold;
+      font-size: $title-s;
+      &:hover{
+        color: $pink-link-hover;
+      }
+    }
+    .danish-date-format {
+      text-transform: lowercase;
+    }
+  }
+
+  .search-result.promoted_search_results {
+    background-color: $white;
+    padding: $space;
+    .search-snippet {
+      margin-bottom: 0;
+    }
+  }
+
+
+  .panel-2col-75-25-top-stacked .panel-col-first {
+  //.panel-col-first.panel-panel.double.active-sort-pane {
+    box-sizing: border-box;
+    padding-right: 5%;
+  }
+
+  /* right filters */
+  .panel-2col-75-25-top-stacked .panel-col-last {
+    .panel-pane {
+      background-color: $blue-bg-hover;
+    }
+    ul {
+      margin: 0;
+      padding-left: 6px;
+    }
+    li {
+      list-style: none;
+    }
+  }
+  .ctools-collapsible-container {
+    background-color: $blue-bg-hover;
+    padding: $space*1.875;
+    ul {
+      margin: 0;
+      padding-left: 6px;
+    }
+    li {
+      list-style: none;
+    }
+  }
+  .panel-2col-stacked .panel-col-top .inside {
+    margin-bottom: 0;
+  }
+}
+
+.page-search-global {
+  .pane-cmis-extra-search-orderby,
+  .pane-apachesolr-search-sort {
+    li {
+      margin-right: $space;
+    }
+  }
+}
+
+
+.page-search {
+
+  .chosen-container-multi .chosen-choices li.search-field input[type="text"] {
+    color: $blue-link;
+    cursor: pointer;
+    &:hover {
+      color: $pink-link-hover;
+    }
+  }
+
+/*   .chosen-container-multi .chosen-choices {
+    position: relative;
+    width: 100%;
+    &:hover {
+      &:after {
+        color: $pink-link-hover;
+      }
+    }
+    &:after {
+      display: inline-block;
+      color: $blue-link;
+      padding-left: $space * 0.3125;
+      position: absolute;
+      top: 14px;
+      right: 0;
+      @extend %font-icon;
+      content: '\e802';
+      font-size: $text-m;
+    }
+  } */
+
+  .select-wrapper .chosen-container-multi ul {
+    border: none;
+  }
+  .chosen-container-multi .chosen-choices {
+    padding-left: $space * 1.875;
+
+    li.search-choice {
+      border: none;
+      padding-top: $space * 0.75;
+      padding-bottom: $space * 0.75;
+      padding-left: $space * 0.75;
+      padding-right: $space * 1.55;
+      color: $white;
+      background: $pink-link-hover;
+    }
+
+    .search-choice-close {
+      background: none !important;
+
+      &:before {
+        @extend %font-icon;
+        content: '\e82f';
+        color: $white;
+        font-size: $small-text-m;
+      }
+    }
+  }
+}
+
+.cmis-alfresco-facets input[type="checkbox"],
+.facetapi-facetapi-checkbox-links input[type="checkbox"] {
+  margin-left: -6px;
+  margin-right: 15px;
+}
+.cmis-alfresco-facets label,
+.facetapi-facetapi-checkbox-links label {
+  position: absolute;
+  padding-left: 0;
+  cursor: pointer;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  margin-left: -8px;
+  margin-top: 3px;
+  &:after {
+    bottom: 0px;
+    left: 0px;
+  }
+  &:before {
+    bottom: 3px;
+    left: 3px;
+    width: 12px;
+    height: 12px;
+  }
+}
+.cmis-alfresco-facets .checkbox-wrapper,
+.facetapi-facetapi-checkbox-links .checkbox-wrapper {
+  float: left;
+  position: relative;
+}
+
+.cmis-alfresco-facets .checkbox-wrapper {
+  margin-right: 5px;
+}
+
+/* search tabs */
+//.pane-egedal-search-tabs {
+.pane-roskilde-search-tabs {
+  background-color: $blue-bg-hover-lighter;
+  padding: $space*1.3125 0;
+  padding-bottom: $space;
+  margin-bottom: $space*2.5;
+  ul.menu,
+  div.horizontal-tabs {
+    border: none;
+    margin: 0;
+  }
+  ul.menu,
+  .horizontal-tabs ul.horizontal-tabs-list {
+    background-color: transparent;
+    border: none;
+    display: inline-block;
+    width: 100%;
+    &:before {
+      display: none;
+    }
+  }
+  .horizontal-tabs ul.horizontal-tabs-list li {
+    background-color: $blue-link;
+    border-radius: 5px;
+    border: none;
+    color: $white;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0;
+    a {
+      border-radius: 5px;
+      color: $white;
+      padding: 11px $space 13px;
+      line-height: 1;
+    }
+    a:hover {
+      background-color: $blue-button-hover;
+      color: $white;
+    }
+  }
+  .horizontal-tabs ul.horizontal-tabs-list li.selected {
+    a {
+      background-color: $pink-link-hover;
+      &:hover {
+        background-color: $pink-link-hover-dark;
+      }
+    }
+  }
+  // ul.menu {
+  //   display: none;
+  // }
+  ul.menu {
+    display: inline-block;
+  }
+  ul.menu li {
+    display: inline-block;
+    float: left;
+    position: relative;
+    list-style: none;
+    list-style-image: none;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0;
+    a {
+      background-color: $blue-link;
+      border-radius: 5px;
+      color: $white;
+      font-size: $text-s;
+      padding: 9px $space 11px;
+      line-height: 1;
+      &:hover {
+        background-color: $blue-button-hover;
+      }
+    }
+    &.active-trail a {
+      color: $white;
+      background-color: $pink-link-hover;
+      &:hover {
+        background-color: $pink-link-hover-dark;
+      }
+    }
+  }
+}
+
+.pane-apachesolr-form .form-item .description {
+  display: none;
+}
+
+
+html.js .ctools-collapsible-container .ctools-collapsible-handle {
+  display: inline-block;
+}
+
+.page-search-news,
+.page-search-events {
+  .serach-design-row.bottom {
+    height: 123px;
+  }
+}
+
+@include breakpoint(small-only-three) {
+  .page-search {
+    .panel-pane li.search-result {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+    .panel-pane p {
+      padding-left: 0;
+    }
+
+
+    .pane-cmis-extra-search-orderby,
+    .pane-apachesolr-search-sort {
+      padding: 0 30px;
+      padding-bottom: $space*2.1875;
+      background-color: $blue-bg-hover-lighter;
+    }
+
+    .pane-cmis-extra-search-results-pane {
+      padding-left: 30px;
+    }
+
+    .pane-roskilde-search-tabs,
+    .panel-2col-75-25-top-stacked .panel-col-top,
+    .panel-2col-stacked .panel-col-top {
+      background-color: $blue-bg-hover-lighter;
+    }
+
+  }
+
+  .pane-apachesolr-form,
+  .pane-roskilde-search-tabs {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+}
+
+.page-search {
+  fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+    .form-item {
+      margin: $space 0;
+      input {
+        background-color: $white;
+        border-radius: 5px;
+        color: $blue-link-hover;
+        font-family: $medium;
+      }
+    }
+
+  }
+}
+
+
+/* date picker */
+
+#ui-datepicker-div {
+  background: $blue-link;
+  border: none;
+  border-radius: 0;
+  font-size: $text-m;
+  font-family: $regular;
+  padding: 0;
+  z-index: 1;
+}
+
+.ui-datepicker .ui-datepicker-header {
+  border-radius: 0;
+}
+
+.ui-datepicker .ui-state-default,
+.ui-datepicker .ui-widget-header {
+  border: none;
+  background: transparent;
+  color: $white;
+  font-family: $bold;
+}
+
+.ui-datepicker .ui-state-default {
+  font-family: $regular;
+  padding: $space/2;
+  &:hover {
+    background: $blue-button-hover;
+  }
+}
+
+.ui-datepicker .ui-state-active {
+  background: $pink-link-hover;
+  &:hover {
+    background: $pink-link-hover-dark;
+  }
+}
+
+
+.ui-datepicker .ui-datepicker-title {
+  font-size: $small-title-m;
+}
+
+.ui-datepicker {
+  table {
+    border: none;
+    border-collapse: collapse;
+    background: transparent;
+    color: $white;
+    font-size: $text-s;
+    margin: 0;
+  }
+  table th {
+    border: none;
+    background: transparent;
+    font-family: $bold;
+  }
+  table tr {
+    border: transparent;
+  }
+  table td {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+}
+
+.ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-next {
+  background-image: none;
+  cursor: pointer;
+  span {
+    background-image: none;
+  }
+  &:hover {
+    border: none;
+    background-image: none;
+    background: transparent;
+  }
+  &:before {
+    @extend %font-icon;
+    color: $white;
+    font-size: $title-s;
+    top: 5px;
+    position: relative;
+  }
+}
+.ui-datepicker .ui-datepicker-prev {
+  &:before {
+    content: '\e82a';
+    left: 5px;
+  }
+}
+.ui-datepicker .ui-datepicker-next {
+  &:before {
+    content: '\e82b';
+    //right: 5px;
+  }
+}

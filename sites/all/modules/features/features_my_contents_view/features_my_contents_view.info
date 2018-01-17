@@ -1,0 +1,12 @@
+name = My contents view
+core = 7.x
+package = Views
+version = 7.x-1.0
+project = features_my_contents_view
+dependencies[] = panelizer
+dependencies[] = strongarm
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = my_contents
+features_exclude[dependencies][ctools] = ctools

@@ -75,8 +75,8 @@ function roskilde_phonebook_form_alter(&$form, &$form_state, $form_id) {
 
     _roskilde_phonebook_node_form_add_dependency($form, $form_state);
 
-    if (1 != $GLOBALS['user']->uid) {
-      $form['field_unit']['#disabled'] = TRUE;
+    global $user;
+    if (!in_array('Administrator', $user->roles)) {
       $form['title']['#printed'] = TRUE;
       $form['actions']['preview_changes']['#printed'] = TRUE;
     }

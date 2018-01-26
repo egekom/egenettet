@@ -2,7 +2,7 @@
 
 // Redirect user to saml
 global $user;
-if($user->uid == 0 && $_SERVER['REQUEST_URI'] != "/da/user")
+if($user->uid == 0 && $_SERVER['REQUEST_URI'] != "/da/user" && $_SERVER['REQUEST_URI'] != "/cron.php")
     header("Location: /saml_login");
 
 /**

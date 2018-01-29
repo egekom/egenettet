@@ -239,18 +239,18 @@ function content_menu_form_menu_edit_item_alter(&$form, &$form_state, $form_id) 
   }
 
   // Simplify the form, by putting all "advanced" fields in fieldset.
-  $form['advanced'] = array(
-    '#type' => 'fieldset',
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    '#weight' => 100,
-    '#title' => t('Advanced menu item settings'),
-  );
-  $advanced_elements = array('description', 'expanded', 'parent', 'weight');
-  foreach ($advanced_elements as $el_key) {
-    $form['advanced'][$el_key] = $form[$el_key];
-    unset($form[$el_key]);
-  }
+//  $form['advanced'] = array(
+//    '#type' => 'fieldset',
+//    '#collapsible' => TRUE,
+//    '#collapsed' => TRUE,
+//    '#weight' => 100,
+//    '#title' => t('Advanced menu item settings'),
+//  );
+//  $advanced_elements = array('description', 'expanded', 'parent', 'weight');
+//  foreach ($advanced_elements as $el_key) {
+//    $form['advanced'][$el_key] = $form[$el_key];
+//    unset($form[$el_key]);
+//  }
 }
 
 

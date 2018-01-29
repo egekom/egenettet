@@ -1,0 +1,66 @@
+<?php
+
+function export_phonebook_cronapi($op, $job = NULL) {
+	$items['export_phonebook_dump_data'] = array(
+		'description' => 'Export phonebook  to XML',
+		'rule' => '0 3 * * *',
+
+	);
+
+	return $items;
+}
+
+function export_phonebook_export_to_xml($view_name, $display, $path) {
+	$view_output = views_embed_view($view_name, $display);
+	file_unmanaged_save_data($view_output, "{$path}", FILE_EXISTS_REPLACE);
+}
+
+function export_phonebook_delete_old_file($path) {
+	if (file_exists($path)) {
+		unlink($path);
+	}
+}
+
+function export_phonebook_dump_data() {
+
+	// Run as admin user (otherwise the module will produce empty files)
+
+	global $user;
+	$original_user = $user;
+	$old_state = drupal_save_session(FALSE);
+	$user = user_load(1);
+	
+	$yesterday = date("Y-m-d", strtotime("yesterday"));
+	$today = date('Y-m-d');
+	$folder = "/var/www/egedal_test/www/egenettet/sites/default/files/exports/phonebook";
+
+	// Dump data for Centers, Departments and Work places
+
+	$displays = array("centers", "departments", "work_places");
+	foreach ($displays as $display) {
+
+		export_phonebook_delete_old_file("{$folder}/{$display}-{$yesterday}.xml");
+		export_phonebook_export_to_xml(
+			'phonebook_export_taxonomy_terms', 
+			'term_export_phonebook_' . $display,
+			"{$folder}/{$display}-{$today}.xml"
+		);
+}
+
+	// Dump data for Records
+
+	export_phonebook_delete_old_file("{$folder}/records-{$yesterday}.xml");
+	export_phonebook_export_to_xml(
+		"phonebook_export_records", 
+		"node_export_phonebook_records",
+		"{$folder}/records-{$today}.xml"
+	);
+
+	// Load the original user and state again
+
+	$user = $original_user;
+	drupal_save_session($old_state);
+}
+
+?>
+

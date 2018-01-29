@@ -1,0 +1,6 @@
+name = Export phonebook
+description = Export phonebook to XML via an apropriate view
+core = 7.x
+dependencies[] = views:views
+dependencies[] = elysia_cron:elysia_cron
+ 

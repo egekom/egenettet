@@ -762,6 +762,10 @@ table {
   padding: 0;
 }
 
+#navigation .links li.last {
+  float: right;
+}
+
 /**
  * Breadcrumb navigation.
  */

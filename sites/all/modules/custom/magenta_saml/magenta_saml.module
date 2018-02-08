@@ -135,16 +135,11 @@
         {
             // Save user with roles if this is first login
             $role_user = 'User';
-            $role_content_supplier = 'Content supplier';
             $role_user_rid = 18;
-            $role_content_supplier_rid = 17;
-            if ($user_data !== FALSE &&
-                !isset($user_data->roles[$role_user_rid]) &&
-                !isset($user_data->roles[$role_content_supplier_rid])) {
+            if ($user_data !== FALSE && !isset($user_data->roles[$role_user_rid])) {
                 $roles = $user_data->roles +
                     array(
-                        $role_user_rid => $role_user,
-                        $role_content_supplier_rid => $role_content_supplier
+                        $role_user_rid => $role_user
                     );
                 user_save($user_data, array('roles' => $roles));
             }

@@ -97,7 +97,12 @@ function cmis_browser2_treeview_render($subtype, $conf, $args, $contexts) {
     'cmis_browser2_form' => drupal_get_form('cmis_browser2_treeview_filter_form', $conf['init_folder'], $mimetype_options),
     'cmis_browser2_treeview' => array(
       '#type' => 'markup',
-      '#markup' => '<div id="cmis-browser2-tree-' . $brower_tree_id . '" initialObjectId="' . base64_encode($conf['init_folder']) . '" treeviewTarget="' . $conf['target'] . '" class="aciTree aciTreeArrow aciTreeNoBranches aciTreeFullRow aciTreeBig ' . $conf['add_treeview_classes'] . '"></div>',
+      '#markup' => '<div id="cmis-browser2-tree-' . $brower_tree_id .
+          '" initialObjectId="' . base64_encode($conf['init_folder']) .
+          '" drupalNodeId="' . $args['nid'] .
+          '" treeviewTarget="' . $conf['target'] .
+          '" class="aciTree aciTreeArrow aciTreeNoBranches aciTreeFullRow aciTreeBig '
+          . $conf['add_treeview_classes'] . '"></div>',
       '#attached' => array(
         'js' => array(
           array(

@@ -5,10 +5,11 @@
         // Initialize the tree using initialObjectId and then restore the
         // ajax.url back to the baseUrl.
         var initialObjectId = $(this).attr('initialObjectId');
+        var drupalNodeId = $(this).attr('drupalNodeId');
         var treeviewTarget = $(this).attr('treeviewTarget');
         var baseUrl = '/admin/settings/cmis/browser2/ajax/';
         var tree = $(this).aciTree({
-          ajax: { url: baseUrl + initialObjectId },
+          ajax: { url: baseUrl + initialObjectId + '/' + drupalNodeId },
           selectable: true,
           autoInit: false,
           itemHook: function(parent, item, itemData, level) {

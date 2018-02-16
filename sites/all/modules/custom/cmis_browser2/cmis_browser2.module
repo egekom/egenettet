@@ -72,7 +72,8 @@ function cmis_browser2_preprocess_cmis_views_detail(&$variables) {
             $name = 'plugins/content_types/cmis_browser2_treeview';
             module_load_include('inc', 'cmis_browser2', $name);
           }
-          $res = cmis_browser2_treeview_render(NULL, $conf, NULL, NULL);
+	  $args = array('nid' => $node->nid);
+          $res = cmis_browser2_treeview_render(NULL, $conf, $args, NULL);
 
           $child->folder_markup = drupal_render($res->content);
           $flag = TRUE;

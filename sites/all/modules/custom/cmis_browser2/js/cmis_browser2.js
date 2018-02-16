@@ -9,7 +9,7 @@
         var treeviewTarget = $(this).attr('treeviewTarget');
         var baseUrl = '/admin/settings/cmis/browser2/ajax/';
         var tree = $(this).aciTree({
-          ajax: { url: baseUrl + drupalNodeId + '/' + initialObjectId },
+          ajax: { url: baseUrl + initialObjectId + '/' + drupalNodeId },
           selectable: true,
           autoInit: false,
           itemHook: function(parent, item, itemData, level) {

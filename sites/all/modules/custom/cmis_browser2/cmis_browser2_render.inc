@@ -13,7 +13,7 @@
  * @return string
  * The json response.
  */ 
-function cmis_browser2_browse($node_id, $path_id = '') {
+function cmis_browser2_browse($path_id = '', $node_id = 0) {
   module_load_include('api.inc', 'cmis');
   module_load_include('utils.inc', 'cmis_browser');
   $return = array();
@@ -32,8 +32,6 @@ function cmis_browser2_browse($node_id, $path_id = '') {
       $sort_prop = 'cmis:name';
       $sort_dir = 'asc';
       if ($node = node_load($node_id)) {
-        watchdog("cmis_browser2_new", print_r($node, true));
-
         if($sort = $node->field_alfresco_document_sort['und'][0]['value']) {
           switch ($sort) {
             case '0':

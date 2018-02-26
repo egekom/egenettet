@@ -1470,7 +1470,8 @@ function roskilde_customisations_views_query_alter(&$view, &$query) {
       ) {
         $field_condition = $condition['field']->conditions();
         if (isset($field_condition[0]['field'])) {
-          $field_table = array_shift(explode('.', $field_condition[0]['field']));
+          $field_conditions = explode('.', $field_condition[0]['field']);
+          $field_table = array_shift($field_conditions);
           if ("field_data_field_for_approve_value_0" == $field_table) {
             // Remove filtration by
             // 'Content: Published in News views (field_for_approve)'.

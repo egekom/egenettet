@@ -484,13 +484,14 @@ function egedal_preprocess_panels_pane(&$vars){
     $vars['title'] = $new_title;
   }
 
+  if(isset($vars['content']['#field_name'])) {
+      if ($vars['content']['#field_name'] == 'field_related_faq') {
+          $vars['title'] = '<span class="pane-title-inner">' . $vars['title'] . '</span>';
+      }
 
-  if($vars['content']['#field_name'] == 'field_related_faq') {
-    $vars['title'] = '<span class="pane-title-inner">'.$vars['title'].'</span>';
-  }
-
-  if($vars['content']['#field_name'] == 'field_related_agreements') {
-    $vars['title'] = '<span class="pane-title-inner">'.$vars['title'].'</span>';
+      if ($vars['content']['#field_name'] == 'field_related_agreements') {
+          $vars['title'] = '<span class="pane-title-inner">' . $vars['title'] . '</span>';
+      }
   }
   // EG-45 - looks like leftover from the roskilde template. Removed by FE suggestion.
   //  if ($variables['type'] == 'story') {

@@ -2,7 +2,6 @@
  * Implements hook_user_login().
  */ function magenta_saml_user_login(&$edit, $account) {
     $attributes = simplesamlphp_auth_get_attributes();
-    watchdog("magenta_saml_claims_all", "all attributes:" . print_r($attributes, true));
     // Set the field value
     $attribute_key_first_name = variable_get('magenta_saml_first_name'); // Fornavn
     $attribute_key_last_name = variable_get('magenta_saml_last_name'); // Efternavn

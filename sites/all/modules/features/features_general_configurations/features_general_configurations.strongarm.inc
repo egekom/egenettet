@@ -1053,7 +1053,7 @@ function features_general_configurations_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'user_picture_default';
-  $strongarm->value = '/sites/all/themes/roskilde/images/profile_pic.png';
+  $strongarm->value = '/sites/all/themes/egedal/images/profile_pic.png';
   $export['user_picture_default'] = $strongarm;
 
   $strongarm = new stdClass();

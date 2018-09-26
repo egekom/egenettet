@@ -5251,27 +5251,12 @@ html.js .form-item-search-block-form input.form-autocomplete {
 /* line 681, ../sass/_custom.scss */
 .view-flag-bookmarks ul .views-row,
 .view-flag-bookmarks-custom ul .views-row {
-  display: none;
+  display: block;
 }
 /* line 683, ../sass/_custom.scss */
 .view-flag-bookmarks ul .views-row .views-label-title,
 .view-flag-bookmarks-custom ul .views-row .views-label-title {
   display: none;
-}
-/* line 687, ../sass/_custom.scss */
-.view-flag-bookmarks ul .views-row-6,
-.view-flag-bookmarks ul .views-row-5,
-.view-flag-bookmarks ul .views-row-4,
-.view-flag-bookmarks ul .views-row-3,
-.view-flag-bookmarks ul .views-row-2,
-.view-flag-bookmarks ul .views-row-1,
-.view-flag-bookmarks-custom ul .views-row-6,
-.view-flag-bookmarks-custom ul .views-row-5,
-.view-flag-bookmarks-custom ul .views-row-4,
-.view-flag-bookmarks-custom ul .views-row-3,
-.view-flag-bookmarks-custom ul .views-row-2,
-.view-flag-bookmarks-custom ul .views-row-1 {
-  display: block;
 }
 /* line 698, ../sass/_custom.scss */
 .view-flag-bookmarks a,

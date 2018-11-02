@@ -178,8 +178,8 @@ function cmis_extra_slingshot_info_query($keyword = '*', $filters = array(), $fa
       }
     }
   }
-  else if ($response && $response->code == 404) {
-      watchdog('CMIS_EXTRA', 'Access denied for http request: ' . $cmis_url . '.', array(), WATCHDOG_ERROR);
+  else {
+      watchdog('CMIS_EXTRA', 'Response code: . ' . $response->code . 'Failed to call http request: ' . $cmis_url . '.', array(), WATCHDOG_ERROR);
   }
 
   return $info;

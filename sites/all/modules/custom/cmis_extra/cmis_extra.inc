@@ -179,7 +179,7 @@ function cmis_extra_slingshot_info_query($keyword = '*', $filters = array(), $fa
     }
   }
   else {
-      watchdog('CMIS_EXTRA', 'Response code: . ' . $response->code . 'Failed to call http request: ' . $cmis_url . '.', array(), WATCHDOG_ERROR);
+      watchdog('CMIS_EXTRA', 'Response code: ' . $response->code . '. Failed to call http request: ' . $cmis_url . '.', array(), WATCHDOG_ERROR);
   }
 
   return $info;

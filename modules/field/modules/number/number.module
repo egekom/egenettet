@@ -164,6 +164,15 @@ function number_field_presave($entity_type, $entity, $field, $instance, $langcod
       }
     }
   }
+  if ($field['type'] == 'number_float') {
+    // Remove the decimal point from float values with decimal
+    // point but no decimal numbers.
+    foreach ($items as $delta => $item) {
+      if (isset($item['value'])) {
+        $items[$delta]['value'] = floatval($item['value']);
+      }
+    }
+  }
 }
 
 /**
@@ -294,7 +303,6 @@ function number_field_formatter_view($entity_type, $entity, $field, $instance, $
     case 'number_decimal':
       foreach ($items as $delta => $item) {
         $output = number_format($item['value'], $settings['scale'], $settings['decimal_separator'], $settings['thousand_separator']);
-        drupal_alter('number_field_formatter_view', $output, $field);
         if ($settings['prefix_suffix']) {
           $prefixes = isset($instance['settings']['prefix']) ? array_map('field_filter_xss', explode('|', $instance['settings']['prefix'])) : array('');
           $suffixes = isset($instance['settings']['suffix']) ? array_map('field_filter_xss', explode('|', $instance['settings']['suffix'])) : array('');

@@ -87,27 +87,28 @@ function cmis_extra_slingshot_mapping($singular_name = '') {
 function cmis_extra_slingshot_info_query($keyword = '*', $filters = array(), $facet_field = array(), $root_folder = '', $repository = 'default') {
 
   global $conf;
+  $repository_conf = $conf['cmis_repositories'][$repository];
 
   $info = array(
     'facets' => array(),
   );
 
-  if (empty($conf['cmis_repositories'][$repository])) {
+  if (empty($repository_conf)) {
     watchdog('CMIS_EXTRA', 'Unknown repository: :repository', array(':repository' => $repository));
     return $info;
   }
 
-  if (empty($conf['cmis_repositories'][$repository]['url'])) {
+  if (empty($repository_conf['url'])) {
     watchdog('CMIS_EXTRA', 'Unknown repository url.');
     return $info;
   }
 
   // Build the url
-  if (!empty($conf['cmis_repositories'][$repository]['user'])) {
+  if (!empty($repository_conf['user'])) {
     $userpass = array();
-    $userpass[] = $conf['cmis_repositories'][$repository]['user'];
-    if (!empty($conf['cmis_repositories'][$repository]['password'])) {
-      $userpass[] = $conf['cmis_repositories'][$repository]['password'];
+    $userpass[] = $repository_conf['user'];
+    if (!empty($repository_conf['password'])) {
+      $userpass[] = $repository_conf['password'];
     }
     $userpass = implode(':', $userpass) . '@';
   }
@@ -115,8 +116,9 @@ function cmis_extra_slingshot_info_query($keyword = '*', $filters = array(), $fa
     $userpass = '';
   }
 
-  $cmis_url_part = parse_url($conf['cmis_repositories'][$repository]['url']);
-  $cmis_url_part['port'] = empty($cmis_url_part['port']) ? '80' : $cmis_url_part['port'];
+  $cmis_url_part = parse_url($repository_conf['url']);
+  if (empty($cmis_url_part['port']))
+      $cmis_url_part['port'] = '80';
   $cmis_url = sprintf('%s://%s%s%s/%s/search',
     $cmis_url_part['scheme'],
     $userpass,
@@ -146,7 +148,9 @@ function cmis_extra_slingshot_info_query($keyword = '*', $filters = array(), $fa
 
   $options = array();
 
-  $x_alfersco_pass = isset($conf['cmis_repositories'][$repository]['X-Alfresco-Run-As-Password']) ? $conf['cmis_repositories'][$repository]['X-Alfresco-Run-As-Password'] : '';
+  $x_alfersco_pass = '';
+  if (isset($repository_conf['X-Alfresco-Run-As-Password']))
+      $x_alfersco_pass = $repository_conf['X-Alfresco-Run-As-Password'];
 
   if ($x_alfersco_pass) {
     $options = array(
@@ -173,6 +177,9 @@ function cmis_extra_slingshot_info_query($keyword = '*', $filters = array(), $fa
         $info['facets'][$facet_name_safe] = $facet_terms;
       }
     }
+  }
+  else {
+      watchdog('CMIS_EXTRA', 'Response code: ' . $response->code . '. Failed to call http request: ' . $cmis_url . '.', array(), WATCHDOG_ERROR);
   }
 
   return $info;

@@ -4626,7 +4626,7 @@ ul {
 }
 /* line 116, ../sass/_custom.scss */
 ul li {
-  padding-left: 15px;
+  padding-left: 0;
   padding-bottom: 5px;
 }
 
@@ -10877,3 +10877,71 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 }
 
 /*# sourceMappingURL=styles.css.map */
+
+/* Changes to landingpages structure */
+#block-menu-block-1 {
+  float: left;
+  width: 75%;
+  margin-left: 0;
+  background-color: #d6e4ed;
+  column-count: 3;
+  column-gap: 8px;
+}
+
+.menu-block-wrapper > .menu > .menu__item > .menu__link {
+  font-family: "Max-Bold";
+  padding-bottom: 10px;
+  color: #333333;
+  font-size: 1.25rem;
+  display: inline-block;
+  margin-top: 15px;
+}
+
+.menu__item .leaf > a::before {
+  content: '\e801';
+  font-family: 'icons';
+  font-style: normal;
+  font-weight: normal;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1em;
+}
+
+.menu__item .leaf > a {
+  color: #333333;
+}
+
+.menu-block-wrapper > .menu > .menu__item.is-expanded {
+  list-style: none;
+  display: inline-block;
+  width: 100%;
+  padding-left: 5px;
+}
+
+.menu-block-wrapper > .menu > .menu__item.is-leaf {
+  list-style: none;
+  display: inline-block;
+  width: 100%;
+  padding-left: 5px;
+}
+
+ul .menu {
+  margin-left: 0;
+  margin-bottom: 0;
+}
+
+.menu-block-wrapper > ul {
+  margin-left: 16px;
+}
+
+.menu-block-wrapper.menu-block-1.menu-name-main-menu.parent-mlid-0.menu-level-2 {
+  width: 292px;
+}
+ul li ul, ul li ol {
+    margin-left: 0;
+    margin-bottom: 0;
+}

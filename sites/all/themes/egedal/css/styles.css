@@ -10888,7 +10888,7 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   column-gap: 8px;
 }
 
-.menu-block-wrapper > .menu > .menu__item > .menu__link {
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item > .menu__link {
   font-family: "Max-Bold";
   padding-bottom: 10px;
   color: #333333;
@@ -10915,7 +10915,7 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   color: #333333;
 }
 
-.menu-block-wrapper > .menu > .menu__item.is-expanded {
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-expanded {
   list-style: none;
   display: inline-block;
   width: 100%;
@@ -10929,22 +10929,19 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   padding-left: 5px;
 }
 
-ul .menu {
+#block-menu-block-1 ul .menu {
   margin-left: 0;
   margin-bottom: 0;
 }
 
-.menu-block-wrapper > ul {
+#block-menu-block-1 .menu-block-wrapper > ul {
   margin-left: 16px;
 }
 
-.menu-block-wrapper.menu-block-1.menu-name-main-menu.parent-mlid-0.menu-level-2 {
+#block-menu-block-1 .menu-block-wrapper.menu-block-1.menu-name-main-menu.parent-mlid-0.menu-level-2 {
   width: 292px;
 }
-ul li ul, ul li ol {
-    margin-left: 0 !important;
-    margin-bottom: 0;
-}
+
 panel-4col-25-left-stack-profile-topic-fp.panel-display {
-  height: 0;
+  height: 0 !important;
 }

@@ -10897,7 +10897,7 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   margin-top: 15px;
 }
 
-.menu__item .leaf > a::before {
+#block-menu-block-1 .menu__item .leaf > a::before {
   content: '\e801';
   font-family: 'icons';
   font-style: normal;
@@ -10911,18 +10911,13 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   line-height: 1em;
 }
 
-.menu__item .leaf > a {
+#block-menu-block-1 .menu__item .leaf > a {
   color: #333333;
 }
 
-#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-expanded {
-  list-style: none;
-  display: inline-block;
-  width: 100%;
-  padding-left: 5px;
-}
-
-.menu-block-wrapper > .menu > .menu__item.is-leaf {
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-expanded,
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-collapsed,
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-leaf {
   list-style: none;
   display: inline-block;
   width: 100%;

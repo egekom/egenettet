@@ -4626,7 +4626,7 @@ ul {
 }
 /* line 116, ../sass/_custom.scss */
 ul li {
-  padding-left: 15px;
+  padding-left: 0;
   padding-bottom: 5px;
 }
 
@@ -10877,3 +10877,66 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 }
 
 /*# sourceMappingURL=styles.css.map */
+
+/* Changes to landingpages structure */
+#block-menu-block-1 {
+  float: left;
+  width: 75%;
+  margin-left: 0;
+  background-color: #d6e4ed;
+  column-count: 3;
+  column-gap: 8px;
+}
+
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item > .menu__link {
+  font-family: "Max-Bold";
+  padding-bottom: 10px;
+  color: #333333;
+  font-size: 1.25rem;
+  display: inline-block;
+  margin-top: 15px;
+}
+
+.menu__item .leaf > a::before {
+  content: '\e801';
+  font-family: 'icons';
+  font-style: normal;
+  font-weight: normal;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1em;
+}
+
+.menu__item .leaf > a {
+  color: #333333;
+}
+
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-expanded,
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-collapsed,
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-leaf {
+  list-style: none;
+  display: inline-block;
+  width: 100%;
+  padding-left: 5px;
+}
+
+#block-menu-block-1 ul .menu {
+  margin-left: 0;
+  margin-bottom: 0;
+}
+
+#block-menu-block-1 .menu-block-wrapper > ul {
+  margin-left: 16px;
+}
+
+#block-menu-block-1 .menu-block-wrapper.menu-block-1.menu-name-main-menu.parent-mlid-0.menu-level-2 {
+  width: 292px;
+}
+
+.panel-4col-25-left-stack-profile-topic-fp.panel-display {
+  height: 0 !important;
+}

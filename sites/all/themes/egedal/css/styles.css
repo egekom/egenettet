@@ -10915,14 +10915,9 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   color: #333333;
 }
 
-#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-expanded {
-  list-style: none;
-  display: inline-block;
-  width: 100%;
-  padding-left: 5px;
-}
-
-.menu-block-wrapper > .menu > .menu__item.is-leaf {
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-expanded,
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-collapsed,
+#block-menu-block-1 .menu-block-wrapper > .menu > .menu__item.is-leaf {
   list-style: none;
   display: inline-block;
   width: 100%;

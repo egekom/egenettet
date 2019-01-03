@@ -4626,7 +4626,7 @@ ul {
 }
 /* line 116, ../sass/_custom.scss */
 ul li {
-  padding-left: 15px;
+  padding-left: 0;
   padding-bottom: 5px;
 }
 
@@ -10877,6 +10877,7 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 }
 
 /*# sourceMappingURL=styles.css.map */
+
 
 /* Changes to emneforsider/landingpages structure */
 #block-menu-block-1 {

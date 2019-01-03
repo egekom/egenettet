@@ -10878,7 +10878,8 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 
 /*# sourceMappingURL=styles.css.map */
 
-/* Changes to landingpages structure */
+
+/* Changes to emneforsider/landingpages structure */
 #block-menu-block-1 {
   float: left;
   width: 75%;
@@ -10939,4 +10940,16 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 
 .panel-4col-25-left-stack-profile-topic-fp.panel-display {
   height: 0 !important;
+}
+
+.panel-4col-25-left-stack-profile-topic-fp.panel-display .panel-row-first.row,
+.panel-4col-25-left-stack-profile-topic-fp.panel-display .panel-row-second.row,
+.panel-4col-25-left-stack-profile-topic-fp.panel-display .panel-row-third.row,
+.panel-4col-25-left-stack-profile-topic-fp.panel-display .panel-row-forth.row {
+  display: none;
+}
+
+#block-menu-block-1 ul li {
+  padding-left: 0;
+  padding-bottom: 5px;
 }

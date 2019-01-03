@@ -10947,6 +10947,8 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 .panel-4col-25-left-stack-profile-topic-fp.panel-display .panel-row-third.row,
 .panel-4col-25-left-stack-profile-topic-fp.panel-display .panel-row-forth.row {
   display: none;
+  visibility: hidden;
+  height: 0;
 }
 
 #block-menu-block-1 ul li {

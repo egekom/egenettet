@@ -11080,14 +11080,3 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
     padding-left: 0;
     padding-bottom: 5px;
 }
-
-/* Changes to bottom panelizer panel and cmis treeview block */
-
-.panel-col-bottom.panel-panel.double {
-  float: left;
-  width: 75%;
-}
-
-#panels-ipe-regionid-bottom .panel-pane.pane-cmis-browser2-treeview {
-  padding-left: 10px;
-}

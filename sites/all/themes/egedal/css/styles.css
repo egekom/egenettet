@@ -11080,3 +11080,12 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
     padding-left: 0;
     padding-bottom: 5px;
 }
+
+/* Fixing styling of panes on emneforsider */
+
+.panel-4col-25-left-stack-profile-topic-fp .panel-col-two {
+  float: left;
+  width: 100%;
+  margin-right: -100%;
+  margin-top: 100px;
+}

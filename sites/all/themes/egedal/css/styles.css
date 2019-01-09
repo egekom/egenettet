@@ -11087,5 +11087,6 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   float: left;
   width: 100%;
   margin-right: -100%;
-  margin-top: 100px;
+  margin-top: 80px;
+  margin-left: 0;
 }

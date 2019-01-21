@@ -10945,3 +10945,11 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   padding-left: 0;
   padding-bottom: 5px;
 }
+
+/* Remove links in titles for attached webforms */
+.panel-pane.pane-entity-field.pane-node-field-webforms a {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  color: black;
+}

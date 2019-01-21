@@ -11090,3 +11090,10 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   margin-top: 80px;
   margin-left: 0;
 }
+/* Remove links in titles for attached webforms */
+.panel-pane.pane-entity-field.pane-node-field-webforms a {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+    color: black;
+}

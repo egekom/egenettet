@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Definition of roskilde_customisations_handler_filter_by_user_workplace.
+ * Definition of roskilde_customisations_handler_filter_by_user_department.
  */
 class roskilde_customisations_handler_filter_by_user_department extends views_handler_filter {
   public function query() {

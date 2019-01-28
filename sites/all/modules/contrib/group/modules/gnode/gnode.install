@@ -1,0 +1,23 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the Group Node project.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function gnode_install() {
+  db_update('system')
+    ->fields(array('weight' => 1))
+    ->condition('name', 'gnode')
+    ->execute();
+}
+
+/**
+ * Backport the Drupal 8 node access code for consistency.
+ */
+function gnode_update_7001() {
+  variable_del('group_node_mode');
+  node_access_needs_rebuild(TRUE);
+}

@@ -28,7 +28,7 @@ function magenta_group_form_node_form_alter(&$form, &$form_state) {
 
   $type = $form['#node']->type;
   // Then
-  if ($type == 'sektionsforside' || $type == 'sektionsside') {
+  if ($type == 'emneforside' || $type == 'emneside') {
   unset($form['group_settings']);
   }
 }
@@ -38,7 +38,7 @@ function magenta_group_node_validate($node, $form, &$form_state) {
   $type = $node->type;
 
   // Then
-  if ($type != 'sektionsforside' && $type != 'sektionsside') {
+  if ($type != 'emneforside' && $type != 'emneside') {
 	  $values = $form_state['values']['group_settings'];
 
 	  if (!empty($values['group'])) {

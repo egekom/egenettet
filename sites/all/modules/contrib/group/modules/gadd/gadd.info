@@ -1,0 +1,13 @@
+name = Group add
+description = Allows you to add members to a group without their consent
+core = 7.x
+package = Group
+
+dependencies[] = group
+
+; Information added by Drupal.org packaging script on 2017-06-16
+version = "7.x-1.0-beta6+21-dev"
+core = "7.x"
+project = "group"
+datestamp = "1497619746"
+

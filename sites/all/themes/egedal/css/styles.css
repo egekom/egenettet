@@ -11092,8 +11092,70 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 }
 /* Remove links in titles for attached webforms */
 .panel-pane.pane-entity-field.pane-node-field-webforms a {
-    pointer-events: none;
-    cursor: default;
-    text-decoration: none;
-    color: black;
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  color: black;
+}
+
+/*Styling of groups*/
+.panel-pane .egenet-button {
+  display: inline-block;
+  color: #fff;
+  background: linear-gradient(to right,#007aaf,#00628f);
+  border: 1px solid #00496e;
+  padding: 5px 8px;
+  font-size: 0.8rem;
+  box-shadow: rgba(0,0,0,0.2) 2px 2px 10px,#00628f 0 0 5px 2px inset;
+  text-transform: uppercase;
+}
+.group_comment_image {
+  width: 35px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.group_comment {
+  margin: 18px 0;
+  padding-left: 53px;
+  position: relative;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #b9c7bc;
+}
+.group_comment_title {
+  color: #99aaa7;
+  font-size: 1.0rem;
+  margin-bottom: 10px;
+}
+.like_button, .like_count, .edit_button {
+  display: inline;
+}
+.delete_button a, .edit_button a, .like_button a {
+  border: none;
+  text-decoration: none;
+  box-shadow: none;
+  font-weight: normal;
+  text-transform: none;
+  display: inline;
+  margin: 0;
+  background-repeat: no-repeat;
+  color: #99aaa7;
+  padding-left: 18px;
+  font-size: 0.9rem;
+}
+.flag.flag-action.flag-link-normal {
+  background-image: url(/sites/default/files/like.png);
+}
+.inline_text .like_count {
+  background-image: url(/sites/default/files/synes_om.png);
+  background-repeat: no-repeat;
+  width: 14px;
+  height: 14px;
+  padding-left: 18px;
+  color: #99aaa7;
+  font-size: 0.9rem;
+  display: inline;
+}
+.edit_button a {
+  background-image: url(/sites/default/files/rediger.png);
 }

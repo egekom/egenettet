@@ -365,7 +365,7 @@ function group_group_membership_action_info() {
   );
 
   $info['group_leave'] = array(
-    'label' => t('Leave'),
+    'label' => t('Frameld'),
     'description' => t('You are member of this group'),
     'access callback' => 'group_user_can_leave',
     'action callback' => 'group_user_leave',

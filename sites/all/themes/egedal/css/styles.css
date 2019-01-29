@@ -11159,3 +11159,41 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 .edit_button a {
   background-image: url(/sites/default/files/rediger.png);
 }
+.egenet-groups-members img {
+  display: block;
+  width: 50px;
+  height: 50px;
+}
+.egenet-groups-members span a {
+  display: inline-block;
+  margin: 0 5px 5px 0;
+  float: left;
+}
+#egenet_groups_infobox {
+  background: #006a9a;
+  padding: 18px;
+  color: #fff;
+  margin-bottom: 18px;
+}
+.egenet_groups_infobox_title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  line-height: 1.3rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  color: #fff;
+}
+.egenet_groups_infobox_status {
+  font-weight: bold;
+}
+.egenet_groups_infobox_member,
+.egenet_groups_infobox_admin_name {
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #fff;
+}
+egenet_groups_infobox_members,
+.egenet_groups_infobox_members_count {
+  display: inline;
+}
+

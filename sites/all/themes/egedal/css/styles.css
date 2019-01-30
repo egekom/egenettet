@@ -11110,10 +11110,16 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   text-transform: uppercase;
 }
 .group_comment_image {
-  width: 35px;
   position: absolute;
   left: 0;
   top: 0;
+}
+.group_comment_image img {
+  float: left;
+  width: 43px;
+  height: 43px;
+  margin-right: 16px;
+  border-radius: 22px;
 }
 .group_comment {
   margin: 18px 0;
@@ -11127,7 +11133,7 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   font-size: 1.0rem;
   margin-bottom: 10px;
 }
-.like_button, .like_count, .edit_button {
+.delete_button, .like_button, .like_count, .edit_button {
   display: inline;
 }
 .delete_button a, .edit_button a, .like_button a {
@@ -11158,6 +11164,9 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 }
 .edit_button a {
   background-image: url(/sites/default/files/rediger.png);
+}
+.delete_button a {
+  background-image: url(/sites/default/files/slet.png);
 }
 .egenet-groups-members img {
   display: block;
@@ -11192,8 +11201,28 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   margin-bottom: 18px;
   border-bottom: 1px solid #fff;
 }
-egenet_groups_infobox_members,
+.egenet_groups_infobox_members,
 .egenet_groups_infobox_members_count {
   display: inline;
 }
-
+.egenet_groups_infobox_admin_name a {
+  color: #fff;
+  text-decoration: transparent;
+}
+.contextual-links-region.panel-pane.pane-views-panes.pane-gruppemedlemmer-panel-pane-1 {
+  padding: 0 20px 0 25px;
+}
+.beskedredigeringsikon {
+  display: inline-block;
+}
+.contextual-links-region.panel-pane.pane-views-panes.pane-gruppebeskeder-handlinger-panel-pane-1,
+.contextual-links-region.panel-pane.pane-views-panes.pane-gruppe-inviter-kollega-panel-pane-1 {
+  display: inline-block;
+  padding: 0px 0 0 25px;
+}
+#group-title-h2 h2 {
+  margin: 0;
+}
+#group-title-h2 {
+  padding-bottom: 0;
+}

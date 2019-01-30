@@ -11220,6 +11220,9 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   display: inline-block;
   padding: 0px 0 0 25px;
 }
+.panel-col-first.panel-panel.double .inside {
+  background: white;
+}
 #group-title-h2 h2 {
   margin: 0;
 }

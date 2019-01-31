@@ -11209,14 +11209,17 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   color: #fff;
   text-decoration: transparent;
 }
-.contextual-links-region.panel-pane.pane-views-panes.pane-gruppemedlemmer-panel-pane-1 {
+.contextual-links-region.panel-pane.pane-views-panes.pane-gruppemedlemmer-panel-pane-1,
+.panel-pane.pane-views-panes.pane-gruppemedlemmer-panel-pane-1 {
   padding: 0 20px 0 25px;
 }
 .beskedredigeringsikon {
   display: inline-block;
 }
 .contextual-links-region.panel-pane.pane-views-panes.pane-gruppebeskeder-handlinger-panel-pane-1,
-.contextual-links-region.panel-pane.pane-views-panes.pane-gruppe-inviter-kollega-panel-pane-1 {
+.contextual-links-region.panel-pane.pane-views-panes.pane-gruppe-inviter-kollega-panel-pane-1,
+.panel-pane.pane-views-panes.pane-gruppebeskeder-handlinger-panel-pane-1,
+.panel-pane.pane-views-panes.pane-gruppe-inviter-kollega-panel-pane-1 {
   display: inline-block;
   padding: 0px 0 0 25px;
 }

@@ -11232,3 +11232,23 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 #group-title-h2 {
   padding-bottom: 0;
 }
+.view .view-header p {
+  font-weight: bold;
+  font-size: 2rem;
+  line-height: 2.2rem;
+  color: #394c49;
+  margin-top: 0;
+  margin-bottom: 50px;
+}
+#block-block-5 {
+  padding: 20px;
+}
+.block__title.block-title {
+  margin-bottom: 25px;
+}
+#block-block-5 p {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  margin-bottom: 0;
+}

@@ -11237,11 +11237,12 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   font-size: 2rem;
   line-height: 2.2rem;
   color: #394c49;
-  margin-top: 0;
+  margin-top: 25px;
   margin-bottom: 50px;
 }
 #block-block-5 {
-  padding: 20px;
+  padding: 10px;
+  margin-left: 20px;
 }
 .block__title.block-title {
   margin-bottom: 25px;
@@ -11250,5 +11251,11 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   font-family: inherit;
   font-size: 14px;
   line-height: 1.2;
+  margin-bottom: 0;
+}
+#edit-group-type-1-wrapper {
+  margin-top: 25px;
+}
+#block-block-6 {
   margin-bottom: 0;
 }

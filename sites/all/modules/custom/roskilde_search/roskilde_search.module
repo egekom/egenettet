@@ -195,7 +195,7 @@ function roskilde_search_apachesolr_autocomplete_callback($keys = '', $x = '') {
 
       case 'intranet':
         $cmis_results = roskilde_search_cmis_extra_search_view($keys);
-        $params['fq'] = 'bundle:"editorial_news" OR bundle:"short_news" OR bundle:"event" OR bundle:"short_event" OR bundle:"subpage" OR bundle:"topic_page" OR bundle:"unit" OR bundle:"promoted_search_results" OR bundle:"faq_qa" OR bundle:"agreements"';
+        $params['fq'] = 'bundle:"editorial_news" OR bundle:"short_news" OR bundle:"event" OR bundle:"short_event" OR bundle:"subpage" OR bundle:"topic_page" OR bundle:"unit" OR bundle:"promoted_search_results" OR bundle:"faq_qa" OR bundle:"agreements" OR bundle:"webform"';
         break;
     }
   }

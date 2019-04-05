@@ -199,7 +199,7 @@ function _term_reference_tree_flatten($element, &$form_state) {
 /**
  * Return an array of options.
  *
- * This function converts a list of taxonomy terms to a key/value list of options.
+ * This function converts a list of taxonomy terms to a key/value list of options..
  *
  * @param $terms
  *   An array of taxonomy term IDs.

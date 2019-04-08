@@ -11260,3 +11260,35 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 #block-block-6 {
   margin-bottom: 0;
 }
+span a.grayedout img {
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+#comment-form {
+  background-color: #dae3da;
+  margin-top: 18px;
+  margin-bottom: 18px;
+  padding: 18px;
+  width: 70%;
+}
+.node.node-besked.node-promoted.contextual-links-region.view-mode-full.clearfix {
+  margin: 30px;
+  width: 70%;
+}
+.panel-pane.pane-entity-field.pane-group-field-alfresco-document ul li {
+  padding-left: 0;
+  padding-bottom: 5px;
+  list-style: none;
+}
+.panel-pane.pane-entity-field.pane-group-field-alfresco-document .alignleft {
+  float: left;
+  width: 23px;
+  margin-right: 15px;
+}
+.panel-pane.pane-entity-field.pane-group-field-alfresco-document .cmisdetails {
+  position: absolute;
+  padding-left: 37px;
+}
+.panel-pane.pane-entity-field.pane-group-field-alfresco-document ul {
+  margin-left: 0;
+}

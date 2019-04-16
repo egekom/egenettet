@@ -8477,7 +8477,7 @@ div[class^="contextual-links-region panel-pane pane-block pane-subscriptions-ui"
 }
 /* line 48, ../sass/_page-phonebook-user-profile.scss */
 .panel-4col-25-50-25-tworows .panel-col-middle .panel-pane.pane-node-field-unit {
-  padding-bottom: 40px;
+  padding-bottom: 10px;
 }
 /* line 51, ../sass/_page-phonebook-user-profile.scss */
 .panel-4col-25-50-25-tworows .panel-col-middle .panel-pane.pane-node-field-department {
@@ -11097,6 +11097,11 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
   text-decoration: none;
   color: black;
 }
+
+.panel-4col-25-50-25-tworows .panel-col-middle .panel-pane.pane-node-field-politiske-udvalg {
+  font-size: 0.875rem;
+  line-height: 1;
+  padding-bottom: 40px;
 
 /*Styling of groups*/
 .panel-pane .egenet-button {

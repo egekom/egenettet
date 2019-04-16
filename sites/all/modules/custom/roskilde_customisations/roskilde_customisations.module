@@ -1323,17 +1323,24 @@ function roskilde_customisations_js_alter(&$javascript) {
  */
 function roskilde_customisations_views_data() {
   $data['views']['filter_by_user_unit'] = array(
-   'title' => t('Phonebook Unit Field'),
+    'title' => t('Phonebook Unit Field'),
     'help' => t('Filtration by phonebook\'s unit field on the logged user.'),
     'filter' => array(
       'handler' => 'roskilde_customisations_handler_filter_by_user_unit',
     ),
   );
   $data['views']['filter_by_user_workplace'] = array(
-   'title' => t('Phonebook Workplace Field'),
+    'title' => t('Phonebook Workplace Field'),
     'help' => t('Filtration by phonebook\'s workplace field on the logged user.'),
     'filter' => array(
       'handler' => 'roskilde_customisations_handler_filter_by_user_workplace',
+    ),
+  );
+  $data['views']['filter_by_user_department'] = array(
+    'title' => t('Phonebook Department Field'),
+    'help' => t('Filtration by phonebook\'s department field on the logged user.'),
+    'filter' => array(
+      'handler' => 'roskilde_customisations_handler_filter_by_user_department',
     ),
   );
 

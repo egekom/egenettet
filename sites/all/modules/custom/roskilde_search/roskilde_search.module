@@ -557,6 +557,7 @@ function _roskilde_search_map_field() {
     'field_unit' => 'im_field_unit',
     'field_department' => 'im_field_department',
     'field_work_place' => 'im_field_work_place',
+    'field_politiske_udvalg' => 'im_field_politiske_udvalg',
   );
 }
 

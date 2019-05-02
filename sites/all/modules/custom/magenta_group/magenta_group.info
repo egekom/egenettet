@@ -1,0 +1,8 @@
+name = Magenta Group Extension
+description = Changes Group module
+core = 7.x
+package = Magenta
+
+dependencies[] = group
+dependencies[] = gnode
+dependencies[] = node

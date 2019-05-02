@@ -8477,7 +8477,7 @@ div[class^="contextual-links-region panel-pane pane-block pane-subscriptions-ui"
 }
 /* line 48, ../sass/_page-phonebook-user-profile.scss */
 .panel-4col-25-50-25-tworows .panel-col-middle .panel-pane.pane-node-field-unit {
-  padding-bottom: 40px;
+  padding-bottom: 10px;
 }
 /* line 51, ../sass/_page-phonebook-user-profile.scss */
 .panel-4col-25-50-25-tworows .panel-col-middle .panel-pane.pane-node-field-department {
@@ -11092,8 +11092,208 @@ html.js .ctools-collapsible-container .ctools-collapsible-handle {
 }
 /* Remove links in titles for attached webforms */
 .panel-pane.pane-entity-field.pane-node-field-webforms a {
-    pointer-events: none;
-    cursor: default;
-    text-decoration: none;
-    color: black;
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  color: black;
+}
+
+.panel-4col-25-50-25-tworows .panel-col-middle .panel-pane.pane-node-field-politiske-udvalg {
+  font-size: 0.875rem;
+  line-height: 1;
+  padding-bottom: 40px;
+}
+/*Styling of groups*/
+.panel-pane .egenet-button {
+  display: inline-block;
+  color: #fff;
+  background: linear-gradient(to right,#007aaf,#00628f);
+  border: 1px solid #00496e;
+  padding: 5px 8px;
+  font-size: 0.8rem;
+  box-shadow: rgba(0,0,0,0.2) 2px 2px 10px,#00628f 0 0 5px 2px inset;
+  text-transform: uppercase;
+}
+.group_comment_image {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.group_comment_image img {
+  float: left;
+  width: 43px;
+  height: 43px;
+  margin-right: 16px;
+  border-radius: 22px;
+}
+.group_comment {
+  margin: 18px 0;
+  padding-left: 53px;
+  position: relative;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #b9c7bc;
+}
+.group_comment_title {
+  color: #99aaa7;
+  font-size: 1.0rem;
+  margin-bottom: 10px;
+}
+.delete_button, .like_button, .like_count, .edit_button {
+  display: inline;
+}
+.delete_button a, .edit_button a, .like_button a {
+  border: none;
+  text-decoration: none;
+  box-shadow: none;
+  font-weight: normal;
+  text-transform: none;
+  display: inline;
+  margin: 0;
+  background-repeat: no-repeat;
+  color: #99aaa7;
+  padding-left: 18px;
+  font-size: 0.9rem;
+}
+.flag.flag-action.flag-link-normal {
+  background-image: url(/sites/default/files/like.png);
+}
+.inline_text .like_count {
+  background-image: url(/sites/default/files/synes_om.png);
+  background-repeat: no-repeat;
+  width: 14px;
+  height: 14px;
+  padding-left: 18px;
+  color: #99aaa7;
+  font-size: 0.9rem;
+  display: inline;
+}
+.edit_button a {
+  background-image: url(/sites/default/files/rediger.png);
+}
+.delete_button a {
+  background-image: url(/sites/default/files/slet.png);
+}
+.egenet-groups-members img {
+  display: block;
+  width: 50px;
+  height: 50px;
+}
+.egenet-groups-members span a {
+  display: inline-block;
+  margin: 0 5px 5px 0;
+  float: left;
+}
+#egenet_groups_infobox {
+  background: #006a9a;
+  padding: 18px;
+  color: #fff;
+  margin-bottom: 18px;
+}
+.egenet_groups_infobox_title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  line-height: 1.3rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  color: #fff;
+}
+.egenet_groups_infobox_status {
+  font-weight: bold;
+}
+.egenet_groups_infobox_member,
+.egenet_groups_infobox_admin_name {
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #fff;
+}
+.egenet_groups_infobox_members,
+.egenet_groups_infobox_members_count {
+  display: inline;
+}
+.egenet_groups_infobox_admin_name a {
+  color: #fff;
+  text-decoration: transparent;
+}
+.contextual-links-region.panel-pane.pane-views-panes.pane-gruppemedlemmer-panel-pane-1,
+.panel-pane.pane-views-panes.pane-gruppemedlemmer-panel-pane-1 {
+  padding: 0 20px 0 25px;
+}
+.beskedredigeringsikon {
+  display: inline-block;
+}
+.contextual-links-region.panel-pane.pane-views-panes.pane-gruppebeskeder-handlinger-panel-pane-1,
+.contextual-links-region.panel-pane.pane-views-panes.pane-gruppe-inviter-kollega-panel-pane-1,
+.panel-pane.pane-views-panes.pane-gruppebeskeder-handlinger-panel-pane-1,
+.panel-pane.pane-views-panes.pane-gruppe-inviter-kollega-panel-pane-1 {
+  display: inline-block;
+  padding: 0px 0 0 25px;
+}
+.panel-col-first.panel-panel.double .inside {
+  background: white;
+}
+#group-title-h2 h2 {
+  margin: 0;
+}
+#group-title-h2 {
+  padding-bottom: 0;
+}
+.view .view-header p {
+  font-weight: bold;
+  font-size: 2rem;
+  line-height: 2.2rem;
+  color: #394c49;
+  margin-top: 25px;
+  margin-bottom: 50px;
+}
+#block-block-5 {
+  padding: 10px;
+  margin-left: 20px;
+  margin-top: 20px;
+}
+.block__title.block-title {
+  margin-bottom: 25px;
+}
+#block-block-5 p {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  margin-bottom: 0;
+}
+#edit-group-type-1-wrapper {
+  margin-top: 25px;
+}
+#block-block-6 {
+  margin-bottom: 0;
+}
+span a.grayedout img {
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+#comment-form {
+  background-color: #dae3da;
+  margin-top: 18px;
+  margin-bottom: 18px;
+  padding: 18px;
+  width: 70%;
+}
+.node.node-besked.node-promoted.contextual-links-region.view-mode-full.clearfix {
+  margin: 30px;
+  width: 70%;
+}
+.panel-pane.pane-entity-field.pane-group-field-alfresco-document ul li {
+  padding-left: 0;
+  padding-bottom: 5px;
+  list-style: none;
+}
+.panel-pane.pane-entity-field.pane-group-field-alfresco-document .alignleft {
+  float: left;
+  width: 23px;
+  margin-right: 15px;
+}
+.panel-pane.pane-entity-field.pane-group-field-alfresco-document .cmisdetails {
+  position: absolute;
+  padding-left: 37px;
+}
+.panel-pane.pane-entity-field.pane-group-field-alfresco-document ul {
+  margin-left: 0;
 }

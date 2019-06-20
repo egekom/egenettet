@@ -11294,7 +11294,7 @@ span a.grayedout img {
 }
 
 /* Styling of menus with dropdown for children*/
-#navigation, .mobile-navigation {
+#navigation {
   position: relative;
   z-index: 1;
   display: block;
@@ -11330,5 +11330,5 @@ span a.grayedout img {
 
 .sf-menu ul li {
   width: 100%;
-  background-color: #0f0f0f;
+  background-color: #f0f0f0;
 }

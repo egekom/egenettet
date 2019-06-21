@@ -11332,3 +11332,8 @@ span a.grayedout img {
   width: 100%;
   background-color: #f0f0f0;
 }
+.sf-menu ul {
+  left: 0;
+  position: absolute;
+  padding-top: 25px;
+}

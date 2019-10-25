@@ -114,7 +114,7 @@ function features_global_search_page_default_page_manager_pages() {
       'keys' => '',
       'keys_required' => 0,
       'filters_action' => 'override',
-      'filters' => 'bundle:"editorial_news" OR bundle:"short_news" OR bundle:"event" OR bundle:"short_event" OR bundle:"article" OR bundle:"topic_frontpage" OR bundle:"topic_page" OR bundle:"unit" OR bundle:"promoted_search_results" OR bundle:"faq_qa"',
+      'filters' => 'bundle:"editorial_news" OR bundle:"short_news" OR bundle:"event" OR bundle:"short_event" OR bundle:"article" OR bundle:"topic_frontpage" OR bundle:"topic_page" OR bundle:"unit" OR bundle:"promoted_search_results" OR bundle:"faq_qa" OR bundle:"webform"',
       'rows' => '10',
       'env_id' => '',
       'sort_action' => 'none',

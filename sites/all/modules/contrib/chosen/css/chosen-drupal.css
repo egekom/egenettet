@@ -30,7 +30,7 @@
 }
 
 /*Fix issues with client side validation of webforms*/
-select:invalid {
+/*select:invalid {
   height: 0 !important;
   opacity: 0 !important;
   position: absolute !important;
@@ -41,3 +41,4 @@ select:invalid {
 select:invalid[multiple] {
   margin-top: 15px !important;
 }
+*/

@@ -131,6 +131,18 @@ Drupal.behaviors.termReferenceTree = {
         //End process checkbox changes.
       } //End Want a cascading checking.
 
+      //On page load, check if the user wants a Select all helper. If so,
+      //prepend the helper to the begining of the list.
+            if($(this).hasClass('select-all-helper')) {
+            var _this = this;
+            var selectAll = $(Drupal.t('<a href="#">Select all</a>')).click(function(event) {
+                event.preventDefault();
+                  $(_this).find('input[type=checkbox]').each(function() {
+                    $(this).attr('checked', true);
+            });
+          });
+            $(this).prepend(selectAll);
+       }
     });
   }
 };

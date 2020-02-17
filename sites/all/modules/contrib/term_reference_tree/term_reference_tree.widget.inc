@@ -483,8 +483,8 @@ function theme_checkbox_tree_track_list($variables) {
 
   $label = format_plural(
       $variables['element']['#max_choices'],
-      'Selected item (click the item to uncheck it)',
-      'Selected items (click an item to uncheck it)'
+      'Valgt arbejdssted (klik på arbejdsstedet for at afvælge det)',
+      'Valgte arbejdssteder (klik på arbejdsstederne for at afvælge dem)'
   );
   $output = '<div class="term-reference-track-list-container">';
   $output .= '<div class="term-reference-track-list-label">' . $label . '</div>';

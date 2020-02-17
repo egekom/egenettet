@@ -135,7 +135,7 @@ Drupal.behaviors.termReferenceTree = {
       //prepend the helper to the begining of the list.
             if($(this).hasClass('select-all-helper')) {
             var _this = this;
-            var selectAll = $(Drupal.t('<a href="#">Select all</a>')).click(function(event) {
+            var selectAll = $(Drupal.t('<a href="#">Vælg alle</a>')).click(function(event) {
                 event.preventDefault();
                   $(_this).find('input[type=checkbox]').each(function() {
                     $(this).attr('checked', true);

@@ -28,3 +28,17 @@
 .chosen-container.error .chosen-single {
   border: 2px solid red;
 }
+
+/*Fix issues with client side validation of webforms*/
+/*select:invalid {
+  height: 0 !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  display: inline !important;
+  width: auto;
+}
+
+select:invalid[multiple] {
+  margin-top: 15px !important;
+}
+*/

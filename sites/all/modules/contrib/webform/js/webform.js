@@ -211,6 +211,8 @@
               $target.toggleClass('webform-conditional-hidden', !actionResult);
               if (actionResult) {
                 $target.show();
+                // Patching Webform module to avoid conflict with Chosen module
+                $form.find('.chosen-disabled').prev().trigger('chosen:updated.chosen');
               }
               else {
                 $target.hide();

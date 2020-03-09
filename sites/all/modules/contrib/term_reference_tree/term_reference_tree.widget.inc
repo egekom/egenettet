@@ -18,6 +18,7 @@ function term_reference_tree_field_widget_info() {
         'filter_view' => '',
         'select_parents' => 0,
         'cascading_selection' => 0,
+        'select_all_helper' => 0,
         'track_list' => 0,
         'token_display' => '',
         'parent_term_id' => '',
@@ -67,6 +68,14 @@ function term_reference_tree_field_widget_settings_form($field, $instance) {
       '#description' => t('On parent selection, automatically select children if none were selected. Some may then be manually unselected. In the same way, on parent unselection, unselect children if all were selected. <em>This option is only valid if an unlimited number of values can be selected.</em>'),
       '#default_value' => $settings['cascading_selection'],
       '#element_validate' => array('_term_reference_tree_cascading_selection_validate'),
+      '#return_value' => 1,
+    );
+    $form['select_all_helper'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Select all helper'),
+      '#description' => t('When turned on, this option shows a "Select all" link on the widget that triggers all items to be selected on click.  <em>This option is only valid if an unlimited number of values can be selected.</em>'),
+      '#default_value' => $settings['select_all_helper'],
+      '#element_validate' => array('_term_reference_tree_select_all_helper_validate'),
       '#return_value' => 1,
     );
 
@@ -254,6 +263,17 @@ function _term_reference_tree_cascading_selection_validate($element, &$form_stat
 }
 
 /**
+ * Makes sure that cardinality is unlimited if select all helper is enabled.
+ */
+function _term_reference_tree_select_all_helper_validate($element, &$form_state) {
+  if ($form_state['values']['instance']['widget']['settings']['select_all_helper'] == 1 && $form_state['values']['field']['cardinality'] != -1) {
+    // This is pretty wonky syntax for the field name in form_set_error, but it's
+    // correct.
+    form_set_error('field][cardinality', t('You must select an Unlimited number of values if Select all helper is enabled.'));
+  }
+}
+
+/**
  * Process the checkbox_tree widget.
  *
  * This function processes the checkbox_tree widget.
@@ -315,6 +335,9 @@ function term_reference_tree_process_checkbox_tree($element, $form_state) {
         '#type' => 'checkbox_tree_track_list',
         '#max_choices' => $max_choices,
       );
+    }
+    if (array_key_exists('#select_all_helper', $element) && $element['#select_all_helper']) {
+      $element['#attributes']['class'][] = 'select-all-helper';
     }
   }
 
@@ -460,8 +483,8 @@ function theme_checkbox_tree_track_list($variables) {
 
   $label = format_plural(
       $variables['element']['#max_choices'],
-      'Selected item (click the item to uncheck it)',
-      'Selected items (click an item to uncheck it)'
+      'Valgt arbejdssted (klik på arbejdsstedet for at afvælge det)',
+      'Valgte arbejdssteder (klik på arbejdsstederne for at afvælge dem)'
   );
   $output = '<div class="term-reference-track-list-container">';
   $output .= '<div class="term-reference-track-list-label">' . $label . '</div>';
@@ -513,6 +536,7 @@ function term_reference_tree_field_widget_form(&$form, &$form_state, $field, $in
       $element['#filter_view'] = module_exists('views') ? $settings['filter_view'] : '';
       $element['#select_parents'] = $settings['select_parents'];
       $element['#cascading_selection'] = $settings['cascading_selection'];
+      $element['#select_all_helper'] = $settings['select_all_helper'];
       $element['#track_list'] = $settings['track_list'];
       $element['#parent_tid'] = $settings['parent_term_id'] ? $settings['parent_term_id'] : $field['settings']['allowed_values'][0]['parent'];
       $element['#vocabulary'] = $vocabulary;

@@ -1,153 +1,152 @@
 <?php /**
  * Implements hook_user_login().
  */ function magenta_saml_user_login(&$edit, $account) {
-  $attributes = simplesamlphp_auth_get_attributes();
-  // Set the field value
-  $attribute_key_first_name = variable_get('magenta_saml_first_name'); // Fornavn
-  $attribute_key_last_name = variable_get('magenta_saml_last_name'); // Efternavn
-  $attribute_key_position = variable_get('magenta_saml_position'); // Jobtitel
-  $attribute_key_mobile_number = variable_get('magenta_saml_mobile_number'); // Mobil nr.
-  $attribute_key_department = variable_get('magenta_saml_department'); // Afdeling
-  $attribute_key_unit = variable_get('magenta_saml_unit'); // Center
-  if(array_key_exists($attribute_key_first_name, $attributes)) {
-    if (is_array($attributes[$attribute_key_first_name]))
-      $attribute_value_first_name = $attributes[$attribute_key_first_name][0];
-    else
-      $attribute_value_first_name = $attributes[$attribute_key_first_name];
-  }
-  if(array_key_exists($attribute_key_last_name, $attributes)) {
-    if (is_array($attributes[$attribute_key_last_name]))
-      $attribute_value_last_name = $attributes[$attribute_key_last_name][0];
-    else
-      $attribute_value_last_name = $attributes[$attribute_key_last_name];
-  }
-  if(array_key_exists($attribute_key_position, $attributes)) {
-    if (is_array($attributes[$attribute_key_position]))
-      $attribute_value_position = $attributes[$attribute_key_position][0];
-    else
-      $attribute_value_position = $attributes[$attribute_key_position];
-  }
-  if(array_key_exists($attribute_key_mobile_number, $attributes)) {
-    if (is_array($attributes[$attribute_key_mobile_number]))
-      $attribute_value_mobile_number = $attributes[$attribute_key_mobile_number][0];
-    else
-      $attribute_value_mobile_number = $attributes[$attribute_key_mobile_number];
-  }
-  if(array_key_exists($attribute_key_department, $attributes)) {
-    if (is_array($attributes[$attribute_key_department]))
-      $attribute_value_departments = $attributes[$attribute_key_department][0];
-    else
-      $attribute_value_departments = $attributes[$attribute_key_department];
-  }
-  if(array_key_exists($attribute_key_unit, $attributes)) {
-    if (is_array($attributes[$attribute_key_unit]))
-      $attribute_value_unit = $attributes[$attribute_key_unit][0];
-    else
-      $attribute_value_unit = $attributes[$attribute_key_unit];
-  }
-  if (isset($attribute_value_first_name) && isset($attribute_value_last_name)) {
-    $new_phonebook_title = $attribute_value_first_name . ' ' . $attribute_value_last_name;
-    $user_data = user_load($account->uid);
-    if(array_key_exists('und', $user_data->field_phonebook)) {
-      $phonebook_nid = $user_data->field_phonebook['und'][0]['target_id'];
+    $attributes = simplesamlphp_auth_get_attributes();
+    // Set the field value
+    $attribute_key_first_name = variable_get('magenta_saml_first_name'); // Fornavn
+    $attribute_key_last_name = variable_get('magenta_saml_last_name'); // Efternavn
+    $attribute_key_position = variable_get('magenta_saml_position'); // Jobtitel
+    $attribute_key_mobile_number = variable_get('magenta_saml_mobile_number'); // Mobil nr.
+    $attribute_key_department = variable_get('magenta_saml_department'); // Afdeling
+    $attribute_key_unit = variable_get('magenta_saml_unit'); // Center
+    if(array_key_exists($attribute_key_first_name, $attributes)) {
+        if (is_array($attributes[$attribute_key_first_name]))
+            $attribute_value_first_name = $attributes[$attribute_key_first_name][0];
+        else
+            $attribute_value_first_name = $attributes[$attribute_key_first_name];
     }
-    // Create new phone book if the user does not have a phone book.
+    if(array_key_exists($attribute_key_last_name, $attributes)) {
+        if (is_array($attributes[$attribute_key_last_name]))
+            $attribute_value_last_name = $attributes[$attribute_key_last_name][0];
+        else
+            $attribute_value_last_name = $attributes[$attribute_key_last_name];
+    }
+    if(array_key_exists($attribute_key_position, $attributes)) {
+        if (is_array($attributes[$attribute_key_position]))
+            $attribute_value_position = $attributes[$attribute_key_position][0];
+        else
+            $attribute_value_position = $attributes[$attribute_key_position];
+    }
+    if(array_key_exists($attribute_key_mobile_number, $attributes)) {
+        if (is_array($attributes[$attribute_key_mobile_number]))
+            $attribute_value_mobile_number = $attributes[$attribute_key_mobile_number][0];
+        else
+            $attribute_value_mobile_number = $attributes[$attribute_key_mobile_number];
+    }
+    if(array_key_exists($attribute_key_department, $attributes)) {
+        if (is_array($attributes[$attribute_key_department]))
+            $attribute_value_departments = $attributes[$attribute_key_department][0];
+        else
+            $attribute_value_departments = $attributes[$attribute_key_department];
+    }
+    if(array_key_exists($attribute_key_unit, $attributes)) {
+        if (is_array($attributes[$attribute_key_unit]))
+            $attribute_value_unit = $attributes[$attribute_key_unit][0];
+        else
+            $attribute_value_unit = $attributes[$attribute_key_unit];
+    }
+    if (isset($attribute_value_first_name) && isset($attribute_value_last_name)) {
+        $new_phonebook_title = $attribute_value_first_name . ' ' . $attribute_value_last_name;
+        $user_data = user_load($account->uid);
+        if(array_key_exists('und', $user_data->field_phonebook)) {
+            $phonebook_nid = $user_data->field_phonebook['und'][0]['target_id'];
+        }
+        // Create new phone book if the user does not have a phone book.
+        else {
+            $node = new stdClass();
+            $node->title = $new_phonebook_title;
+            $node->type = 'phonebook';
+            node_object_prepare($node);
+            $node->language = 'und';
+            $node->uid = $account->uid;
+            $node->status = 1;
+            $node->promote = 0;
+            $node->comment = 1;
+            // Set reference to user
+            $node->field_user['und'][0]['target_id'] = $account->uid;
+            $node = node_submit($node);
+            node_save($node);
+            $phonebook_nid = $node->nid;
+            // Set reference from user
+            $user_data->field_phonebook['und'][0]['target_id'] = $phonebook_nid;
+        }
+        // Load phone book
+        $phonebook = node_load($phonebook_nid);
+        // Add title to phonebook
+        $phonebook->title = $new_phonebook_title;
+        // Add names to phonebook
+       $phonebook->field_first_name['und'][0]['value'] = $attribute_value_first_name;
+        $phonebook->field_last_name['und'][0]['value'] = $attribute_value_last_name;
+        // Add position to phonebook
+        if(!array_key_exists('und', $phonebook->field_position)) {
+            if (isset($attribute_value_position)) {
+                 $phonebook->field_position['und'][0]['value'] = $attribute_value_position;
+            }
+        }
+        // Add mobile number to phonebook
+        if(!array_key_exists('und', $phonebook->field_mobile_number)) {
+            if (isset($attribute_value_mobile_number)) {
+                $phonebook->field_mobile_number['und'][0]['value'] = $attribute_value_mobile_number;
+            }
+        }
+        // Add email to phonebook
+        if(!array_key_exists('und', $phonebook->field_email)) {
+            if (isset($user_data->mail)) {
+                 $phonebook->field_email['und'][0]['value'] = $user_data->mail;
+            }
+        }
+        // Get department
+        // Skipping departments that are not found in the DB. They need to be created in the AD
+        if (isset($attribute_value_departments)) {
+            $department = explode(';', $attribute_value_departments)[0];
+            $query = db_select('field_data_field_phonebook_tax_sd_id', 'dep');
+            $query->fields('dep', array('entity_id')) //tid
+                ->condition('dep.field_phonebook_tax_sd_id_value', $department)
+                ->range(0, 1);
+            $query_result = $query->execute()
+                ->fetchObject();
+            // If the department is found then set department
+            if(isset($query_result->entity_id)) {
+                $phonebook->field_department['und'][0]['tid'] = $query_result->entity_id;
+            }
+        }
+        // Get unit
+        // Skipping units that are not found in the DB. They need to be created in the AD
+        if (isset($attribute_value_unit)) {
+            // unit_id is e.g. 'CAS'
+            $unit_id = preg_replace('/(.*\()(.*)(\).*)/', '$2', $attribute_value_unit);
+                $query = db_select('field_data_field_phonebook_tax_center_id', 'unit');
+            $query->fields('unit', array('entity_id')) //tid
+            ->condition('unit.bundle', 'organisational_unit') // Only units
+            ->condition('unit.field_phonebook_tax_center_id_value', $unit_id)
+                ->range(0, 1);
+            $unit_tid = $query->execute()
+                ->fetchField();
+            if(isset($unit_tid))
+                $phonebook->field_unit['und'][0]['tid'] = $unit_tid;
+        }
+        // Important to save the phonebook in the end
+        node_save($phonebook);
+        // If all fields are set in the phonebook then give roles to the user otherwise the user should not gain access
+        if(isset($new_phonebook_title) &&
+            isset($phonebook->field_department['und'][0]['tid']) &&
+            isset($phonebook->field_unit['und'][0]['tid']))
+        {
+            // Save user with roles if this is first login
+            $role_user = 'User';
+            $role_user_rid = 18;
+            if ($user_data !== FALSE && !isset($user_data->roles[$role_user_rid])) {
+                $roles = $user_data->roles +
+                    array(
+                        $role_user_rid => $role_user
+                    );
+                user_save($user_data, array('roles' => $roles));
+            }
+        }
+    }
     else {
-      $node = new stdClass();
-      $node->title = $new_phonebook_title;
-      $node->type = 'phonebook';
-      node_object_prepare($node);
-      $node->language = 'und';
-      $node->uid = $account->uid;
-      $node->status = 1;
-      $node->promote = 0;
-      $node->comment = 1;
-      // Set reference to user
-      $node->field_user['und'][0]['target_id'] = $account->uid;
-      $node = node_submit($node);
-      node_save($node);
-      $phonebook_nid = $node->nid;
-      // Set reference from user
-      $user_data->field_phonebook['und'][0]['target_id'] = $phonebook_nid;
+        drupal_set_message(t('You do not have a first name and a last name in your login token.'), 'warning');
     }
-    // Load phone book
-    $phonebook = node_load($phonebook_nid);
-    // Add title to phonebook
-    $phonebook->title = $new_phonebook_title;
-    // Add names to phonebook
-    $phonebook->field_first_name['und'][0]['value'] = $attribute_value_first_name;
-    $phonebook->field_last_name['und'][0]['value'] = $attribute_value_last_name;
-    // Add position to phonebook
-    if(!array_key_exists('und', $phonebook->field_position)) {
-      if (isset($attribute_value_position)) {
-        $phonebook->field_position['und'][0]['value'] = $attribute_value_position;
-      }
-    }
-    // Add mobile number to phonebook
-    if(!array_key_exists('und', $phonebook->field_mobile_number)) {
-      if (isset($attribute_value_mobile_number)) {
-        $phonebook->field_mobile_number['und'][0]['value'] = $attribute_value_mobile_number;
-      }
-    }
-    // Add email to phonebook
-    if(!array_key_exists('und', $phonebook->field_email)) {
-      if (isset($user_data->mail)) {
-        $phonebook->field_email['und'][0]['value'] = $user_data->mail;
-      }
-    }
-    // Get department
-    // Skipping departments that are not found in the DB. They need to be created in the AD
-    if (isset($attribute_value_departments) &&
-      !isset($phonebook->field_department['und'][0]['tid']) ) {
-      $department = explode(';', $attribute_value_departments)[0];
-      $query = db_select('field_data_field_phonebook_tax_sd_id', 'dep');
-      $query->fields('dep', array('entity_id')) //tid
-      ->condition('dep.field_phonebook_tax_sd_id_value', $department)
-        ->range(0, 1);
-      $query_result = $query->execute()
-        ->fetchObject();
-      // If the department is found then set department
-      if(isset($query_result->entity_id)) {
-        $phonebook->field_department['und'][0]['tid'] = $query_result->entity_id;
-      }
-    }
-    // Get unit
-    // Skipping units that are not found in the DB. They need to be created in the AD
-    if (isset($attribute_value_unit)) {
-      // unit_id is e.g. 'CAS'
-      $unit_id = preg_replace('/(.*\()(.*)(\).*)/', '$2', $attribute_value_unit);
-      $query = db_select('field_data_field_phonebook_tax_center_id', 'unit');
-      $query->fields('unit', array('entity_id')) //tid
-      ->condition('unit.bundle', 'organisational_unit') // Only units
-      ->condition('unit.field_phonebook_tax_center_id_value', $unit_id)
-        ->range(0, 1);
-      $unit_tid = $query->execute()
-        ->fetchField();
-      if(isset($unit_tid))
-        $phonebook->field_unit['und'][0]['tid'] = $unit_tid;
-    }
-    // Important to save the phonebook in the end
-    node_save($phonebook);
-    // If all fields are set in the phonebook then give roles to the user otherwise the user should not gain access
-    if(isset($new_phonebook_title) &&
-      isset($phonebook->field_department['und'][0]['tid']) &&
-      isset($phonebook->field_unit['und'][0]['tid']))
-    {
-      // Save user with roles if this is first login
-      $role_user = 'User';
-      $role_user_rid = 18;
-      if ($user_data !== FALSE && !isset($user_data->roles[$role_user_rid])) {
-        $roles = $user_data->roles +
-          array(
-            $role_user_rid => $role_user
-          );
-        user_save($user_data, array('roles' => $roles));
-      }
-    }
-  }
-  else {
-    drupal_set_message(t('You do not have a first name and a last name in your login token.'), 'warning');
-  }
 }
 /**
  * Implement hook_menu().
@@ -159,7 +158,7 @@
     'page callback' => 'drupal_get_form',
     'page arguments' => array('magenta_saml_admin'),
     'access arguments' => array('access administration pages'),
-  );
+   );
   return $items;
 }
 /**
@@ -199,20 +198,20 @@
     '#required' => TRUE,
   );
   $form['magenta_saml_department'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Department'),
-    '#default_value' => variable_get('magenta_saml_department', 'urn:Afdelingsnummer'),
-    '#size' => 50,
-    '#maxlength' => 255,
-    '#required' => TRUE,
+      '#type' => 'textfield',
+      '#title' => t('Department'),
+      '#default_value' => variable_get('magenta_saml_department', 'urn:Afdelingsnummer'),
+      '#size' => 50,
+      '#maxlength' => 255,
+      '#required' => TRUE,
   );
   $form['magenta_saml_unit'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Unit'),
-    '#default_value' => variable_get('magenta_saml_unit', 'urn:OrgHierarki'),
-    '#size' => 50,
-    '#maxlength' => 255,
-    '#required' => TRUE,
+      '#type' => 'textfield',
+      '#title' => t('Unit'),
+      '#default_value' => variable_get('magenta_saml_unit', 'urn:OrgHierarki'),
+      '#size' => 50,
+      '#maxlength' => 255,
+      '#required' => TRUE,
   );
   return system_settings_form($form);
 }

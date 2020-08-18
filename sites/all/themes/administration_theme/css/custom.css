@@ -54,7 +54,3 @@ select.form-select {
 #edit-group_main_content .fieldset-wrapper .field-name-field-for-approve {
   margin-top: 32px;
 }
-.node-type-editorial-news .form-item-workbench-moderation-state-new,
-.page-node-add-editorial-news .form-item-workbench-moderation-state-new {
-  display: none;
-}

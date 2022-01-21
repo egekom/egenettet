@@ -1,0 +1,6 @@
+Added patches:
+
+User Processor - add mapping target for user roles
+Issue: https://www.drupal.org/project/feeds/issues/1376774
+Patch: https://www.drupal.org/files/issues/feeds-user-processor-roles-1376774-58.patch
+
